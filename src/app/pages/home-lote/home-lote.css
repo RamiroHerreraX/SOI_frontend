@@ -1,0 +1,41 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.navbar {
+  background-color: #333 !important; /* gris oscuro para navbar */
+}
+
+.btn-warning {
+  background-color: #d4af37 !important; /* dorado */
+  border: none;
+}
+
+.btn-success {
+  background-color: #c0c0c0 !important; /* plata */
+  border: none;
+  color: #000;
+}
+
+.card {
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.carousel-caption h5, .carousel-caption p {
+  color: white;
+}
+
+footer {
+  background-color: #333;
+}
+
+@media (max-width: 768px) {
+  .card img {
+    height: 200px;
+    object-fit: cover;
+  }
+}
