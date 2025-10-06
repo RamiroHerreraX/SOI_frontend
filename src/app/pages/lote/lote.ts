@@ -8,7 +8,7 @@ declare var bootstrap: any;
 
 @Component({
   selector: 'app-lote',
-  standalone: true, // ✅ Obligatorio para usar imports
+  standalone: true, 
   imports: [
     CommonModule,
     FormsModule,
