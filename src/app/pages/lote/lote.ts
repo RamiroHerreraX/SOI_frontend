@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoteService } from '../../services/lote';
+import { UbicacionService } from '../../services/ubicacion.service';
 
 declare var bootstrap: any;
 
@@ -12,6 +13,7 @@ declare var bootstrap: any;
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule
   ],
   templateUrl: './lote.html',
@@ -22,11 +24,55 @@ export class Lote implements OnInit {
   lotes: any[] = [];
   currentLote: any = {};
   isEdit: boolean = false;
+  estados: any[] = [];
+  ciudades: any[] = [];
+  colonias: any[] = [];
 
-  constructor(private loteService: LoteService) { }
+  estadoControl = new FormControl();
+  ciudadControl = new FormControl();
+  coloniaControl = new FormControl();
+
+  selectedEstado: any;
+  selectedCiudad: any;
+
+  constructor(private loteService: LoteService, private ubicacionService: UbicacionService) { }
 
   ngOnInit(): void {
     this.loadLotes();
+
+    this.ubicacionService.getEstados().subscribe({
+    next: data => this.estados = data,
+    error: err => console.error('Error al cargar estados', err)
+  });
+
+  // Cuando se selecciona un estado, traer ciudades
+  this.estadoControl.valueChanges.subscribe(val => {
+    this.selectedEstado = this.estados.find(e => e.nombre_estado === val);
+    if (this.selectedEstado) {
+      this.ubicacionService.getCiudades(this.selectedEstado.id_estado)
+        .subscribe({
+          next: data => this.ciudades = data,
+          error: err => console.error('Error al cargar ciudades', err)
+        });
+    } else {
+      this.ciudades = []; // limpiar ciudades si no hay selección válida
+      this.colonias = []; // limpiar colonias también
+    }
+  });
+
+  // Cuando se selecciona una ciudad, traer colonias
+  this.ciudadControl.valueChanges.subscribe(val => {
+    this.selectedCiudad = this.ciudades.find(c => c.nombre_ciudad === val);
+    if (this.selectedCiudad) {
+      this.ubicacionService.getColonias(this.selectedCiudad.id_ciudad)
+        .subscribe({
+          next: data => this.colonias = data,
+          error: err => console.error('Error al cargar colonias', err)
+        });
+    } else {
+      this.colonias = []; // limpiar colonias si no hay selección válida
+    }
+  });
   }
 
   // Cargar todos los lotes

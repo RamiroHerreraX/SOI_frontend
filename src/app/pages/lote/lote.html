@@ -1,5 +1,8 @@
 <!-- Agregar Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
 
 <style>
   body {
@@ -11,7 +14,8 @@
   .navbar {
     background-color: #555 !important; /* Gris principal */
   }
-  .navbar-brand, .nav-link {
+  .navbar-brand,
+  .nav-link {
     color: #fff !important;
     font-weight: bold;
   }
@@ -101,13 +105,19 @@
     <div class="row g-4">
       <div class="col-md-4" *ngFor="let lote of lotes">
         <div class="card shadow-sm">
-          <img [src]="lote.imagen || 'assets/default-lote.jpg'" class="card-img-top" alt="{{ lote.numLote }}">
+          <img
+            [src]="lote.imagen || 'assets/default-lote.jpg'"
+            class="card-img-top"
+            alt="{{ lote.numLote }}"
+          />
           <div class="card-body">
             <h5 class="card-title">{{ lote.tipo | titlecase }} - {{ lote.numLote }}</h5>
-            <p class="card-text">{{ lote.descripcion | slice:0:100 }}...</p>
+            <p class="card-text">{{ lote.descripcion | slice : 0 : 100 }}...</p>
             <div class="d-flex justify-content-between">
               <button class="btn btn-silver btn-sm" (click)="editLote(lote)">Editar</button>
-              <button class="btn btn-danger btn-sm" (click)="deleteLote(lote.id_propiedad)">Eliminar</button>
+              <button class="btn btn-danger btn-sm" (click)="deleteLote(lote.id_propiedad)">
+                Eliminar
+              </button>
             </div>
           </div>
         </div>
@@ -117,7 +127,13 @@
 </section>
 
 <!-- Formulario Modal -->
-<div class="modal fade" id="loteModal" tabindex="-1" aria-labelledby="loteModalLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  id="loteModal"
+  tabindex="-1"
+  aria-labelledby="loteModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header bg-secondary text-white">
@@ -139,35 +155,89 @@
             </div>
             <div class="col-md-4">
               <label class="form-label">Número de Lote</label>
-              <input class="form-control" [(ngModel)]="currentLote.numLote" name="numLote" required>
+              <input
+                class="form-control"
+                [(ngModel)]="currentLote.numLote"
+                name="numLote"
+                required
+              />
             </div>
             <div class="col-md-4">
               <label class="form-label">Dirección</label>
-              <input class="form-control" [(ngModel)]="currentLote.direccion" name="direccion" required>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label">Colonia</label>
-              <input class="form-control" [(ngModel)]="currentLote.colonia" name="colonia">
-            </div>
-            <div class="col-md-4">
-              <label class="form-label">Ciudad</label>
-              <input class="form-control" [(ngModel)]="currentLote.ciudad" name="ciudad">
+              <input
+                class="form-control"
+                [(ngModel)]="currentLote.direccion"
+                name="direccion"
+                required
+              />
             </div>
             <div class="col-md-4">
               <label class="form-label">Estado</label>
-              <input class="form-control" [(ngModel)]="currentLote.estado" name="estado">
+              <input
+                class="form-control"
+                [formControl]="estadoControl"
+                list="estados"
+                name="estado"
+              />
+              <datalist id="estados">
+                <option *ngFor="let e of estados" [value]="e.nombre_estado"></option>
+              </datalist>
             </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Ciudad</label>
+              <input
+                class="form-control"
+                [formControl]="ciudadControl"
+                list="ciudades"
+                name="ciudad"
+              />
+              <datalist id="ciudades">
+                <option *ngFor="let c of ciudades" [value]="c.nombre_ciudad"></option>
+              </datalist>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Colonia</label>
+              <input
+                class="form-control"
+                [formControl]="coloniaControl"
+                list="colonias"
+                name="colonia"
+              />
+              <datalist id="colonias">
+                <option *ngFor="let col of colonias" [value]="col.nombre_colonia"></option>
+              </datalist>
+            </div>
+
             <div class="col-md-4">
               <label class="form-label">Precio</label>
-              <input type="number" class="form-control" [(ngModel)]="currentLote.precio" name="precio" required>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="currentLote.precio"
+                name="precio"
+                required
+              />
             </div>
             <div class="col-md-4">
               <label class="form-label">Superficie m²</label>
-              <input type="number" class="form-control" [(ngModel)]="currentLote.superficie_m2" name="superficie_m2" required>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="currentLote.superficie_m2"
+                name="superficie_m2"
+                required
+              />
             </div>
             <div class="col-md-4">
               <label class="form-label">Estado Propiedad</label>
-              <select class="form-select" [(ngModel)]="currentLote.estado_propiedad" name="estado_propiedad" required>
+              <select
+                class="form-select"
+                [(ngModel)]="currentLote.estado_propiedad"
+                name="estado_propiedad"
+                required
+              >
                 <option value="disponible">Disponible</option>
                 <option value="rentada">Rentada</option>
                 <option value="vendida">Vendida</option>
@@ -176,15 +246,22 @@
             </div>
             <div class="col-12">
               <label class="form-label">Descripción</label>
-              <textarea class="form-control" rows="3" [(ngModel)]="currentLote.descripcion" name="descripcion"></textarea>
+              <textarea
+                class="form-control"
+                rows="3"
+                [(ngModel)]="currentLote.descripcion"
+                name="descripcion"
+              ></textarea>
             </div>
             <div class="col-12">
               <label class="form-label">Imagen URL</label>
-              <input class="form-control" [(ngModel)]="currentLote.imagen" name="imagen">
+              <input class="form-control" [(ngModel)]="currentLote.imagen" name="imagen" />
             </div>
           </div>
           <div class="mt-3 text-end">
-            <button type="submit" class="btn btn-gold">{{ isEdit ? 'Actualizar' : 'Guardar' }}</button>
+            <button type="submit" class="btn btn-gold">
+              {{ isEdit ? 'Actualizar' : 'Guardar' }}
+            </button>
           </div>
         </form>
       </div>
