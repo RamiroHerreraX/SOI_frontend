@@ -1,0 +1,224 @@
+/* === NAVBAR === */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1050;
+  background-color: #FFFFFF; /* fondo blanco */
+  border-bottom: 2px solid #B8860B; /* borde dorado */
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+  color: #B8860B !important; /* dorado elegante */
+  font-weight: 700;
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.navbar-logo {
+  height: 45px;
+  width: auto;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.navbar-nav .nav-link {
+  color: #1A1A1A !important; /* negro elegante */
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin: 0 8px;
+  border-radius: 6px;
+  padding: 8px 14px;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: #B8860B !important; /* dorado al hover */
+  background-color: rgba(255, 215, 0, 0.1); /* sutil resplandor dorado */
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(184, 134, 11, 0.3);
+}
+
+/* === FOOTER === */
+/* === FOOTER === */
+footer {
+  background-color: #1A1A1A; /* fondo negro elegante */
+  color: #E0E0E0; /* texto gris claro */
+  padding: 30px 0;
+  text-align: center;
+}
+
+footer a {
+  color: #C0C0C0; /* links gris más claro */
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+footer a:hover {
+  color: #FFFFFF; /* blanco al hover */
+  text-shadow: 0 0 4px rgba(255,255,255,0.3);
+}
+
+footer h5 {
+  color: #FFFFFF; /* títulos blancos */
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+footer p, footer li {
+  color: #D3D3D3; /* gris claro para párrafos y lista */
+}
+/* Hover efecto dorado para links y iconos */
+footer a,
+footer .social-icon {
+  transition: all 0.3s ease;
+}
+
+footer a:hover,
+footer .social-icon:hover {
+  color: #B8860B; /* dorado brillante */
+  text-shadow: 0 0 6px rgba(255,215,0,0.5);
+  transform: translateY(-2px);
+}
+
+/* Opcional: cursor pointer en iconos */
+footer .social-icon {
+  cursor: pointer;
+}
+
+
+/* === BOTONES === */
+.btn-gold {
+  background-color: #B8860B; /* dorado elegante */
+  color: #FFFFFF;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  padding: 10px 20px;
+}
+
+.btn-gold:hover {
+  background-color: #FFD700; /* más brillante al hover */
+  color: #1A1A1A;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.btn-silver {
+  background-color: #C0C0C0; /* plata metálica */
+  color: #1A1A1A;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+}
+
+.btn-silver:hover {
+  background-color: #E0E0E0; /* plata clara al hover */
+  color: #1A1A1A;
+  box-shadow: 0 4px 12px rgba(192, 192, 192, 0.4);
+}
+
+/* === BODY === */
+body {
+  background-color: #FFFFFF;
+  color: #1A1A1A;
+  font-family: "Poppins", sans-serif;
+  padding-top: 90px;
+  margin: 0;
+}
+
+/* === CARDS === */
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #F9F9F9; /* blanco suave */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(184, 134, 11, 0.3);
+}
+
+.card-title {
+  color: #1A1A1A;
+  font-weight: 600;
+}
+
+.card-text {
+  color: #444;
+}
+
+.card .precio {
+  color: #B8860B;
+  font-weight: 700;
+}
+
+/* === MODAL === */
+.modal-content.modal-sm {
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(184, 134, 11, 0.3);
+}
+
+.modal-close {
+  color: #B8860B;
+}
+
+/* === BOTÓN SCROLL TOP === */
+.btn-scroll-top {
+  background: #B8860B;
+  color: #FFFFFF;
+}
+.btn-scroll-top:hover {
+  background: #FFD700;
+  color: #1A1A1A;
+}
+
+
+
+
+
+
+
+.btn-scroll-top,
+.btn-scroll-down {
+  position: fixed;
+  right: 20px;
+  z-index: 999;
+  border: none;
+  border-radius: 50%;
+  padding: 12px 15px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-scroll-top {
+  bottom: 70px;
+  background-color: #B8860B;
+  color: #fff;
+}
+
+.btn-scroll-top:hover {
+  background-color: #B8860B;
+  color: #1A1A1A;
+}
+
+.btn-scroll-down {
+  bottom: 20px;
+  background-color: #1A1A1A;
+  color: #fff;
+}
+
+.btn-scroll-down:hover {
+  background-color: #B8860B;
+  color: #fff;
+}
