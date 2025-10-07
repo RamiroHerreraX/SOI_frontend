@@ -1,211 +1,278 @@
-<!-- HomeLotes Component HTML -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lotes Exclusivos | Inmobiliaria INDES</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="home-lote.css">
+    <style>
+        /* Colores sólidos header y footer */
+        .navbar, .footer-section {
+            background-color: #1a1a1a; /* sólido y oscuro */
+        }
+        .navbar .nav-link, .navbar .navbar-brand, .footer-section h5, .footer-section p, .footer-section a {
+            color: #FFD700; /* dorado para resaltar */
+        }
+        .navbar .nav-link:hover, .footer-section a:hover {
+            color: #fff;
+        }
+        .breadcrumb-section {
+            background-color: #f8f9fa; /* se mantiene claro */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="assets/logo.png" alt="Logo Inmobiliaria INDES" class="navbar-logo me-2">
+                <span class="fw-bold text-uppercase">Inmobiliaria INDES</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#inicio">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#lotes">Lotes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#nuevos">Nuevos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-<!-- Agregar Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Breadcrumb -->
+    <section class="breadcrumb-section py-3">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 text-dark">
+                    <li class="breadcrumb-item"><a href="#">Inicio</a></li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">Lotes Disponibles</li>
+                </ol>
+            </nav>
+        </div>
+    </section>
 
-<style>
-  body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f8f8f8;
-  }
+    <!-- Bienvenida -->
+    <section id="inicio" class="welcome-section">
+        <div class="overlay"></div>
+        <div class="container position-relative text-center text-white">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <h1 class="display-3 fw-bolder mb-3 text-gold-shine">Lotes Exclusivos</h1>
+                    <p class="lead text-shadow">Descubre terrenos privilegiados para tu proyecto. Inversión segura con ubicaciones premium y servicios completos.</p>
+                    <a href="#lotes" class="btn btn-gold btn-lg mt-4 shadow-sm">
+                        <i class="fas fa-search me-2"></i>Ver Lotes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  /* Navbar */
-  .navbar {
-    background-color: #555 !important; /* Gris principal */
-  }
-  .navbar-brand, .nav-link {
-    color: #fff !important;
-    font-weight: bold;
-  }
-  .nav-link:hover {
-    color: #d4af37 !important; /* Dorado */
-  }
+    <!-- Filtros -->
+    <section class="filters-section py-4 bg-light-gray border-bottom">
+        <div class="container">
+            <h3 class="text-center mb-3 text-dark">Filtrar por Tipo de Lote</h3>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="btn-group w-100 filter-buttons" role="group">
+                        <input type="radio" class="btn-check" name="lote-type" id="all-lotes" autocomplete="off" checked>
+                        <label class="btn btn-outline-dark fw-bold" for="all-lotes" (click)="filterType('')">Todos</label>
 
-  /* Breadcrumbs */
-  .breadcrumb {
-    background-color: #eaeaea !important;
-  }
+                        <input type="radio" class="btn-check" name="lote-type" id="plano-lotes" autocomplete="off">
+                        <label class="btn btn-outline-dark fw-bold" for="plano-lotes" (click)="filterType('plano')">Planos</label>
 
-  /* Welcome Section */
-  .welcome-section {
-    background-color: #f2f2f2;
-    padding: 50px 0;
-    text-align: center;
-  }
-  .welcome-section h1 {
-    color: #333;
-    font-weight: bold;
-    margin-top: 20px;
-  }
-  .welcome-section p {
-    color: #666;
-    font-size: 1.1rem;
-  }
+                        <input type="radio" class="btn-check" name="lote-type" id="premium-lotes" autocomplete="off">
+                        <label class="btn btn-outline-dark fw-bold" for="premium-lotes" (click)="filterType('premium')">Premium</label>
 
-  /* Buttons */
-  .btn-gold {
-    background-color: #d4af37;
-    color: #fff;
-    border: none;
-  }
-  .btn-gold:hover {
-    background-color: #b8952f;
-  }
-  .btn-silver {
-    background-color: #c0c0c0;
-    color: #000;
-    border: none;
-  }
-  .btn-silver:hover {
-    background-color: #a9a9a9;
-  }
+                        <input type="radio" class="btn-check" name="lote-type" id="irregular-lotes" autocomplete="off">
+                        <label class="btn btn-outline-dark fw-bold" for="irregular-lotes" (click)="filterType('irregular')">Irregulares</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  /* Cards */
-  .card {
-    transition: transform 0.3s;
-  }
-  .card:hover {
-    transform: scale(1.05);
-  }
+    <!-- Lotes Disponibles -->
+    <section id="lotes" class="lotes-section py-5 bg-white">
+        <div class="container">
+            <h2 class="text-center mb-5 section-title text-dark">Lotes Disponibles</h2>
+            <div class="row g-4">
+                <div class="col-sm-6 col-md-6 col-lg-4" *ngFor="let lote of lotesFiltered">
+                    <div class="card lotes-card h-100 shadow-hover border-0 rounded-3 overflow-hidden">
+                        <div class="image-container">
+                            <img [src]="lote.foto" class="card-img-top lote-img" [alt]="lote.nombre">
+                            <span class="lote-badge badge text-dark" [class]="'bg-' + lote.tipo">{{lote.tipo | titlecase}}</span>
+                        </div>
+                        <div class="card-body d-flex flex-column p-4">
+                            <h5 class="card-title fw-bold text-dark mb-1">{{lote.nombre}}</h5>
+                            <p class="card-text flex-grow-1 text-secondary small">{{truncateText(lote.descripcion, 60)}}</p>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="precio-card text-gold fw-bolder">{{lote.precio}}</span>
+                                <span class="text-secondary"><i class="fas fa-ruler-combined me-1"></i> {{lote.dimensiones}}</span>
+                            </div>
+                            <div class="mt-auto d-grid gap-2 d-md-block">
+                                <button class="btn btn-gold btn-sm w-100 w-md-auto me-md-2 mb-2 mb-md-0" (click)="verDetalles(lote)">
+                                    <i class="fas fa-eye me-2"></i>Ver Detalles
+                                </button>
+                                <button class="btn btn-silver btn-sm w-100 w-md-auto" (click)="contactarWhatsApp(lote)">
+                                    <i class="fab fa-whatsapp me-2"></i>Contactar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  /* Carousel captions */
-  .carousel-caption {
-    background-color: rgba(85, 85, 85, 0.7);
-    border-radius: 5px;
-    padding: 10px;
-  }
-  .carousel-caption h5, .carousel-caption p {
-    color: #fff;
-  }
+    <!-- Lotes Nuevos -->
+    <section id="nuevos" class="nuevos-section py-5 bg-light-gray">
+        <div class="container">
+            <h2 class="text-center mb-5 section-title text-dark">Lanzamientos Exclusivos</h2>
+            <div id="carouselLotes" class="carousel slide carousel-fade shadow-lg rounded-3 overflow-hidden" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item" *ngFor="let lote of lotesNuevos; let i = index" [class.active]="i === 0">
+                        <div class="row align-items-center bg-white p-4 p-md-5">
+                            <div class="col-md-7">
+                                <img [src]="lote.foto" class="d-block w-100 rounded-3 carousel-img" [alt]="lote.nombre">
+                            </div>
+                            <div class="col-md-5 mt-4 mt-md-0">
+                                <div class="carousel-content text-dark">
+                                    <h3 class="text-gold fw-bolder mb-2">{{lote.nombre}}</h3>
+                                    <p class="mb-3">{{lote.descripcion}}</p>
+                                    <ul class="list-unstyled mb-4 small">
+                                        <li><i class="fas fa-map-marker-alt text-silver me-2"></i> {{lote.ubicacion}}</li>
+                                        <li><i class="fas fa-ruler-combined text-silver me-2"></i> {{lote.dimensiones}}</li>
+                                    </ul>
+                                    <h4 class="fw-bold mb-3">Precio: <span class="text-gold">{{lote.precio}}</span></h4>
+                                    <div class="d-grid gap-2 d-sm-flex justify-content-start">
+                                        <button class="btn btn-gold btn-sm" (click)="verDetalles(lote)">
+                                            <i class="fas fa-eye me-2"></i>Ver Detalles
+                                        </button>
+                                        <button class="btn btn-silver btn-sm" (click)="contactarWhatsApp(lote)">
+                                            <i class="fab fa-whatsapp me-2"></i>Contactar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselLotes" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselLotes" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
+            </div>
+        </div>
+    </section>
 
-  /* Footer */
-  footer {
-    background-color: #555;
-    color: #fff;
-    padding: 30px 0;
-    margin-top: 50px;
-  }
+   <!-- Modal Detalles -->
+    <div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
+        <div class="modal-content modal-sm" (click)="preventClose($event)">
+            <div class="modal-header">
+                <h3 class="modal-title text-gold">{{loteSeleccionado?.nombre}}</h3>
+                <button class="modal-close" (click)="cerrarModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img [src]="loteSeleccionado?.foto" [alt]="loteSeleccionado?.nombre" class="lote-imagen rounded mb-3">
+                <p class="text-light-silver">{{loteSeleccionado?.descripcion}}</p>
+                <div class="detalles-grid">
+                    <div class="detalle-item">
+                        <div class="detalle-titulo text-silver">Ubicación</div>
+                        <div class="detalle-valor fw-bold">{{loteSeleccionado?.ubicacion}}</div>
+                    </div>
+                    <div class="detalle-item">
+                        <div class="detalle-titulo text-silver">Dimensiones</div>
+                        <div class="detalle-valor fw-bold">{{loteSeleccionado?.dimensiones}}</div>
+                    </div>
+                    <div class="detalle-item">
+                        <div class="detalle-titulo text-silver">Servicios</div>
+                        <div class="detalle-valor fw-bold">{{loteSeleccionado?.servicios}}</div>
+                    </div>
+                    <div class="detalle-item">
+                        <div class="detalle-titulo text-silver">Tipo</div>
+                        <div class="detalle-valor fw-bold">{{loteSeleccionado?.tipo | titlecase}}</div>
+                    </div>
+                </div>
+                <div class="caracteristicas-section mt-3">
+                    <h4 class="text-gold mb-2">Características Destacadas</h4>
+                    <ul class="caracteristicas-lista text-light-silver">
+                        <li *ngFor="let caracteristica of loteSeleccionado?.caracteristicas"><i class="fas fa-check-circle me-2 text-gold"></i>{{caracteristica}}</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <h3 class="precio-destacado">{{loteSeleccionado?.precio}}</h3>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-silver btn-sm" (click)="contactarWhatsApp(loteSeleccionado)">
+                        <i class="fab fa-whatsapp me-2"></i>Contactar
+                    </button>
+                    <button class="btn btn-outline-light btn-sm" (click)="cerrarModal()">
+                        <i class="fas fa-times me-2"></i>Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  /* Scroll-to-top button */
-  #btnTop {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-  }
-
-  @media (max-width: 768px) {
-    .card img {
-      height: 200px;
-      object-fit: cover;
-    }
-  }
-</style>
-
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg">
-  <div class="container">
-    <a class="navbar-brand" href="#">HomeLotes</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+    <!-- Scroll Top Button -->
+    <button class="btn-scroll-top" id="btnScrollTop" title="Ir al inicio">
+        <i class="fas fa-chevron-up"></i>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link active" href="#">Inicio</a></li>
-        <li class="nav-item"><a class="nav-link" href="#lotes">Lotes</a></li>
-        <li class="nav-item"><a class="nav-link" href="#nuevos">Nuevos</a></li>
-        <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
 
-<!-- Breadcrumbs -->
-<nav aria-label="breadcrumb" class="py-2">
-  <div class="container">
-    <ol class="breadcrumb mb-0">
-      <li class="breadcrumb-item"><a href="#">Inicio</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Lotes</li>
-    </ol>
-  </div>
-</nav>
-
-<!-- Welcome Section -->
-<section class="welcome-section">
-  <div class="container">
-    <img src="assets/welcome.jpg" class="img-fluid rounded" alt="Bienvenida">
-    <h1>Bienvenido a HomeLotes</h1>
-    <p>Descubre los mejores lotes disponibles y encuentra el ideal para ti.</p>
-  </div>
-</section>
-
-<!-- Filter by Type -->
-<section class="py-4">
-  <div class="container text-center">
-    <h4 class="mb-3">Filtra por tipo de lote</h4>
-    <div class="btn-group" role="group">
-      <button type="button" class="btn btn-outline-secondary" (click)="filterType('plano')">Plano</button>
-      <button type="button" class="btn btn-outline-secondary" (click)="filterType('irregular')">Irregular</button>
-      <button type="button" class="btn btn-outline-secondary" (click)="filterType('premium')">Premium</button>
-      <button type="button" class="btn btn-outline-secondary" (click)="filterType('')">Todos</button>
-    </div>
-  </div>
-</section>
-
-<!-- Lotes Cards -->
-<section id="lotes" class="py-5">
-  <div class="container">
-    <div class="row g-4">
-      <div class="col-md-4" *ngFor="let lote of lotesFiltered">
-        <div class="card shadow-sm">
-          <img [src]="lote.foto" class="card-img-top" alt="Lote {{ lote.nombre }}">
-          <div class="card-body">
-            <h5 class="card-title">{{ lote.nombre }}</h5>
-            <p class="card-text">{{ lote.descripcion | slice:0:100 }}...</p>
-            <button class="btn btn-gold w-100 mb-2" (click)="verDetalles(lote)">Ver detalles</button>
-            <a [href]="'https://wa.me/521' + whatsappNumber + '?text=Hola!%20Estoy%20interesado%20en%20el%20lote%20' + lote.nombre"
-              target="_blank" class="btn btn-silver w-100">Preguntar por WhatsApp</a>
-          </div>
+    <!-- Footer -->
+    <footer id="contacto" class="footer-section py-5 bg-dark-indes text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-gold mb-3 fw-bold"><i class="fas fa-building me-2"></i>Inmobiliaria INDES</h5>
+                    <p class="text-light-silver">Tu inversión en terrenos de alta plusvalía. Hacemos realidad tus proyectos inmobiliarios.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-gold mb-3 fw-bold">Contacto</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2 text-light-silver"><i class="fas fa-phone me-2 text-silver"></i>+1 234 567 890</li>
+                        <li class="mb-2 text-light-silver"><i class="fas fa-envelope me-2 text-silver"></i>info@lotespremium.com</li>
+                        <li class="text-light-silver"><i class="fas fa-map-marker-alt me-2 text-silver"></i>San Luis de la Paz, Guanajuato</li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-gold mb-3 fw-bold">Síguenos</h5>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="social-icon text-silver fs-4"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon text-silver fs-4"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon text-silver fs-4"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4 footer-divider">
+            <div class="text-center">
+                <p class="text-light-silver mb-0 small">&copy; 2025 Inmobiliaria INDES. Todos los derechos reservados.</p>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </footer>
 
-<!-- Carousel Nuevos Lotes -->
-<section id="nuevos" class="py-5">
-  <div class="container">
-    <h3 class="text-center mb-4">Nuevos Lotes</h3>
-    <div id="carouselLotes" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        <div class="carousel-item" *ngFor="let lote of lotesNuevos; let i = index" [class.active]="i===0">
-          <img [src]="lote.foto" class="d-block w-100 rounded" alt="Lote {{ lote.nombre }}">
-          <div class="carousel-caption d-none d-md-block">
-            <h5>{{ lote.nombre }}</h5>
-            <p>{{ lote.descripcion | slice:0:80 }}...</p>
-          </div>
-        </div>
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselLotes" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselLotes" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
-      </button>
-    </div>
-  </div>
-</section>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Scroll Top
+        const btnScrollTop = document.getElementById('btnScrollTop');
+        window.onscroll = () => {
+            btnScrollTop.style.display = (document.documentElement.scrollTop > 200) ? 'block' : 'none';
+        };
+        btnScrollTop.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
+    </script>
+</body>
+</html>
 
-<!-- Scroll to top button -->
-<button id="btnTop" class="btn btn-secondary" (click)="scrollToTop()">↑</button>
-
-<!-- Footer -->
-<footer>
-  <div class="container text-center">
-    <p>&copy; 2025 HomeLotes. Todos los derechos reservados.</p>
-  </div>
-</footer>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
