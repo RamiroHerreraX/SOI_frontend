@@ -127,6 +127,7 @@
 </section>
 
 <!-- Formulario Modal -->
+<!-- Formulario Modal -->
 <div
   class="modal fade"
   id="loteModal"
@@ -134,7 +135,7 @@
   aria-labelledby="loteModalLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-secondary text-white">
         <h5 class="modal-title" id="loteModalLabel">{{ isEdit ? 'Editar Lote' : 'Nuevo Lote' }}</h5>
@@ -143,7 +144,8 @@
       <div class="modal-body">
         <form (ngSubmit)="saveLote()">
           <div class="row g-3">
-            <div class="col-md-4">
+            <!-- Tipo -->
+            <div class="col-md-3">
               <label class="form-label">Tipo</label>
               <select class="form-select" [(ngModel)]="currentLote.tipo" name="tipo" required>
                 <option value="casa">Casa</option>
@@ -153,7 +155,9 @@
                 <option value="otro">Otro</option>
               </select>
             </div>
-            <div class="col-md-4">
+
+            <!-- Número de Lote -->
+            <div class="col-md-3">
               <label class="form-label">Número de Lote</label>
               <input
                 class="form-control"
@@ -162,7 +166,15 @@
                 required
               />
             </div>
-            <div class="col-md-4">
+
+            <!-- Manzana -->
+            <div class="col-md-3">
+              <label class="form-label">Manzana</label>
+              <input class="form-control" [(ngModel)]="currentLote.manzana" name="manzana" />
+            </div>
+
+            <!-- Dirección -->
+            <div class="col-md-3">
               <label class="form-label">Dirección</label>
               <input
                 class="form-control"
@@ -171,46 +183,63 @@
                 required
               />
             </div>
-            <div class="col-md-4">
+
+            <!-- Código Postal -->
+            <div class="col-md-3">
+              <label class="form-label">Código Postal</label>
+              <input
+                type="text"
+                class="form-control"
+                maxlength="5"
+                [(ngModel)]="codigoPostal"
+                (input)="buscarPorCodigoPostal()"
+                placeholder="Ej. 37904"
+              />
+            </div>
+
+            <!-- Estado -->
+            <div class="col-md-3">
               <label class="form-label">Estado</label>
-              <input
-                class="form-control"
-                [formControl]="estadoControl"
-                list="estados"
-                name="estado"
-              />
-              <datalist id="estados">
-                <option *ngFor="let e of estados" [value]="e.nombre_estado"></option>
-              </datalist>
+              <select
+                class="form-select"
+                [(ngModel)]="selectedEstado"
+                (change)="onEstadoChange($event)"
+              >
+                <option value="">Seleccionar Estado</option>
+                <option *ngFor="let estado of estados" [value]="estado.id_estado">
+                  {{ estado.nombre_estado }}
+                </option>
+              </select>
             </div>
 
-            <div class="col-md-4">
+            <!-- Ciudad -->
+            <div class="col-md-3">
               <label class="form-label">Ciudad</label>
-              <input
-                class="form-control"
-                [formControl]="ciudadControl"
-                list="ciudades"
-                name="ciudad"
-              />
-              <datalist id="ciudades">
-                <option *ngFor="let c of ciudades" [value]="c.nombre_ciudad"></option>
-              </datalist>
+              <select
+                class="form-select"
+                [(ngModel)]="selectedCiudad"
+                (change)="onCiudadChange($event)"
+              >
+                <option value="">Seleccionar Ciudad</option>
+                <option *ngFor="let ciudad of ciudades" [value]="ciudad.id_ciudad">
+                  {{ ciudad.nombre_ciudad }}
+                </option>
+              </select>
             </div>
 
-            <div class="col-md-4">
+            <!-- Colonia -->
+            <div class="col-md-3">
               <label class="form-label">Colonia</label>
-              <input
-                class="form-control"
-                [formControl]="coloniaControl"
-                list="colonias"
-                name="colonia"
-              />
-              <datalist id="colonias">
-                <option *ngFor="let col of colonias" [value]="col.nombre_colonia"></option>
-              </datalist>
+              <select class="form-select" [(ngModel)]="currentLote.id_colonia" name="id_colonia">
+                <option value="">Seleccionar Colonia</option>
+                <option *ngFor="let col of colonias" [value]="col.id_colonia">
+                  {{ col.nombre_colonia }}
+                </option>
+              </select>
             </div>
 
-            <div class="col-md-4">
+            <!-- Precio -->
+            <div class="col-md-3">
               <label class="form-label">Precio</label>
               <input
                 type="number"
@@ -220,7 +249,20 @@
                 required
               />
             </div>
-            <div class="col-md-4">
+
+            <!-- Valor Avalúo -->
+            <div class="col-md-3">
+              <label class="form-label">Valor Avalúo</label>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="currentLote.valor_avaluo"
+                name="valor_avaluo"
+              />
+            </div>
+
+            <!-- Superficie -->
+            <div class="col-md-3">
               <label class="form-label">Superficie m²</label>
               <input
                 type="number"
@@ -230,7 +272,70 @@
                 required
               />
             </div>
-            <div class="col-md-4">
+
+            <!-- Habitaciones -->
+            <div class="col-md-3">
+              <label class="form-label">Habitaciones</label>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="currentLote.num_habitaciones"
+                name="num_habitaciones"
+              />
+            </div>
+
+            <!-- Baños -->
+            <div class="col-md-3">
+              <label class="form-label">Baños</label>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="currentLote.num_banos"
+                name="num_banos"
+              />
+            </div>
+
+            <!-- Estacionamientos -->
+            <div class="col-md-3">
+              <label class="form-label">Estacionamientos</label>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="currentLote.num_estacionamientos"
+                name="num_estacionamientos"
+              />
+            </div>
+
+            <!-- Servicios -->
+            <div class="col-md-3">
+              <label class="form-label">Servicios</label>
+              <input
+                class="form-control"
+                [(ngModel)]="currentLote.servicios"
+                name="servicios"
+                placeholder="Ej. Luz, agua, drenaje..."
+              />
+            </div>
+
+            <!-- Topografía -->
+            <div class="col-md-3">
+              <label class="form-label">Topografía</label>
+              <input class="form-control" [(ngModel)]="currentLote.topografia" name="topografia" />
+            </div>
+
+            <!-- Documentación -->
+            <div class="col-md-3">
+              <label class="form-label">Documentación</label>
+              <input
+                class="form-control"
+                [(ngModel)]="currentLote.documentacion"
+                name="documentacion"
+                placeholder="Ej. Escritura, título, etc."
+              />
+            </div>
+
+            <!-- Estado Propiedad -->
+            <div class="col-md-3">
               <label class="form-label">Estado Propiedad</label>
               <select
                 class="form-select"
@@ -244,7 +349,26 @@
                 <option value="en proceso">En Proceso</option>
               </select>
             </div>
-            <div class="col-12">
+
+            <!-- Fecha Disponibilidad -->
+            <div class="col-md-3">
+              <label class="form-label">Fecha Disponibilidad</label>
+              <input
+                type="date"
+                class="form-control"
+                [(ngModel)]="currentLote.fecha_disponibilidad"
+                name="fecha_disponibilidad"
+              />
+            </div>
+
+            <!-- Imagen -->
+            <div class="col-md-6">
+              <label class="form-label">Imagen URL</label>
+              <input class="form-control" [(ngModel)]="currentLote.imagen" name="imagen" />
+            </div>
+
+            <!-- Descripción -->
+            <div class="col-md-6">
               <label class="form-label">Descripción</label>
               <textarea
                 class="form-control"
@@ -253,13 +377,23 @@
                 name="descripcion"
               ></textarea>
             </div>
-            <div class="col-12">
-              <label class="form-label">Imagen URL</label>
-              <input class="form-control" [(ngModel)]="currentLote.imagen" name="imagen" />
+
+            <!-- Usuario -->
+            <!-- Encargado -->
+            <div class="col-md-3">
+              <label class="form-label">A quién dirigirse (Encargado)</label>
+              <select class="form-select" [(ngModel)]="currentLote.id_user" name="id_user" required>
+                <option value="">Seleccionar Encargado</option>
+                <option *ngFor="let encargado of encargados" [value]="encargado.id_user">
+                  {{ encargado.usuario }}
+                </option>
+              </select>
             </div>
           </div>
-          <div class="mt-3 text-end">
-            <button type="submit" class="btn btn-gold">
+
+          <!-- Botón Guardar -->
+          <div class="mt-4 text-end">
+            <button type="submit" class="btn btn-gold px-4">
               {{ isEdit ? 'Actualizar' : 'Guardar' }}
             </button>
           </div>

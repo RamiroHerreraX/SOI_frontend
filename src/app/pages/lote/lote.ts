@@ -4,6 +4,8 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoteService } from '../../services/lote';
 import { UbicacionService } from '../../services/ubicacion.service';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { UsersService } from '../../services/users.service';
 
 declare var bootstrap: any;
 
@@ -27,6 +29,7 @@ export class Lote implements OnInit {
   estados: any[] = [];
   ciudades: any[] = [];
   colonias: any[] = [];
+  codigoPostal: string = '';
 
   estadoControl = new FormControl();
   ciudadControl = new FormControl();
@@ -34,11 +37,15 @@ export class Lote implements OnInit {
 
   selectedEstado: any;
   selectedCiudad: any;
+  encargados: any[] = [];
 
-  constructor(private loteService: LoteService, private ubicacionService: UbicacionService) { }
+
+  constructor(private loteService: LoteService, private ubicacionService: UbicacionService, private userService: UsersService) { }
 
   ngOnInit(): void {
     this.loadLotes();
+    this.loadEncargados();
+
 
     this.ubicacionService.getEstados().subscribe({
     next: data => this.estados = data,
@@ -132,6 +139,62 @@ export class Lote implements OnInit {
         });
     }
   }
+
+  //Ubicación
+  onEstadoChange(event: any): void {
+  const idEstado = event.target.value;
+  if (idEstado) {
+    this.ubicacionService.getCiudades(idEstado).subscribe({
+      next: data => {
+        this.ciudades = data;
+        this.colonias = [];
+      },
+      error: err => console.error('Error al cargar ciudades', err)
+    });
+  }
+}
+
+onCiudadChange(event: any): void {
+  const idCiudad = event.target.value;
+  if (idCiudad) {
+    this.ubicacionService.getColonias(idCiudad).subscribe({
+      next: data => this.colonias = data,
+      error: err => console.error('Error al cargar colonias', err)
+    });
+  }
+}
+
+buscarPorCodigoPostal(): void {
+  if (this.codigoPostal.length === 5) {
+    this.ubicacionService.getCiudadPorCP(this.codigoPostal).subscribe({
+      next: data => {
+        if (data && data.id_ciudad) {
+          this.selectedCiudad = data.id_ciudad;
+          this.selectedEstado = data.id_estado;
+          this.ubicacionService.getCiudades(data.id_estado).subscribe({
+            next: ciudades => this.ciudades = ciudades,
+          });
+          this.ubicacionService.getColonias(data.id_ciudad).subscribe({
+            next: colonias => this.colonias = colonias,
+          });
+        }
+      },
+      error: err => console.error('Error al buscar por código postal', err)
+    });
+  }
+}
+
+loadEncargados() {
+    this.userService.getEncargados().subscribe(
+      (data) => {
+        this.encargados = data;
+      },
+      (error) => {
+        console.error('Error al obtener encargados:', error);
+      }
+    );
+  }
+
 
   // Scroll hacia arriba
   scrollToTop(): void {

@@ -22,4 +22,9 @@ export class UbicacionService {
   getColonias(ciudadId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/colonias/${ciudadId}`); 
   }
+
+  getCiudadPorCP(codigoPostal: string) {
+  return this.http.get<any>(`${this.baseUrl}/codigo-postal/${codigoPostal}`);
+}
+
 }
