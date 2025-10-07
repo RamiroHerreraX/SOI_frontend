@@ -1,66 +1,194 @@
-/* Navbar */
-.navbar-gold{position:fixed;top:0;left:0;width:100%;z-index:1050;background:linear-gradient(135deg,#ffd700 0%,#e5c100 20%,#daa520 40%,#b8860b 60%,#ffd700 80%,#fff8dc 100%);background-size:200% 200%;animation:shineGold 8s ease-in-out infinite;box-shadow:0 2px 20px rgba(212,175,55,0.4);border-bottom:3px solid #f5deb3;opacity:1;}
-@keyframes shineGold{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
-.navbar-logo{height:45px;width:auto;border-radius:6px;object-fit:contain;filter:drop-shadow(0 0 4px rgba(255,215,0,0.4));}
-.navbar-brand{color:#2b2b2b;font-weight:700;font-size:1.5rem;text-transform:uppercase;letter-spacing:1px;text-shadow:1px 1px 2px rgba(255,255,255,0.3);}
-.nav-link{color:#2b2b2b;font-weight:500;transition:all 0.3s ease;margin:0 5px;border-radius:5px;padding:8px 15px;text-shadow:1px 1px 2px rgba(255,255,255,0.4);}
-.nav-link:hover{color:#2b2b2b;background-color:rgba(255,255,255,0.3);transform:translateY(-2px);box-shadow:0 2px 8px rgba(255,215,0,0.3);}
-.nav-link.active{color:#2b2b2b;background-color:rgba(255,255,255,0.5);font-weight:600;box-shadow:0 4px 8px rgba(192,192,192,0.3);}
-
-/* Body */
-body{padding-top:90px;font-family:"Poppins",sans-serif;background:#fff;margin:0;}
-
-/* Bienvenida */
-.welcome-section{position:relative;background-image:url("/assets/lolo.jpg");background-size:cover;background-position:center;background-repeat:no-repeat;color:#fff;min-height:70vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;}
-.welcome-section::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(34,26,9,0.7),rgba(71,53,16,0.7));z-index:1;}
-.welcome-section .container{position:relative;z-index:2;padding:0 15px;}
-.welcome-section h1{color:#ffd700;font-weight:700;font-size:2.5rem;text-shadow:2px 2px 10px rgba(0,0,0,0.8);}
-.welcome-section p{color:#f5f5f5;font-weight:400;font-size:1.1rem;max-width:600px;margin:15px auto 0;text-shadow:1px 1px 6px rgba(0,0,0,0.7);}
-
-/* Botones */
-.btn-gold{background-color:#ffd700;color:#2b2b2b;font-weight:600;border:none;border-radius:8px;transition:all 0.3s ease;padding:10px 20px;}
-.btn-gold:hover{background-color:#e5c100;color:#000;box-shadow:0 4px 15px rgba(255,215,0,0.4);}
-.btn-silver{background-color:#c0c0c0;color:#2b2b2b;font-weight:600;border:none;border-radius:8px;transition:all 0.3s ease;padding:10px 20px;}
-.btn-silver:hover{background-color:#a9a9a9;color:#fff;box-shadow:0 4px 15px rgba(128,128,128,0.4);}
-.btn-scroll-top{position:fixed;bottom:25px;right:25px;background:#ffd700;color:#2b2b2b;border:none;padding:12px 14px;border-radius:50%;font-size:18px;cursor:pointer;display:none;z-index:1150;box-shadow:0 4px 10px rgba(0,0,0,0.3);transition:all 0.3s ease;}
-.btn-scroll-top:hover{background:#e5c100;transform:translateY(-2px);}
-
-/* Colores */
-.text-dorado{color:#b8860b !important;}
-.text-plata{color:#c0c0c0 !important;}
-.bg-gris-medio{background-color:#f2f2f2 !important;}
-
-/* Cards */
-.card-sm{font-size:0.9rem;}
-.card-sm img{height:180px;object-fit:cover;border-radius:6px;}
-.card-lg{font-size:1rem;}
-.card-lg img{height:220px;object-fit:cover;border-radius:6px;}
-
-/* Modal compacto */
-.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:1100;}
-.modal-content.modal-sm{background:#1c1c1c;color:#fff;border-radius:10px;max-width:600px;width:90%;max-height:90vh;overflow-y:auto;position:relative;padding:20px;}
-.modal-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #444;padding-bottom:10px;margin-bottom:10px;}
-.modal-close{background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;}
-.modal-body img.lote-imagen{width:100%;max-height:220px;object-fit:cover;margin-bottom:10px;}
-.detalles-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px;}
-.detalle-item .detalle-titulo{font-weight:600;}
-.detalle-item .detalle-valor{font-weight:400;}
-.caracteristicas-lista{padding-left:20px;}
-.modal-footer{display:flex;justify-content:space-between;align-items:center;padding-top:10px;margin-top:10px;border-top:1px solid #444;}
-.precio-destacado{color:#ffd700;font-weight:700;font-size:1.5rem;margin:0;}
-
-/* Carousel principal */
-#carouselLotes .carousel-item img{height:400px;object-fit:cover;border-radius:6px;}
-
-/* Media Queries (Responsivo) */
-@media(max-width:768px){
-    .card-sm img{height:150px;}
-    .card-lg img{height:180px;} /* Cambiado de 220px a 180px en pantallas medianas */
-    #carouselLotes .carousel-item img{height:250px;}
+/* === NAVBAR === */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1050;
+  background-color: #FFFFFF; /* fondo blanco */
+  border-bottom: 2px solid #B8860B; /* borde dorado */
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
 }
-@media(max-width:576px){
-    .modal-content.modal-sm{width:95%;}
-    .card-sm img{height:120px;} /* Cambiado de 180px a 120px en pantallas pequeñas */
-    .card-lg img{height:150px;} /* Cambiado de 220px a 150px en pantallas pequeñas */
-    #carouselLotes .carousel-item img{height:180px;}
+
+.navbar-brand {
+  color: #B8860B !important; /* dorado elegante */
+  font-weight: 700;
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.navbar-logo {
+  height: 45px;
+  width: auto;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.navbar-nav .nav-link {
+  color: #1A1A1A !important; /* negro elegante */
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin: 0 8px;
+  border-radius: 6px;
+  padding: 8px 14px;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: #B8860B !important; /* dorado al hover */
+  background-color: rgba(255, 215, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(184, 134, 11, 0.3);
+}
+
+/* === FOOTER === */
+footer {
+  background-color: #1A1A1A; /* negro elegante */
+  color: #B8860B; /* texto dorado */
+  padding: 30px 0;
+  text-align: center;
+}
+
+footer a {
+  color: #C0C0C0; /* links gris */
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+footer a:hover {
+  color: #B8860B; /* dorado brillante al hover */
+  text-shadow: 0 0 4px rgba(255,215,0,0.4);
+}
+
+/* === BOTONES === */
+.btn-gold {
+  background-color: #B8860B; /* dorado elegante */
+  color: #FFFFFF;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  padding: 10px 20px;
+}
+
+.btn-gold:hover {
+  background-color: #FFD700; 
+  color: #1A1A1A;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.btn-silver {
+  background-color: #C0C0C0; /* plata metálica */
+  color: #1A1A1A;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+}
+
+.btn-silver:hover {
+  background-color: #E0E0E0;
+  color: #1A1A1A;
+  box-shadow: 0 4px 12px rgba(192, 192, 192, 0.4);
+}
+
+/* === BODY === */
+body {
+  background-color: #FFFFFF;
+  color: #1A1A1A;
+  font-family: "Poppins", sans-serif;
+  padding-top: 90px;
+  margin: 0;
+}
+
+/* === CARDS === */
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #F9F9F9;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(184, 134, 11, 0.3);
+}
+
+.card-title {
+  color: #1A1A1A;
+  font-weight: 600;
+}
+
+.card-text {
+  color: #444;
+}
+
+.card .precio {
+  color: #B8860B;
+  font-weight: 700;
+}
+
+/* === MODAL === */
+.modal-content.modal-sm {
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(184, 134, 11, 0.3);
+}
+
+.modal-close {
+  color: #B8860B;
+}
+
+/* === BOTÓN SCROLL TOP === */
+.btn-scroll-top {
+  background: #B8860B;
+  color: #FFFFFF;
+}
+.btn-scroll-top:hover {
+  background: #FFD700;
+  color: #1A1A1A;
+}
+
+
+
+
+
+
+.btn-scroll-top,
+.btn-scroll-down {
+  position: fixed;
+  right: 20px;
+  z-index: 999;
+  border: none;
+  border-radius: 50%;
+  padding: 12px 15px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-scroll-top {
+  bottom: 70px;
+  background-color: #B8860B;
+  color: #fff;
+}
+
+.btn-scroll-top:hover {
+  background-color: #B8860B;
+  color: #1A1A1A;
+}
+
+.btn-scroll-down {
+  bottom: 20px;
+  background-color: #1A1A1A;
+  color: #fff;
+}
+
+.btn-scroll-down:hover {
+  background-color: #B8860B;
+  color: #fff;
 }
