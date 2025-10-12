@@ -104,12 +104,59 @@ export class Lote implements OnInit {
     modal.show();
   }
 
-  editLote(lote: any): void {
-    this.isEdit = true;
-    this.currentLote = { ...lote };
-    const modal = new bootstrap.Modal(document.getElementById('loteModal')!);
-    modal.show();
+editLote(lote: any): void {
+  this.isEdit = true;
+
+  // Mapear todos los campos del lote al currentLote
+  this.currentLote = {
+    ...lote,
+    numLote: lote.numlote || '',
+    fecha_disponibilidad: lote.fecha_disponibilidad
+      ? new Date(lote.fecha_disponibilidad).toISOString().slice(0, 10)
+      : ''
+  };
+
+  // Estado y ciudad
+  this.selectedEstado = lote.id_estado || null;
+  this.selectedCiudad = lote.id_ciudad || null;
+
+  // Limpiar arrays
+  this.ciudades = [];
+  this.colonias = [];
+
+  // Cargar ciudades si hay estado seleccionado
+  if (this.selectedEstado) {
+    this.ubicacionService.getCiudades(this.selectedEstado).subscribe({
+      next: ciudades => {
+        this.ciudades = ciudades;
+
+        // Cargar colonias si hay ciudad seleccionada
+        if (this.selectedCiudad) {
+          this.ubicacionService.getColonias(this.selectedCiudad).subscribe({
+            next: colonias => {
+              this.colonias = colonias;
+
+              // Asignar colonia si existe
+              if (lote.id_colonia) {
+                const col = colonias.find(c => c.id_colonia === lote.id_colonia);
+                this.currentLote.nombre_colonia_nueva = col?.nombre_colonia || '';
+              }
+            },
+            error: err => console.error('Error al cargar colonias', err)
+          });
+        }
+      },
+      error: err => console.error('Error al cargar ciudades', err)
+    });
   }
+
+  // Abrir modal
+  const modal = new bootstrap.Modal(document.getElementById('loteModal')!);
+  modal.show();
+}
+
+
+
 
  onColoniaChange(event: any) {
   if (typeof event === 'string') {
@@ -126,46 +173,34 @@ export class Lote implements OnInit {
 
   saveLote(): void {
   try {
-    // --- Validaciones básicas ---
-    if (!this.selectedEstado) {
-      alert('Debes seleccionar un estado');
-      return;
+    // Validaciones básicas
+    if (!this.selectedEstado) return alert('Debes seleccionar un estado');
+    if (!this.selectedCiudad) return alert('Debes seleccionar una ciudad');
+
+    const coloniaNombre = this.currentLote.nombre_colonia_nueva?.trim();
+    const coloniaExistenteId = this.currentLote.id_colonia;
+
+    if (!coloniaNombre && !coloniaExistenteId) {
+      return alert('Debes escribir o seleccionar una colonia');
     }
 
-    if (!this.selectedCiudad) {
-      alert('Debes seleccionar una ciudad');
-      return;
-    }
-
-    const colonia = this.currentLote.id_colonia || this.currentLote.nombre_colonia_nueva;
-if (!colonia || colonia.toString().trim() === '') {
-  alert('Debes escribir o seleccionar una colonia');
-  return;
-}
-
-
-    if (!colonia && !this.currentLote.id_colonia && !this.codigoPostal) {
-      alert('Debes ingresar el código postal para la colonia nueva');
-      return;
-    }
-
-    // --- Obtener ciudad completa desde selección ---
+    // Obtener ciudad y estado completos
     const ciudadObj = this.ciudades.find(c => c.id_ciudad == this.selectedCiudad);
-    const idCiudad = ciudadObj?.id_ciudad;
-    const idEstado = ciudadObj?.id_estado || this.selectedEstado?.id_estado;
+    if (!ciudadObj) return alert('No se pudo determinar la ciudad seleccionada');
+    const idCiudad = ciudadObj.id_ciudad;
+    const idEstado = ciudadObj.id_estado || this.selectedEstado;
 
-    if (!idCiudad) {
-      alert('No se pudo determinar la ciudad seleccionada');
-      return;
+    // --- Determinar ID de colonia para backend ---
+    let idColoniaParaBackend = null;
+    if (coloniaNombre) {
+      // Si hay nombre de colonia nueva, ignorar ID viejo
+      idColoniaParaBackend = null;
+    } else if (coloniaExistenteId) {
+      // Colonia existente
+      idColoniaParaBackend = coloniaExistenteId;
     }
 
-    // --- Buscar si la colonia ya existe ---
-    const coloniaExistente = this.currentLote.id_colonia
-  ? this.colonias.find(c => c.id_colonia === this.currentLote.id_colonia)
-  : null;
-
-
-    // --- Preparar objeto para enviar ---
+    // Preparar objeto para enviar
     const loteData: any = {
       tipo: this.currentLote.tipo,
       numLote: this.currentLote.numLote,
@@ -187,51 +222,36 @@ if (!colonia || colonia.toString().trim() === '') {
       fecha_disponibilidad: this.currentLote.fecha_disponibilidad,
       imagen: this.currentLote.imagen,
       id_user: this.currentLote.id_user,
+      // Colonia
+      id_colonia: idColoniaParaBackend,
+      nombre_colonia_nueva: coloniaNombre || null,
+      codigo_postal: this.codigoPostal || ''
     };
 
-    // --- Manejo de colonia ---
-    if (coloniaExistente) {
-  loteData.id_colonia = coloniaExistente.id_colonia;
-  loteData.nombre_colonia_nueva = null;
-} else {
-  loteData.id_colonia = null;
-  loteData.nombre_colonia_nueva = colonia;
-  loteData.codigo_postal = this.codigoPostal;
-}
+    console.log("📦 Datos para backend:", loteData);
 
-
-    console.log("📦 Datos preparados para enviar al backend:", loteData);
-
-    // --- Llamada a servicio ---
+    // Crear o actualizar
     if (this.isEdit) {
       this.loteService.update(this.currentLote.id_propiedad, loteData).subscribe({
-        next: (res) => {
+        next: res => {
           this.loadLotes();
           bootstrap.Modal.getInstance(document.getElementById('loteModal')!)?.hide();
           this.resetForm();
         },
-        error: err => {
-          console.error('Error al actualizar lote', err);
-          alert(err.error?.error || 'Error al actualizar lote');
-        }
+        error: err => alert(err.error?.error || 'Error al actualizar lote')
       });
     } else {
       this.loteService.create(loteData).subscribe({
-        next: (res: any) => {
-          this.loadLotes();
-          bootstrap.Modal.getInstance(document.getElementById('loteModal')!)?.hide();
-
-          // Si el backend creó una colonia nueva, asignar id_colonia para futuras ediciones
+        next: res => {
+          // Si el backend creó la colonia nueva, actualizar id_colonia
           if (res?.id_colonia) {
             this.currentLote.id_colonia = res.id_colonia;
           }
-
+          this.loadLotes();
+          bootstrap.Modal.getInstance(document.getElementById('loteModal')!)?.hide();
           this.resetForm();
         },
-        error: err => {
-          console.error('Error al crear lote', err);
-          alert(err.error?.error || 'Error al crear lote');
-        }
+        error: err => alert(err.error?.error || 'Error al crear lote')
       });
     }
 
@@ -240,6 +260,7 @@ if (!colonia || colonia.toString().trim() === '') {
     alert('Ocurrió un error inesperado');
   }
 }
+
 
 // --- Método para limpiar formulario después de crear/editar ---
 resetForm(): void {
