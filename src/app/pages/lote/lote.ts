@@ -71,19 +71,19 @@ export class Lote implements OnInit {
       }
     });
 
-    // Cuando se selecciona una ciudad, traer colonias
-    this.ciudadControl.valueChanges.subscribe(val => {
-      this.selectedCiudad = this.ciudades.find(c => c.nombre_ciudad === val);
-      if (this.selectedCiudad) {
-        this.ubicacionService.getColonias(this.selectedCiudad.id_ciudad)
-          .subscribe({
-            next: data => this.colonias = data,
-            error: err => console.error('Error al cargar colonias', err)
-          });
-      } else {
-        this.colonias = [];
-      }
-    });
+     // Cuando se selecciona una ciudad, traer colonias
+     this.ciudadControl.valueChanges.subscribe(val => {
+       this.selectedCiudad = this.ciudades.find(c => c.nombre_ciudad === val);
+       if (this.selectedCiudad) {
+         this.ubicacionService.getColonias(this.selectedCiudad.id_ciudad)
+           .subscribe({
+             next: data => this.colonias = data,
+             error: err => console.error('Error al cargar colonias', err)
+           });
+       } else {
+         this.colonias = [];
+       }
+     });
   }
 
   // === CRUD Lotes ===
@@ -109,26 +109,72 @@ export class Lote implements OnInit {
   }
 
   saveLote(): void {
-    if (this.isEdit) {
-      this.loteService.update(this.currentLote.id_propiedad, this.currentLote)
-        .subscribe({
-          next: () => {
-            this.loadLotes();
-            bootstrap.Modal.getInstance(document.getElementById('loteModal')!)?.hide();
-          },
-          error: err => console.error('Error al actualizar lote', err)
-        });
-    } else {
-      this.loteService.create(this.currentLote)
-        .subscribe({
-          next: () => {
-            this.loadLotes();
-            bootstrap.Modal.getInstance(document.getElementById('loteModal')!)?.hide();
-          },
-          error: err => console.error('Error al crear lote', err)
-        });
+  try {
+    // Asegurar que colonia fue seleccionada
+    const id_colonia = this.currentLote.id_colonia;
+    if (!id_colonia) {
+      console.error('Debe seleccionar una colonia');
+      return;
     }
+
+    // Asegurar que estado y ciudad fueron seleccionados
+    if (!this.selectedEstado || !this.selectedCiudad) {
+      console.error('Debe seleccionar Estado y Ciudad');
+      return;
+    }
+
+    // Preparar datos para backend
+    const loteData = {
+      tipo: this.currentLote.tipo,
+      numLote: this.currentLote.numLote,
+      manzana: this.currentLote.manzana,
+      direccion: this.currentLote.direccion,
+      id_colonia: id_colonia,                  // ✅ Ya se captura del select
+      id_ciudad: this.selectedCiudad,          // ✅ Directo del <select>
+      id_estado: this.selectedEstado,          // ✅ Directo del <select>
+      superficie_m2: this.currentLote.superficie_m2,
+      precio: this.currentLote.precio,
+      valor_avaluo: this.currentLote.valor_avaluo,
+      num_habitaciones: this.currentLote.num_habitaciones,
+      num_banos: this.currentLote.num_banos,
+      num_estacionamientos: this.currentLote.num_estacionamientos,
+      servicios: this.currentLote.servicios,
+      descripcion: this.currentLote.descripcion,
+      topografia: this.currentLote.topografia,
+      documentacion: this.currentLote.documentacion,
+      estado_propiedad: this.currentLote.estado_propiedad,
+      fecha_disponibilidad: this.currentLote.fecha_disponibilidad,
+      imagen: this.currentLote.imagen,
+      id_user: this.currentLote.id_user
+    };
+
+    console.log("📦 Datos preparados para enviar al backend:", loteData);
+
+    // Editar o Crear
+    if (this.isEdit) {
+      this.loteService.update(this.currentLote.id_propiedad, loteData).subscribe({
+        next: () => {
+          this.loadLotes();
+          bootstrap.Modal.getInstance(document.getElementById('loteModal')!)?.hide();
+        },
+        error: err => console.error('Error al actualizar lote', err)
+      });
+    } else {
+      this.loteService.create(loteData).subscribe({
+        next: () => {
+          this.loadLotes();
+          bootstrap.Modal.getInstance(document.getElementById('loteModal')!)?.hide();
+        },
+        error: err => console.error('Error al crear lote', err)
+      });
+    }
+
+  } catch (error) {
+    console.error('Error en saveLote:', error);
   }
+}
+
+
 
   deleteLote(id: number): void {
     if (confirm('¿Seguro que quieres eliminar este lote?')) {
@@ -169,20 +215,25 @@ buscarPorCodigoPostal(): void {
     this.ubicacionService.getCiudadPorCP(this.codigoPostal).subscribe({
       next: data => {
         if (data && data.id_ciudad) {
-          this.selectedCiudad = data.id_ciudad;
+
+          // Asignar estado y ciudad automáticamente
           this.selectedEstado = data.id_estado;
+          this.selectedCiudad = data.id_ciudad;
+
+          // Cargar ciudades del estado
           this.ubicacionService.getCiudades(data.id_estado).subscribe({
             next: ciudades => this.ciudades = ciudades,
           });
-          this.ubicacionService.getColonias(data.id_ciudad).subscribe({
-            next: colonias => this.colonias = colonias,
-          });
+
+          // ✅ Usar solo colonias que vienen del CP
+          this.colonias = data.colonias;
         }
       },
       error: err => console.error('Error al buscar por código postal', err)
     });
   }
 }
+
 
 loadEncargados() {
     this.userService.getEncargados().subscribe(
