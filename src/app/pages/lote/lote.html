@@ -164,15 +164,22 @@
             </div>
 
             <!-- Colonia -->
-            <div class="col-md-3">
-              <label class="form-label">Colonia</label>
-              <select class="form-select" [(ngModel)]="currentLote.id_colonia" name="id_colonia">
-                <option value="">Seleccionar Colonia</option>
-                <option *ngFor="let col of colonias" [value]="col.id_colonia">
-                  {{ col.nombre_colonia }}
-                </option>
-              </select>
-            </div>
+          <div class="col-md-3">
+          <label class="form-label">Colonia</label>
+          <ng-select
+            [items]="colonias"
+            bindLabel="nombre_colonia"
+            bindValue="nombre_colonia"
+            [addTag]="true"
+            placeholder="Selecciona o escribe una colonia"
+            [(ngModel)]="currentLote.nombre_colonia_nueva"
+            name="id_colonia"
+            [clearable]="true"
+            (change)="onColoniaChange($event)"
+            class="ng-select-bootstrap bg-white border rounded"
+            [searchable]="true">
+          </ng-select>
+        </div>
 
             <!-- Precio -->
             <div class="col-md-3">
