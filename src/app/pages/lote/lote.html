@@ -1,16 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lotes Exclusivos | Inmobiliaria INDES</title>
-  <!-- Agregar Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="lote.css">
-</head>
-<body>
+
   <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-lg">
         <div class="container">
@@ -51,11 +39,7 @@
       <div class="row g-4">
         <div class="col-md-4" *ngFor="let lote of lotes">
           <div class="card shadow-sm">
-            <img
-              [src]="lote.imagen || 'assets/default-lote.jpg'"
-              class="card-img-top"
-              alt="{{ lote.numLote }}"
-            />
+              <img [src]="lote.imagenUrl" alt="{{ lote.numLote }}" class="card-img-top" />
             <div class="card-body">
               <h5 class="card-title">{{ lote.tipo | titlecase }} - {{ lote.numLote }}</h5>
               <p class="card-text">{{ lote.descripcion | slice : 0 : 100 }}...</p>
@@ -136,6 +120,7 @@
                 type="text"
                 class="form-control"
                 maxlength="5"
+                name="codigoPostal"
                 [(ngModel)]="codigoPostal"
                 (input)="buscarPorCodigoPostal()"
                 placeholder="Ej. 37904"
@@ -147,6 +132,7 @@
               <label class="form-label">Estado</label>
               <select
                 class="form-select"
+                name="id_estado"
                 [(ngModel)]="selectedEstado"
                 (change)="onEstadoChange($event)"
               >
@@ -162,6 +148,7 @@
               <label class="form-label">Ciudad</label>
               <select
                 class="form-select"
+                name="id_ciudad"
                 [(ngModel)]="selectedCiudad"
                 (change)="onCiudadChange($event)"
               >
@@ -173,15 +160,22 @@
             </div>
 
             <!-- Colonia -->
-            <div class="col-md-3">
-              <label class="form-label">Colonia</label>
-              <select class="form-select" [(ngModel)]="currentLote.id_colonia" name="id_colonia">
-                <option value="">Seleccionar Colonia</option>
-                <option *ngFor="let col of colonias" [value]="col.id_colonia">
-                  {{ col.nombre_colonia }}
-                </option>
-              </select>
-            </div>
+          <div class="col-md-3">
+          <label class="form-label">Colonia</label>
+          <ng-select
+            [items]="colonias"
+            bindLabel="nombre_colonia"
+            bindValue="nombre_colonia"
+            [addTag]="true"
+            placeholder="Selecciona o escribe una colonia"
+            [(ngModel)]="currentLote.nombre_colonia_nueva"
+            name="id_colonia"
+            [clearable]="true"
+            (change)="onColoniaChange($event)"
+            class="ng-select-bootstrap bg-white border rounded"
+            [searchable]="true">
+          </ng-select>
+        </div>
 
             <!-- Precio -->
             <div class="col-md-3">
@@ -306,11 +300,20 @@
               />
             </div>
 
-            <!-- Imagen -->
-            <div class="col-md-6">
-              <label class="form-label">Imagen URL</label>
-              <input class="form-control" [(ngModel)]="currentLote.imagen" name="imagen" />
+          <!-- Imagen desde dispositivo -->
+          <div class="col-md-6">
+            <label class="form-label">Imagen</label>
+            <input
+              type="file"
+              class="form-control"
+              (change)="onFileSelected($event)"
+              accept="image/*"
+            />
+            <div *ngIf="previewImagen" class="mt-2">
+              <img [src]="previewImagen" alt="Preview" class="img-thumbnail" style="max-height: 150px;" />
             </div>
+          </div>
+
 
             <!-- Descripción -->
             <div class="col-md-6">

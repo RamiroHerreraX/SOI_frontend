@@ -24,7 +24,10 @@ export class UbicacionService {
   }
 
   getCiudadPorCP(codigoPostal: string) {
-  return this.http.get<any>(`${this.baseUrl}/codigo-postal/${codigoPostal}`);
+    return this.http.get<any>(`${this.baseUrl}/codigo-postal/${codigoPostal}`);
 }
+  getCiudadById(id_ciudad: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/ciudad/${id_ciudad}`);
+  }
 
 }

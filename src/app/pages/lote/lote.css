@@ -222,3 +222,37 @@ body {
   background-color: #B8860B;
   color: #fff;
 }
+
+/*  ***********************************/
+/* Estilo general para que ng-select se vea como un select de Bootstrap con fondo blanco */
+::ng-deep ng-select.ng-select-bootstrap {
+  height: 38px;               /* Igual que los selects normales */
+  font-size: 1rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid #ced4da;
+  background-color: #ffffff;  /* Fondo blanco */
+  color: #495057;             /* Texto color estándar de Bootstrap */
+}
+
+/* Dropdown (lista de opciones) */
+::ng-deep ng-select.ng-select-bootstrap .ng-dropdown-panel {
+  border-radius: 0.375rem;
+  border: 1px solid #ced4da;
+  box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,.1);
+  background-color: #ffffff;  /* Fondo blanco */
+}
+
+/* Opciones */
+::ng-deep ng-select.ng-select-bootstrap .ng-option {
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  background-color: #ffffff;  /* Fondo blanco */
+  color: #212529;
+}
+
+/* Resaltar opción al pasar mouse */
+::ng-deep ng-select.ng-select-bootstrap .ng-option:hover {
+  background-color: #f8f9fa;
+  color: #212529;
+}
