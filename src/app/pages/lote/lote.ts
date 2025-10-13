@@ -114,6 +114,8 @@ export class Lote implements OnInit {
   openForm(): void {
     this.isEdit = false;
     this.currentLote = {};
+    this.previewImagen = null;  
+    this.selectedFile = null;   
     const modal = new bootstrap.Modal(document.getElementById('loteModal')!);
     modal.show();
   }
@@ -138,6 +140,9 @@ editLote(lote: any): void {
   this.ciudades = [];
   this.colonias = [];
 
+  this.previewImagen = lote.imagen
+    ? `http://localhost:3000${lote.imagen}`
+    : null;
   // Cargar ciudades si hay estado seleccionado
   if (this.selectedEstado) {
     this.ubicacionService.getCiudades(this.selectedEstado).subscribe({
@@ -288,6 +293,8 @@ resetForm(): void {
   this.ciudades = [];
   this.selectedEstado = null;
   this.selectedCiudad = null;
+  this.previewImagen = null;
+  this.selectedFile = null;   
 }
 
 

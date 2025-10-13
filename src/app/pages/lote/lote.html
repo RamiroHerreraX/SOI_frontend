@@ -39,7 +39,7 @@
       <div class="row g-4">
         <div class="col-md-4" *ngFor="let lote of lotes">
           <div class="card shadow-sm">
-            <img [src]="lote.imagenUrl" alt="{{ lote.numLote }}" class="card-img-top" />
+              <img [src]="lote.imagenUrl" alt="{{ lote.numLote }}" class="card-img-top" />
             <div class="card-body">
               <h5 class="card-title">{{ lote.tipo | titlecase }} - {{ lote.numLote }}</h5>
               <p class="card-text">{{ lote.descripcion | slice : 0 : 100 }}...</p>
