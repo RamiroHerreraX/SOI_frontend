@@ -19,11 +19,11 @@ export class LoteService {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  create(lote: any): Observable<any> {
+  create(lote: FormData): Observable<any> {
     return this.http.post<any>(this.apiUrl, lote);
   }
 
-  update(id: number, lote: any): Observable<any> {
+  update(id: number, lote: FormData): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, lote);
   }
 

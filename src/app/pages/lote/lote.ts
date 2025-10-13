@@ -43,6 +43,8 @@ export class Lote implements OnInit {
   selectedCiudad: any;
   coloniaSeleccionada: any;
   encargados: any[] = [];
+  selectedFile: File | null = null;
+  previewImagen: string | ArrayBuffer | null = null;
   
 
 
@@ -91,11 +93,23 @@ export class Lote implements OnInit {
 
   // === CRUD Lotes ===
   loadLotes(): void {
-    this.loteService.getAll().subscribe({
-      next: data => this.lotes = data,
-      error: err => console.error('Error al cargar lotes', err)
-    });
-  }
+  this.loteService.getAll().subscribe({
+    next: data => {
+      // Preparamos la URL de la imagen para cada lote
+      this.lotes = data.map(lote => {
+        const url = lote.imagen ? `http://localhost:3000${lote.imagen}` : 'assets/default-lote.jpg';
+        console.log('Lote:', lote.numLote, 'Imagen URL:', url); // <-- aquí ves qué URL genera
+        return {
+          ...lote,
+          imagenUrl: url
+        };
+      });
+    },
+    error: err => console.error('Error al cargar lotes', err)
+  });
+}
+
+
 
   openForm(): void {
     this.isEdit = false;
@@ -155,6 +169,11 @@ editLote(lote: any): void {
   modal.show();
 }
 
+// Dentro de tu componente Lote
+getImagenUrl(lote: any): string {
+    if (!lote.imagen) return 'assets/default-lote.jpg';
+    return `http://localhost:3000/${lote.imagen}`;
+  }
 
 
 
@@ -171,69 +190,71 @@ editLote(lote: any): void {
 }
 
 
+
+
+onFileSelected(event: any) {
+  if (event.target.files && event.target.files.length > 0) {
+    const file = event.target.files[0]; // guardar en una variable local
+    this.selectedFile = file;
+
+    // Mostrar preview
+    const reader = new FileReader();
+    reader.onload = e => this.previewImagen = reader.result;
+
+    // ✅ pasar solo file, no this.selectedFile
+    reader.readAsDataURL(file);
+  }
+}
+
+
+
+
+
   saveLote(): void {
   try {
-    // Validaciones básicas
     if (!this.selectedEstado) return alert('Debes seleccionar un estado');
     if (!this.selectedCiudad) return alert('Debes seleccionar una ciudad');
 
     const coloniaNombre = this.currentLote.nombre_colonia_nueva?.trim();
     const coloniaExistenteId = this.currentLote.id_colonia;
+    if (!coloniaNombre && !coloniaExistenteId) return alert('Debes escribir o seleccionar una colonia');
 
-    if (!coloniaNombre && !coloniaExistenteId) {
-      return alert('Debes escribir o seleccionar una colonia');
-    }
-
-    // Obtener ciudad y estado completos
     const ciudadObj = this.ciudades.find(c => c.id_ciudad == this.selectedCiudad);
     if (!ciudadObj) return alert('No se pudo determinar la ciudad seleccionada');
     const idCiudad = ciudadObj.id_ciudad;
     const idEstado = ciudadObj.id_estado || this.selectedEstado;
 
-    // --- Determinar ID de colonia para backend ---
-    let idColoniaParaBackend = null;
-    if (coloniaNombre) {
-      // Si hay nombre de colonia nueva, ignorar ID viejo
-      idColoniaParaBackend = null;
-    } else if (coloniaExistenteId) {
-      // Colonia existente
-      idColoniaParaBackend = coloniaExistenteId;
+    const formData = new FormData();
+    formData.append('tipo', this.currentLote.tipo);
+    formData.append('numLote', this.currentLote.numLote);
+    formData.append('manzana', this.currentLote.manzana || '');
+    formData.append('direccion', this.currentLote.direccion);
+    formData.append('id_ciudad', idCiudad);
+    formData.append('id_estado', idEstado);
+    formData.append('superficie_m2', this.currentLote.superficie_m2 || '');
+    formData.append('precio', this.currentLote.precio || '');
+    formData.append('valor_avaluo', this.currentLote.valor_avaluo || '');
+    formData.append('num_habitaciones', this.currentLote.num_habitaciones || '');
+    formData.append('num_banos', this.currentLote.num_banos || '');
+    formData.append('num_estacionamientos', this.currentLote.num_estacionamientos || '');
+    formData.append('servicios', this.currentLote.servicios || '');
+    formData.append('descripcion', this.currentLote.descripcion || '');
+    formData.append('topografia', this.currentLote.topografia || '');
+    formData.append('documentacion', this.currentLote.documentacion || '');
+    formData.append('estado_propiedad', this.currentLote.estado_propiedad);
+    formData.append('fecha_disponibilidad', this.currentLote.fecha_disponibilidad || '');
+    formData.append('id_user', this.currentLote.id_user);
+    formData.append('id_colonia', coloniaExistenteId || '');
+    formData.append('nombre_colonia_nueva', coloniaNombre || '');
+    formData.append('codigo_postal', this.codigoPostal || '');
+
+    if (this.selectedFile) {
+      formData.append('imagen', this.selectedFile);
     }
 
-    // Preparar objeto para enviar
-    const loteData: any = {
-      tipo: this.currentLote.tipo,
-      numLote: this.currentLote.numLote,
-      manzana: this.currentLote.manzana,
-      direccion: this.currentLote.direccion,
-      id_ciudad: idCiudad,
-      id_estado: idEstado,
-      superficie_m2: this.currentLote.superficie_m2,
-      precio: this.currentLote.precio,
-      valor_avaluo: this.currentLote.valor_avaluo,
-      num_habitaciones: this.currentLote.num_habitaciones,
-      num_banos: this.currentLote.num_banos,
-      num_estacionamientos: this.currentLote.num_estacionamientos,
-      servicios: this.currentLote.servicios,
-      descripcion: this.currentLote.descripcion,
-      topografia: this.currentLote.topografia,
-      documentacion: this.currentLote.documentacion,
-      estado_propiedad: this.currentLote.estado_propiedad,
-      fecha_disponibilidad: this.currentLote.fecha_disponibilidad,
-      imagen: this.currentLote.imagen,
-      id_user: this.currentLote.id_user,
-      // Colonia
-      id_colonia: idColoniaParaBackend,
-      nombre_colonia_nueva: coloniaNombre || null,
-      codigo_postal: this.codigoPostal || ''
-    };
-
-    console.log("📦 Datos para backend:", loteData);
-
-    // Crear o actualizar
     if (this.isEdit) {
-      this.loteService.update(this.currentLote.id_propiedad, loteData).subscribe({
-        next: res => {
+      this.loteService.update(this.currentLote.id_propiedad, formData).subscribe({
+        next: () => {
           this.loadLotes();
           bootstrap.Modal.getInstance(document.getElementById('loteModal')!)?.hide();
           this.resetForm();
@@ -241,12 +262,8 @@ editLote(lote: any): void {
         error: err => alert(err.error?.error || 'Error al actualizar lote')
       });
     } else {
-      this.loteService.create(loteData).subscribe({
-        next: res => {
-          // Si el backend creó la colonia nueva, actualizar id_colonia
-          if (res?.id_colonia) {
-            this.currentLote.id_colonia = res.id_colonia;
-          }
+      this.loteService.create(formData).subscribe({
+        next: () => {
           this.loadLotes();
           bootstrap.Modal.getInstance(document.getElementById('loteModal')!)?.hide();
           this.resetForm();
@@ -260,6 +277,7 @@ editLote(lote: any): void {
     alert('Ocurrió un error inesperado');
   }
 }
+
 
 
 // --- Método para limpiar formulario después de crear/editar ---

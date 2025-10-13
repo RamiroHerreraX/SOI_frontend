@@ -39,11 +39,7 @@
       <div class="row g-4">
         <div class="col-md-4" *ngFor="let lote of lotes">
           <div class="card shadow-sm">
-            <img
-              [src]="lote.imagen || 'assets/default-lote.jpg'"
-              class="card-img-top"
-              alt="{{ lote.numLote }}"
-            />
+            <img [src]="lote.imagenUrl" alt="{{ lote.numLote }}" class="card-img-top" />
             <div class="card-body">
               <h5 class="card-title">{{ lote.tipo | titlecase }} - {{ lote.numLote }}</h5>
               <p class="card-text">{{ lote.descripcion | slice : 0 : 100 }}...</p>
@@ -304,11 +300,20 @@
               />
             </div>
 
-            <!-- Imagen -->
-            <div class="col-md-6">
-              <label class="form-label">Imagen URL</label>
-              <input class="form-control" [(ngModel)]="currentLote.imagen" name="imagen" />
+          <!-- Imagen desde dispositivo -->
+          <div class="col-md-6">
+            <label class="form-label">Imagen</label>
+            <input
+              type="file"
+              class="form-control"
+              (change)="onFileSelected($event)"
+              accept="image/*"
+            />
+            <div *ngIf="previewImagen" class="mt-2">
+              <img [src]="previewImagen" alt="Preview" class="img-thumbnail" style="max-height: 150px;" />
             </div>
+          </div>
+
 
             <!-- Descripción -->
             <div class="col-md-6">
