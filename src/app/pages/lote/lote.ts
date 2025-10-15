@@ -6,6 +6,7 @@ import { LoteService } from '../../services/lote';
 import { UbicacionService } from '../../services/ubicacion.service';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { UsersService } from '../../services/users.service';
+import { HeaderAdmin } from "../../shared/header-admin/header-admin";
 
 declare var bootstrap: any;
 
@@ -17,8 +18,9 @@ declare var bootstrap: any;
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    NgSelectModule
-  ],
+    NgSelectModule,
+    HeaderAdmin
+],
   templateUrl: './lote.html',
   styleUrls: ['./lote.css']
 })

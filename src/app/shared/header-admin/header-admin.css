@@ -1,0 +1,47 @@
+/* === NAVBAR === */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1050;
+  background-color: #FFFFFF; /* fondo blanco */
+  border-bottom: 2px solid #B8860B; /* borde dorado */
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+  color: #B8860B !important; /* dorado elegante */
+  font-weight: 700;
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.navbar-logo {
+  height: 45px;
+  width: auto;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.navbar-nav .nav-link {
+  color: #1A1A1A !important; /* negro elegante */
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin: 0 8px;
+  border-radius: 6px;
+  padding: 8px 14px;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: #B8860B !important; /* dorado al hover */
+  background-color: rgba(255, 215, 0, 0.1); /* sutil resplandor dorado */
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(184, 134, 11, 0.3);
+}
+
+
+
+

@@ -1,0 +1,32 @@
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-lg admin-navbar">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" href="/home">
+      <img src="assets/logo.png" alt="Logo INDES" class="navbar-logo me-2">
+      <span class="fw-bold text-uppercase">Inmobiliaria INDES</span>
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAdmin"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNavAdmin">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item me-3">
+          <span class="nav-link text-dark fw-bold">
+            {{ usuario.nombre }}
+          </span>
+        </li>
+        <li class="nav-item">
+          <button class="btn btn-danger btn-sm" (click)="cerrarSesion()">
+            Salir
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
