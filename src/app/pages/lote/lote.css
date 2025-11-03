@@ -1,258 +1,335 @@
+/* ================================== */
+/* === BASE Y TIPOGRAFÍA === */
+/* ================================== */
+body {
+    background-color: #FFFFFF;
+    color: #1A1A1A;
+    font-family: "Poppins", sans-serif;
+    padding-top: 90px; /* Ajuste para el navbar fijo */
+    margin: 0;
+}
+
+/* ================================== */
+/* === BOTONES GENERALES === */
+/* ================================== */
+.btn-gold {
+    background-color: #B8860B; /* dorado elegante */
+    color: #FFFFFF;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    padding: 10px 20px;
+}
+
+.btn-gold:hover {
+    background-color: #FFD700; /* más brillante al hover */
+    color: #1A1A1A;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.btn-silver {
+    background-color: #C0C0C0; /* plata metálica */
+    color: #1A1A1A;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+}
+
+.btn-silver:hover {
+    background-color: #E0E0E0; /* plata clara al hover */
+    color: #1A1A1A;
+    box-shadow: 0 4px 12px rgba(192, 192, 192, 0.4);
+}
+
+/* ================================== */
 /* === NAVBAR === */
+/* ================================== */
 .navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1050;
-  background-color: #FFFFFF; /* fondo blanco */
-  border-bottom: 2px solid #B8860B; /* borde dorado */
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1050;
+    background-color: #FFFFFF; /* fondo blanco */
+    border-bottom: 2px solid #B8860B; /* borde dorado */
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
 }
 
 .navbar-brand {
-  color: #B8860B !important; /* dorado elegante */
-  font-weight: 700;
-  font-size: 1.6rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+    color: #B8860B !important; /* dorado elegante */
+    font-weight: 700;
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .navbar-logo {
-  height: 45px;
-  width: auto;
-  border-radius: 6px;
-  object-fit: contain;
+    height: 45px;
+    width: auto;
+    border-radius: 6px;
+    object-fit: contain;
 }
 
 .navbar-nav .nav-link {
-  color: #1A1A1A !important; /* negro elegante */
-  font-weight: 500;
-  transition: all 0.3s ease;
-  margin: 0 8px;
-  border-radius: 6px;
-  padding: 8px 14px;
+    color: #1A1A1A !important; /* negro elegante */
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin: 0 8px;
+    border-radius: 6px;
+    padding: 8px 14px;
 }
 
 .navbar-nav .nav-link:hover,
 .navbar-nav .nav-link.active {
-  color: #B8860B !important; /* dorado al hover */
-  background-color: rgba(255, 215, 0, 0.1); /* sutil resplandor dorado */
-  transform: translateY(-2px);
-  box-shadow: 0 2px 6px rgba(184, 134, 11, 0.3);
+    color: #B8860B !important; /* dorado al hover */
+    background-color: rgba(255, 215, 0, 0.1); /* sutil resplandor dorado */
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(184, 134, 11, 0.3);
 }
 
+/* ================================== */
 /* === FOOTER === */
-/* === FOOTER === */
+/* ================================== */
 footer {
-  background-color: #1A1A1A; /* fondo negro elegante */
-  color: #E0E0E0; /* texto gris claro */
-  padding: 30px 0;
-  text-align: center;
+    background-color: #1A1A1A; /* fondo negro elegante */
+    color: #E0E0E0; /* texto gris claro */
+    padding: 30px 0;
+    text-align: center;
 }
 
 footer a {
-  color: #C0C0C0; /* links gris más claro */
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
+    color: #C0C0C0; /* links gris más claro */
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
 footer a:hover {
-  color: #FFFFFF; /* blanco al hover */
-  text-shadow: 0 0 4px rgba(255,255,255,0.3);
+    color: #FFFFFF; /* blanco al hover */
+    text-shadow: 0 0 4px rgba(255,255,255,0.3);
 }
 
 footer h5 {
-  color: #FFFFFF; /* títulos blancos */
-  font-weight: 700;
-  margin-bottom: 15px;
+    color: #FFFFFF; /* títulos blancos */
+    font-weight: 700;
+    margin-bottom: 15px;
 }
 
 footer p, footer li {
-  color: #D3D3D3; /* gris claro para párrafos y lista */
+    color: #D3D3D3; /* gris claro para párrafos y lista */
 }
+
 /* Hover efecto dorado para links y iconos */
 footer a,
 footer .social-icon {
-  transition: all 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 footer a:hover,
 footer .social-icon:hover {
-  color: #B8860B; /* dorado brillante */
-  text-shadow: 0 0 6px rgba(255,215,0,0.5);
-  transform: translateY(-2px);
+    color: #B8860B; /* dorado brillante */
+    text-shadow: 0 0 6px rgba(255,215,0,0.5);
+    transform: translateY(-2px);
 }
 
 /* Opcional: cursor pointer en iconos */
 footer .social-icon {
-  cursor: pointer;
+    cursor: pointer;
 }
 
-
-/* === BOTONES === */
-.btn-gold {
-  background-color: #B8860B; /* dorado elegante */
-  color: #FFFFFF;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  padding: 10px 20px;
-}
-
-.btn-gold:hover {
-  background-color: #FFD700; /* más brillante al hover */
-  color: #1A1A1A;
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
-}
-
-.btn-silver {
-  background-color: #C0C0C0; /* plata metálica */
-  color: #1A1A1A;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-}
-
-.btn-silver:hover {
-  background-color: #E0E0E0; /* plata clara al hover */
-  color: #1A1A1A;
-  box-shadow: 0 4px 12px rgba(192, 192, 192, 0.4);
-}
-
-/* === BODY === */
-body {
-  background-color: #FFFFFF;
-  color: #1A1A1A;
-  font-family: "Poppins", sans-serif;
-  padding-top: 90px;
-  margin: 0;
-}
-
-/* === CARDS === */
+/* ================================== */
+/* === CARDS GENERALES === */
+/* ================================== */
 .card {
-  border-radius: 12px;
-  overflow: hidden;
-  background-color: #F9F9F9; /* blanco suave */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #F9F9F9; /* blanco suave */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(184, 134, 11, 0.3);
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(184, 134, 11, 0.3);
 }
 
 .card-title {
-  color: #1A1A1A;
-  font-weight: 600;
+    color: #1A1A1A;
+    font-weight: 600;
 }
 
 .card-text {
-  color: #444;
+    color: #444;
 }
 
 .card .precio {
-  color: #B8860B;
-  font-weight: 700;
+    color: #B8860B;
+    font-weight: 700;
 }
 
+/* ================================== */
 /* === MODAL === */
+/* ================================== */
 .modal-content.modal-sm {
-  background: #1A1A1A;
-  color: #FFFFFF;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(184, 134, 11, 0.3);
+    background: #1A1A1A;
+    color: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(184, 134, 11, 0.3);
 }
 
 .modal-close {
-  color: #B8860B;
+    color: #B8860B;
 }
 
-/* === BOTÓN SCROLL TOP === */
-.btn-scroll-top {
-  background: #B8860B;
-  color: #FFFFFF;
-}
-.btn-scroll-top:hover {
-  background: #FFD700;
-  color: #1A1A1A;
+/* ================================== */
+/* === AJUSTES HOME ADMIN (ESPECÍFICO) === */
+/* ================================== */
+.home-admin-container {
+    padding-bottom: 60px;
+    min-height: 100vh; /* asegura que el contenido ocupe toda la pantalla */
 }
 
+/* Mejora el espaciado interno de las tarjetas */
+.admin-card {
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid transparent; /* Borde base para la transición */
+    border-radius: 14px;
+    background-color: #FFFFFF;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
 
+/* Efecto hover: eleva, aplica sombra y BORDE DORADO */
+.admin-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 6px 16px rgba(184, 134, 11, 0.3);
+    border-color: #B8860B; /* Borde dorado al hacer hover */
+}
 
+/* Corrige el tamaño de íconos y texto */
+.admin-card i {
+    font-size: 3rem;
+    color: #B8860B;
+    transition: color 0.3s ease;
+}
 
+.admin-card .card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
 
+.admin-card .card-text {
+    font-size: 0.95rem;
+    margin-bottom: 0;
+}
 
+/* Espaciado general para que las tarjetas no se peguen al navbar */
+/* Nota: Se usa .mt-5.pt-5 para alta especificidad */
+.container.mt-5.pt-5 {
+    margin-top: 2rem !important;
+}
 
+/* ================================== */
+/* === BOTONES Y SCROLL TOP/DOWN === */
+/* ================================== */
 .btn-scroll-top,
 .btn-scroll-down {
-  position: fixed;
-  right: 20px;
-  z-index: 999;
-  border: none;
-  border-radius: 50%;
-  padding: 12px 15px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+    position: fixed;
+    right: 20px;
+    z-index: 999;
+    border: none;
+    border-radius: 50%;
+    padding: 12px 15px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .btn-scroll-top {
-  bottom: 70px;
-  background-color: #B8860B;
-  color: #fff;
+    bottom: 70px;
+    background-color: #B8860B;
+    color: #fff;
 }
 
 .btn-scroll-top:hover {
-  background-color: #B8860B;
-  color: #1A1A1A;
+    background-color: #FFD700; /* Coherencia con .btn-gold:hover */
+    color: #1A1A1A; /* Coherencia con .btn-gold:hover */
 }
 
 .btn-scroll-down {
-  bottom: 20px;
-  background-color: #1A1A1A;
-  color: #fff;
+    bottom: 20px;
+    background-color: #1A1A1A;
+    color: #fff;
 }
 
 .btn-scroll-down:hover {
-  background-color: #B8860B;
-  color: #fff;
+    background-color: #B8860B;
+    color: #fff;
 }
 
-/*  ***********************************/
+/* ================================== */
+/* === NG-SELECT (ANGULAR) === */
+/* ================================== */
 /* Estilo general para que ng-select se vea como un select de Bootstrap con fondo blanco */
 ::ng-deep ng-select.ng-select-bootstrap {
-  height: 38px;               /* Igual que los selects normales */
-  font-size: 1rem;
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.375rem;
-  border: 1px solid #ced4da;
-  background-color: #ffffff;  /* Fondo blanco */
-  color: #495057;             /* Texto color estándar de Bootstrap */
+    height: 38px;
+    font-size: 1rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid #ced4da;
+    background-color: #ffffff; /* Fondo blanco */
+    color: #495057; /* Texto color estándar de Bootstrap */
 }
 
 /* Dropdown (lista de opciones) */
 ::ng-deep ng-select.ng-select-bootstrap .ng-dropdown-panel {
-  border-radius: 0.375rem;
-  border: 1px solid #ced4da;
-  box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,.1);
-  background-color: #ffffff;  /* Fondo blanco */
+    border-radius: 0.375rem;
+    border: 1px solid #ced4da;
+    box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,.1);
+    background-color: #ffffff;
 }
 
 /* Opciones */
 ::ng-deep ng-select.ng-select-bootstrap .ng-option {
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  background-color: #ffffff;  /* Fondo blanco */
-  color: #212529;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    background-color: #ffffff;
+    color: #212529;
 }
 
 /* Resaltar opción al pasar mouse */
 ::ng-deep ng-select.ng-select-bootstrap .ng-option:hover {
-  background-color: #f8f9fa;
-  color: #212529;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+/* Nuevo CSS a añadir o modificar */
+.card-lote:hover {
+    /* Mantiene los efectos de la clase .card:hover */
+    border: 2px solid #B8860B !important; /* Borde dorado visible */
+}
+
+/* Modificación de la regla general de card para que sea más sutil al inicio */
+.card {
+    border: 1px solid #dee2e6; /* Añadir un borde sutil para que el dorado sea notorio */
+    /* ... resto de estilos de .card ... */
+}
+
+/* Estilos por defecto (para pantallas Lg y superiores) */
+.content-margin-top {
+    /* Altura que funciona para tu header no colapsado */
+    margin-top: 90px; 
+}
+
+/* Ajuste para pantallas pequeñas (Sm, Md, donde el menú colapsa) */
+@media (max-width: 991.98px) {
+    .content-margin-top {
+        /* Reduce el margen, ya que el header se hace más compacto */
+        margin-top: 70px; 
+    }
 }

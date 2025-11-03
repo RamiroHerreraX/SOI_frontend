@@ -1,401 +1,479 @@
-
 <app-header-admin></app-header-admin>
 
-  <!-- Breadcrumbs -->
-  <section class="breadcrumb-section py-3">
+<section id="lotes" class="py-5 content-margin-top" *ngIf="!isModalOpen">
     <div class="container">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb mb-0 text-dark">
-          <li class="breadcrumb-item"><a href="#">Inicio</a></li>
-          <li class="breadcrumb-item active text-dark" aria-current="page">Lotes Disponibles</li>
-        </ol>
-      </nav>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>Lotes Disponibles</h3>
+            <button class="btn btn-gold" (click)="openForm()">Nuevo Lote</button>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4" *ngFor="let lote of lotes">
+                <div class="card shadow-sm card-lote">
+                    
+                    <span 
+                        class="status-tag"
+                        [ngClass]="{
+                            'status-disponible': lote.estado_propiedad === 'disponible',
+                            'status-rentada': lote.estado_propiedad === 'rentada',
+                            'status-vendida': lote.estado_propiedad === 'vendida',
+                            'status-en-proceso': lote.estado_propiedad === 'en proceso'
+                        }">
+                        {{ lote.estado_propiedad | titlecase }}
+                    </span>
+
+                    <img [src]="getImagenUrl(lote)" alt="{{ lote.numLote }}" class="card-img-top" style="height: 200px; object-fit: cover;"/>
+                    
+                    <div class="card-body">
+                        <h5 class="card-title text-gold mb-1">{{ lote.tipo | titlecase }} #{{ lote.numLote }}</h5>
+                        
+                        <p class="card-subtitle text-muted mb-2" style="font-size: 0.9rem;">
+                            <i class="bi bi-geo-alt-fill me-1"></i>
+                            {{ lote.nombre_colonia_nueva || 'Colonia Desconocida' }} | {{ lote.nombre_ciudad }}, {{ lote.nombre_estado }}
+                        </p>
+
+                        <hr class="my-2">
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <small class="text-uppercase text-secondary d-block">Precio</small>
+                                <strong class="fs-5 text-success">${{ lote.precio | number : '1.2-2' }}</strong> 
+                            </div>
+                            <div class="text-end">
+                                <small class="text-uppercase text-secondary d-block">Superficie</small>
+                                <strong class="fs-5">{{ lote.superficie_m2 }} m²</strong>
+                            </div>
+                        </div>
+
+                        <div *ngIf="lote.tipo === 'casa' || lote.tipo === 'depto'" class="d-flex justify-content-around text-center border-top pt-2">
+                            <div title="Habitaciones">
+                                <i class="bi bi-bed-fill text-info"></i> 
+                                <strong class="d-block">{{ lote.num_habitaciones || 0 }}</strong>
+                                <small class="text-muted d-block" style="font-size: 0.75rem;">Habitaciones</small>
+                            </div>
+                            <div title="Baños">
+                                <i class="bi bi-bath-fill text-info"></i> 
+                                <strong class="d-block">{{ lote.num_banos || 0 }}</strong>
+                                <small class="text-muted d-block" style="font-size: 0.75rem;">Baños</small>
+                            </div>
+                            <div title="Estacionamiento">
+                                <i class="bi bi-car-fill text-info"></i> 
+                                <strong class="d-block">{{ lote.num_estacionamientos || 0 }}</strong>
+                                <small class="text-muted d-block" style="font-size: 0.75rem;">Estac.</small>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-2">
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                            <button class="btn btn-silver btn-sm" (click)="editLote(lote)">
+                                <i class="bi bi-pencil-fill"></i> Editar
+                            </button>
+                            <button class="btn btn-danger btn-sm" (click)="deleteLote(lote.id_propiedad)">
+                                <i class="bi bi-trash-fill"></i> Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+</section>
+
+<div class="modal fade" id="loteModal" tabindex="-1" aria-labelledby="loteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-secondary text-white">
+                <h5 class="modal-title" id="loteModalLabel">{{ isEdit ? 'Editar Lote' : 'Nuevo Lote' }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="onModalClose()"></button>
+            </div>
+            <div class="modal-body">
+                <form (ngSubmit)="saveLote()" #loteForm="ngForm">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Tipo <span class="text-danger">*</span></label>
+                            <select 
+                                class="form-select" 
+                                [(ngModel)]="currentLote.tipo" 
+                                name="tipo" 
+                                required
+                                #tipo="ngModel"
+                                [class.is-invalid]="tipo.invalid && (tipo.touched || loteForm.submitted)">
+                                <option [ngValue]="null">Seleccionar Tipo</option>
+                                <option value="casa">Casa</option>
+                                <option value="depto">Departamento</option>
+                                <option value="terreno">Terreno</option>
+                                <option value="local">Local</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                            <div *ngIf="tipo.invalid && (tipo.touched || loteForm.submitted)" class="invalid-feedback">
+                                El tipo es obligatorio.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Número de Lote <span class="text-danger">*</span></label>
+                            <input
+                                class="form-control"
+                                [(ngModel)]="currentLote.numLote"
+                                name="numLote"
+                                type="number"
+                                pattern="[0-9]+"
+                                required
+                                #numLote="ngModel"
+                                [class.is-invalid]="numLote.invalid && (numLote.touched || loteForm.submitted)"
+                            />
+                            <div *ngIf="numLote.invalid && (numLote.touched || loteForm.submitted)" class="invalid-feedback">
+                                El número de lote es obligatorio y solo debe contener dígitos.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Manzana</label>
+                            <input 
+                                class="form-control" 
+                                [(ngModel)]="currentLote.manzana" 
+                                name="manzana"
+                                pattern="[a-zA-Z0-9-]+"
+                                #manzana="ngModel"
+                                [class.is-invalid]="manzana.invalid && manzana.touched"
+                            />
+                            <div *ngIf="manzana.invalid && manzana.touched" class="invalid-feedback">
+                                Solo puede contener letras, números y guiones.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Dirección <span class="text-danger">*</span></label>
+                            <input
+                                class="form-control"
+                                [(ngModel)]="currentLote.direccion"
+                                name="direccion"
+                                required
+                                #direccion="ngModel"
+                                [class.is-invalid]="direccion.invalid && (direccion.touched || loteForm.submitted)"
+                            />
+                            <div *ngIf="direccion.invalid && (direccion.touched || loteForm.submitted)" class="invalid-feedback">
+                                La dirección es obligatoria.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Código Postal <span class="text-danger">*</span></label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                maxlength="5"
+                                minlength="5"
+                                pattern="[0-9]{5}"
+                                type="number"
+                                name="codigoPostal"
+                                [(ngModel)]="codigoPostal"
+                                (input)="buscarPorCodigoPostal()"
+                                placeholder="Ej. 37904"
+                                required
+                                #cp="ngModel"
+                                [class.is-invalid]="(cp.invalid && (cp.touched || loteForm.submitted)) || (cp.valid && !cpEsValido)"
+                            />
+                            <div *ngIf="cp.invalid && (cp.touched || loteForm.submitted)" class="invalid-feedback">
+                                El CP es obligatorio y debe ser de 5 dígitos numéricos.
+                            </div>
+                            <div *ngIf="cp.valid && !cpEsValido" class="invalid-feedback d-block">
+                                El código postal ingresado no es válido o no fue encontrado.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Estado <span class="text-danger">*</span></label>
+                            <select
+                                class="form-select"
+                                name="id_estado"
+                                [(ngModel)]="selectedEstado"
+                                (change)="onEstadoChange($event)"
+                                required
+                                #estado="ngModel"
+                                [class.is-invalid]="estado.invalid && (estado.touched || loteForm.submitted)"
+                            >
+                                <option [ngValue]="null">Seleccionar Estado</option>
+                                <option *ngFor="let estado of estados" [value]="estado.id_estado">
+                                    {{ estado.nombre_estado }}
+                                </option>
+                            </select>
+                            <div *ngIf="estado.invalid && (estado.touched || loteForm.submitted)" class="invalid-feedback">
+                                El estado es obligatorio.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Ciudad <span class="text-danger">*</span></label>
+                            <select
+                                class="form-select"
+                                name="id_ciudad"
+                                [(ngModel)]="selectedCiudad"
+                                (change)="onCiudadChange($event)"
+                                required
+                                #ciudad="ngModel"
+                                [class.is-invalid]="ciudad.invalid && (ciudad.touched || loteForm.submitted)"
+                            >
+                                <option [ngValue]="null">Seleccionar Ciudad</option>
+                                <option *ngFor="let ciudad of ciudades" [value]="ciudad.id_ciudad">
+                                    {{ ciudad.nombre_ciudad }}
+                                </option>
+                            </select>
+                            <div *ngIf="ciudad.invalid && (ciudad.touched || loteForm.submitted)" class="invalid-feedback">
+                                La ciudad es obligatoria.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Colonia <span class="text-danger">*</span></label>
+                            <ng-select
+                                [items]="colonias"
+                                bindLabel="nombre_colonia"
+                                bindValue="nombre_colonia"
+                                [addTag]="true"
+                                placeholder="Selecciona o escribe una colonia"
+                                [(ngModel)]="currentLote.nombre_colonia_nueva"
+                                name="id_colonia"
+                                [clearable]="true"
+                                (change)="onColoniaChange($event)"
+                                [required]="true"
+                                #colonia="ngModel"
+                                class="ng-select-bootstrap bg-white border rounded"
+                                [searchable]="true">
+                            </ng-select>
+                            <div *ngIf="colonia.invalid && (colonia.touched || loteForm.submitted)" class="invalid-feedback d-block">
+                                La colonia es obligatoria.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Precio <span class="text-danger">*</span></label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                [(ngModel)]="currentLote.precio"
+                                name="precio"
+                                required
+                                min="1"
+                                #precio="ngModel"
+                                [class.is-invalid]="precio.invalid && (precio.touched || loteForm.submitted)"
+                            />
+                            <div *ngIf="precio.invalid && (precio.touched || loteForm.submitted)" class="invalid-feedback">
+                                El precio es obligatorio y debe ser mayor a 0.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Valor Avalúo</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                [(ngModel)]="currentLote.valor_avaluo"
+                                name="valor_avaluo"
+                                min="0"
+                                #avaluo="ngModel"
+                                [class.is-invalid]="avaluo.invalid && avaluo.touched"
+                            />
+                            <div *ngIf="avaluo.invalid && avaluo.touched" class="invalid-feedback">
+                                Debe ser un valor positivo.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Superficie m² <span class="text-danger">*</span></label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                [(ngModel)]="currentLote.superficie_m2"
+                                name="superficie_m2"
+                                required
+                                min="1"
+                                #superficie="ngModel"
+                                [class.is-invalid]="superficie.invalid && (superficie.touched || loteForm.submitted)"
+                            />
+                            <div *ngIf="superficie.invalid && (superficie.touched || loteForm.submitted)" class="invalid-feedback">
+                                La superficie es obligatoria y debe ser mayor a 0.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3" *ngIf="currentLote.tipo === 'casa' || currentLote.tipo === 'depto'">
+                            <label class="form-label">Habitaciones</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                [(ngModel)]="currentLote.num_habitaciones"
+                                name="num_habitaciones"
+                                min="0"
+                                #hab="ngModel"
+                                [class.is-invalid]="hab.invalid && hab.touched"
+                            />
+                            <div *ngIf="hab.invalid && hab.touched" class="invalid-feedback">
+                                Debe ser un número positivo.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3" *ngIf="currentLote.tipo === 'casa' || currentLote.tipo === 'depto'">
+                            <label class="form-label">Baños</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                [(ngModel)]="currentLote.num_banos"
+                                name="num_banos"
+                                min="0"
+                                #banos="ngModel"
+                                [class.is-invalid]="banos.invalid && banos.touched"
+                            />
+                            <div *ngIf="banos.invalid && banos.touched" class="invalid-feedback">
+                                Debe ser un número positivo.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3" *ngIf="currentLote.tipo === 'casa' || currentLote.tipo === 'depto'">
+                            <label class="form-label">Estacionamientos</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                [(ngModel)]="currentLote.num_estacionamientos"
+                                name="num_estacionamientos"
+                                min="0"
+                                #estac="ngModel"
+                                [class.is-invalid]="estac.invalid && estac.touched"
+                            />
+                            <div *ngIf="estac.invalid && estac.touched" class="invalid-feedback">
+                                Debe ser un número positivo.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Servicios</label>
+                            <input
+                                class="form-control"
+                                [(ngModel)]="currentLote.servicios"
+                                name="servicios"
+                                placeholder="Ej. Luz, agua, drenaje..."
+                            />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Topografía</label>
+                            <input class="form-control" [(ngModel)]="currentLote.topografia" name="topografia" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Documentación</label>
+                            <input
+                                class="form-control"
+                                [(ngModel)]="currentLote.documentacion"
+                                name="documentacion"
+                                placeholder="Ej. Escritura, título, etc."
+                            />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Estado Propiedad <span class="text-danger">*</span></label>
+                            <select
+                                class="form-select"
+                                [(ngModel)]="currentLote.estado_propiedad"
+                                name="estado_propiedad"
+                                required
+                                #estadoProp="ngModel"
+                                [class.is-invalid]="estadoProp.invalid && (estadoProp.touched || loteForm.submitted)"
+                            >
+                                <option [ngValue]="null">Seleccionar Estado</option>
+                                <option value="disponible">Disponible</option>
+                                <option value="rentada">Rentada</option>
+                                <option value="vendida">Vendida</option>
+                                <option value="en proceso">En Proceso</option>
+                            </select>
+                            <div *ngIf="estadoProp.invalid && (estadoProp.touched || loteForm.submitted)" class="invalid-feedback">
+                                El estado de la propiedad es obligatorio.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Fecha Disponibilidad</label>
+                            <input
+                                type="date"
+                                class="form-control"
+                                [(ngModel)]="currentLote.fecha_disponibilidad"
+                                name="fecha_disponibilidad"
+                            />
+                        </div>
+
+                       <div class="col-md-6">
+                            <label class="form-label">Imagen</label>
+                            <input
+                                type="file"
+                                class="form-control"
+                                (change)="onFileSelected($event)"
+                                accept="image/*"
+                                #fileInput
+                                [class.is-invalid]="fileError" />
+                            <div *ngIf="fileError" class="invalid-feedback d-block">
+                                Solo se permiten archivos de imagen (JPG, PNG, GIF, etc.).
+                            </div>
+
+                            <div *ngIf="previewImagen" class="mt-2">
+                                <img [src]="previewImagen" alt="Preview" class="img-thumbnail" style="max-height: 150px;" />
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label class="form-label">Descripción</label>
+                            <textarea
+                                class="form-control"
+                                rows="3"
+                                [(ngModel)]="currentLote.descripcion"
+                                name="descripcion"
+                            ></textarea>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">A quién dirigirse (Encargado) <span class="text-danger">*</span></label>
+                            <select 
+                                class="form-select" 
+                                [(ngModel)]="currentLote.id_user" 
+                                name="id_user" 
+                                required
+                                #encargado="ngModel"
+                                [class.is-invalid]="encargado.invalid && (encargado.touched || loteForm.submitted)">
+                                <option [ngValue]="null">Seleccionar Encargado</option>
+                                <option *ngFor="let encargado of encargados" [value]="encargado.id_user">
+                                    {{ encargado.usuario }}
+                                </option>
+                            </select>
+                            <div *ngIf="encargado.invalid && (encargado.touched || loteForm.submitted)" class="invalid-feedback">
+                                El encargado es obligatorio.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 text-end">
+                        <button type="submit" class="btn btn-gold px-4" [disabled]="loteForm.invalid">
+                            {{ isEdit ? 'Actualizar' : 'Guardar' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </section>
+</div>
 
-  <!-- Lotes List -->
-  <section id="lotes" class="py-5">
-    <div class="container">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>Lotes Disponibles</h3>
-        <button class="btn btn-gold" (click)="openForm()">Nuevo Lote</button>
-      </div>
-      <div class="row g-4">
-        <div class="col-md-4" *ngFor="let lote of lotes">
-          <div class="card shadow-sm">
-              <img [src]="lote.imagenUrl" alt="{{ lote.numLote }}" class="card-img-top" />
-            <div class="card-body">
-              <h5 class="card-title">{{ lote.tipo | titlecase }} - {{ lote.numLote }}</h5>
-              <p class="card-text">{{ lote.descripcion | slice : 0 : 100 }}...</p>
-              <div class="d-flex justify-content-between">
-                <button class="btn btn-silver btn-sm" (click)="editLote(lote)">Editar</button>
-                <button class="btn btn-danger btn-sm" (click)="deleteLote(lote.id_propiedad)">
-                  Eliminar
-                </button>
-              </div>
-            </div>
-          </div>
+
+
+
+<app-footer-admin></app-footer-admin>
+
+<div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 2000;">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div class="toast-header">
+            <strong class="me-auto toast-title">Notificación</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-      </div>
+        <div class="toast-body">
+            El mensaje del toast aparecerá aquí.
+        </div>
     </div>
-  </section>
-
-<!-- Formulario Modal -->
-<div
-  class="modal fade"
-  id="loteModal"
-  tabindex="-1"
-  aria-labelledby="loteModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <div class="modal-header bg-secondary text-white">
-        <h5 class="modal-title" id="loteModalLabel">{{ isEdit ? 'Editar Lote' : 'Nuevo Lote' }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <form (ngSubmit)="saveLote()">
-          <div class="row g-3">
-            <!-- Tipo -->
-            <div class="col-md-3">
-              <label class="form-label">Tipo</label>
-              <select class="form-select" [(ngModel)]="currentLote.tipo" name="tipo" required>
-                <option value="casa">Casa</option>
-                <option value="depto">Departamento</option>
-                <option value="terreno">Terreno</option>
-                <option value="local">Local</option>
-                <option value="otro">Otro</option>
-              </select>
-            </div>
-
-            <!-- Número de Lote -->
-            <div class="col-md-3">
-              <label class="form-label">Número de Lote</label>
-              <input
-                class="form-control"
-                [(ngModel)]="currentLote.numLote"
-                name="numLote"
-                required
-              />
-            </div>
-
-            <!-- Manzana -->
-            <div class="col-md-3">
-              <label class="form-label">Manzana</label>
-              <input class="form-control" [(ngModel)]="currentLote.manzana" name="manzana" />
-            </div>
-
-            <!-- Dirección -->
-            <div class="col-md-3">
-              <label class="form-label">Dirección</label>
-              <input
-                class="form-control"
-                [(ngModel)]="currentLote.direccion"
-                name="direccion"
-                required
-              />
-            </div>
-
-            <!-- Código Postal -->
-            <div class="col-md-3">
-              <label class="form-label">Código Postal</label>
-              <input
-                type="text"
-                class="form-control"
-                maxlength="5"
-                name="codigoPostal"
-                [(ngModel)]="codigoPostal"
-                (input)="buscarPorCodigoPostal()"
-                placeholder="Ej. 37904"
-              />
-            </div>
-
-            <!-- Estado -->
-            <div class="col-md-3">
-              <label class="form-label">Estado</label>
-              <select
-                class="form-select"
-                name="id_estado"
-                [(ngModel)]="selectedEstado"
-                (change)="onEstadoChange($event)"
-              >
-                <option value="">Seleccionar Estado</option>
-                <option *ngFor="let estado of estados" [value]="estado.id_estado">
-                  {{ estado.nombre_estado }}
-                </option>
-              </select>
-            </div>
-
-            <!-- Ciudad -->
-            <div class="col-md-3">
-              <label class="form-label">Ciudad</label>
-              <select
-                class="form-select"
-                name="id_ciudad"
-                [(ngModel)]="selectedCiudad"
-                (change)="onCiudadChange($event)"
-              >
-                <option value="">Seleccionar Ciudad</option>
-                <option *ngFor="let ciudad of ciudades" [value]="ciudad.id_ciudad">
-                  {{ ciudad.nombre_ciudad }}
-                </option>
-              </select>
-            </div>
-
-            <!-- Colonia -->
-          <div class="col-md-3">
-          <label class="form-label">Colonia</label>
-          <ng-select
-            [items]="colonias"
-            bindLabel="nombre_colonia"
-            bindValue="nombre_colonia"
-            [addTag]="true"
-            placeholder="Selecciona o escribe una colonia"
-            [(ngModel)]="currentLote.nombre_colonia_nueva"
-            name="id_colonia"
-            [clearable]="true"
-            (change)="onColoniaChange($event)"
-            class="ng-select-bootstrap bg-white border rounded"
-            [searchable]="true">
-          </ng-select>
-        </div>
-
-            <!-- Precio -->
-            <div class="col-md-3">
-              <label class="form-label">Precio</label>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="currentLote.precio"
-                name="precio"
-                required
-              />
-            </div>
-
-            <!-- Valor Avalúo -->
-            <div class="col-md-3">
-              <label class="form-label">Valor Avalúo</label>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="currentLote.valor_avaluo"
-                name="valor_avaluo"
-              />
-            </div>
-
-            <!-- Superficie -->
-            <div class="col-md-3">
-              <label class="form-label">Superficie m²</label>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="currentLote.superficie_m2"
-                name="superficie_m2"
-                required
-              />
-            </div>
-
-            <!-- Habitaciones -->
-            <div class="col-md-3">
-              <label class="form-label">Habitaciones</label>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="currentLote.num_habitaciones"
-                name="num_habitaciones"
-              />
-            </div>
-
-            <!-- Baños -->
-            <div class="col-md-3">
-              <label class="form-label">Baños</label>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="currentLote.num_banos"
-                name="num_banos"
-              />
-            </div>
-
-            <!-- Estacionamientos -->
-            <div class="col-md-3">
-              <label class="form-label">Estacionamientos</label>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="currentLote.num_estacionamientos"
-                name="num_estacionamientos"
-              />
-            </div>
-
-            <!-- Servicios -->
-            <div class="col-md-3">
-              <label class="form-label">Servicios</label>
-              <input
-                class="form-control"
-                [(ngModel)]="currentLote.servicios"
-                name="servicios"
-                placeholder="Ej. Luz, agua, drenaje..."
-              />
-            </div>
-
-            <!-- Topografía -->
-            <div class="col-md-3">
-              <label class="form-label">Topografía</label>
-              <input class="form-control" [(ngModel)]="currentLote.topografia" name="topografia" />
-            </div>
-
-            <!-- Documentación -->
-            <div class="col-md-3">
-              <label class="form-label">Documentación</label>
-              <input
-                class="form-control"
-                [(ngModel)]="currentLote.documentacion"
-                name="documentacion"
-                placeholder="Ej. Escritura, título, etc."
-              />
-            </div>
-
-            <!-- Estado Propiedad -->
-            <div class="col-md-3">
-              <label class="form-label">Estado Propiedad</label>
-              <select
-                class="form-select"
-                [(ngModel)]="currentLote.estado_propiedad"
-                name="estado_propiedad"
-                required
-              >
-                <option value="disponible">Disponible</option>
-                <option value="rentada">Rentada</option>
-                <option value="vendida">Vendida</option>
-                <option value="en proceso">En Proceso</option>
-              </select>
-            </div>
-
-            <!-- Fecha Disponibilidad -->
-            <div class="col-md-3">
-              <label class="form-label">Fecha Disponibilidad</label>
-              <input
-                type="date"
-                class="form-control"
-                [(ngModel)]="currentLote.fecha_disponibilidad"
-                name="fecha_disponibilidad"
-              />
-            </div>
-
-          <!-- Imagen desde dispositivo -->
-          <div class="col-md-6">
-            <label class="form-label">Imagen</label>
-            <input
-              type="file"
-              class="form-control"
-              (change)="onFileSelected($event)"
-              accept="image/*"
-            />
-            <div *ngIf="previewImagen" class="mt-2">
-              <img [src]="previewImagen" alt="Preview" class="img-thumbnail" style="max-height: 150px;" />
-            </div>
-          </div>
-
-
-            <!-- Descripción -->
-            <div class="col-md-6">
-              <label class="form-label">Descripción</label>
-              <textarea
-                class="form-control"
-                rows="3"
-                [(ngModel)]="currentLote.descripcion"
-                name="descripcion"
-              ></textarea>
-            </div>
-
-            <!-- Usuario -->
-            <!-- Encargado -->
-            <div class="col-md-3">
-              <label class="form-label">A quién dirigirse (Encargado)</label>
-              <select class="form-select" [(ngModel)]="currentLote.id_user" name="id_user" required>
-                <option value="">Seleccionar Encargado</option>
-                <option *ngFor="let encargado of encargados" [value]="encargado.id_user">
-                  {{ encargado.usuario }}
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Botón Guardar -->
-          <div class="mt-4 text-end">
-            <button type="submit" class="btn btn-gold px-4">
-              {{ isEdit ? 'Actualizar' : 'Guardar' }}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-
-
-
-    
-  </div>
-
-  <!-- Scroll to top -->
-  <!-- Reemplaza esto -->
-<!-- <button id="btnTop" class="btn-scroll-top" (click)="scrollToTop()"> -->
-<button id="btnTop" class="btn-scroll-top" (click)="scrollToggle()">
-  <i class="fas" [ngClass]="{'fa-chevron-up': showBtnTop, 'fa-chevron-down': showBtnDown}"></i>
-</button>
-
-
-  <!-- Footer -->
-  <footer id="contacto" class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4 mb-4">
-          <h5 class="text-gold mb-3 fw-bold"><i class="fas fa-building me-2"></i>Inmobiliaria INDES</h5>
-          <p class="text-light-silver">Tu inversión en propiedades de alta plusvalía. Hacemos realidad tus proyectos inmobiliarios.</p>
-        </div>
-        <div class="col-md-4 mb-4">
-          <h5 class="text-gold mb-3 fw-bold">Contacto</h5>
-          <ul class="list-unstyled">
-            <li class="mb-2 text-light-silver"><i class="fas fa-phone me-2 text-silver"></i>4681327809</li>
-            <li class="mb-2 text-light-silver"><i class="fas fa-envelope me-2 text-silver"></i>info@Inmobiliaria.com</li>
-            <li class="text-light-silver"><i class="fas fa-map-marker-alt me-2 text-silver"></i>San Luis de la Paz, Guanajuato</li>
-          </ul>
-        </div>
-        <div class="col-md-4 mb-4">
-          <h5 class="text-gold mb-3 fw-bold">Síguenos</h5>
-          <div class="d-flex gap-3">
-            <a href="#" class="social-icon text-silver fs-4"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="social-icon text-silver fs-4"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="social-icon text-silver fs-4"><i class="fab fa-whatsapp"></i></a>
-          </div>
-        </div>
-      </div>
-      <hr class="my-4 footer-divider">
-      <div class="text-center">
-        <p class="text-light-silver mb-0 small">&copy; 2025 Inmobiliaria INDES. Todos los derechos reservados.</p>
-      </div>
-    </div>
-  </footer>
-
-<!-- Botón flotante -->
-<button
-  class="btn-scroll-top"
-  *ngIf="showBtnTop || showBtnDown"
-  (click)="scrollToggle()"
->
-  <i class="fas" [ngClass]="{'fa-chevron-up': showBtnTop, 'fa-chevron-down': showBtnDown}"></i>
-</button>
-
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Scroll Top
-    const btnScrollTop = document.getElementById('btnTop');
-    window.onscroll = () => {
-      btnScrollTop.style.display = (document.documentElement.scrollTop > 200) ? 'block' : 'none';
-    };
-    btnScrollTop.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
-  </script>
+</div>

@@ -1,59 +1,53 @@
 <app-header-admin></app-header-admin>
 
-<!-- Contenido principal -->
 <div class="container mt-5 pt-5 home-admin-container">
-  <h2 class="text-center fw-bold mb-4">Bienvenido al Panel de Administración</h2>
-  <p class="text-center text-muted mb-5">Selecciona una sección para gestionar la información</p>
+    <h2 class="text-center fw-bold mb-4">Bienvenido al Panel de Administración</h2>
+    <p class="text-center text-muted mb-5">Selecciona una sección para gestionar la información</p>
 
-  <div class="row g-4 justify-content-center">
-    <!-- Tarjeta Clientes -->
-    <div class="col-12 col-sm-6 col-lg-3">
-      <div class="card admin-card shadow-lg border-0" (click)="navegarA('clientes')">
-        <div class="card-body text-center">
-          <i class="bi bi-people-fill icon-clientes"></i>
-          <h5 class="card-title mt-3">Clientes</h5>
-          <p class="card-text text-muted">Gestión de usuarios registrados.</p>
+    <div class="row g-4 justify-content-center">
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card admin-card shadow-lg" (click)="navegarA('clientes')">
+                <div class="card-body text-center">
+                    <i class="bi bi-people-fill icon-clientes"></i>
+                    <h5 class="card-title mt-3">Clientes</h5>
+                    <p class="card-text text-muted">Gestión de usuarios registrados.</p>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Tarjeta Lotes -->
-    <div class="col-12 col-sm-6 col-lg-3">
-      <div class="card admin-card shadow-lg border-0" (click)="navegarA('lotes')">
-        <div class="card-body text-center">
-          <i class="bi bi-map-fill icon-lotes"></i>
-          <h5 class="card-title mt-3">Lotes</h5>
-          <p class="card-text text-muted">Administración de terrenos disponibles.</p>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card admin-card shadow-lg" (click)="navegarA('lotes')">
+                <div class="card-body text-center">
+                    <i class="bi bi-map-fill icon-lotes"></i>
+                    <h5 class="card-title mt-3">Lotes</h5>
+                    <p class="card-text text-muted">Administración de terrenos disponibles.</p>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Tarjeta Contratos -->
-    <div class="col-12 col-sm-6 col-lg-3">
-      <div class="card admin-card shadow-lg border-0" (click)="navegarA('contratos')">
-        <div class="card-body text-center">
-          <i class="bi bi-file-earmark-text-fill icon-contratos"></i>
-          <h5 class="card-title mt-3">Contratos</h5>
-          <p class="card-text text-muted">Control y registro de contratos.</p>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card admin-card shadow-lg" (click)="navegarA('contratos')">
+                <div class="card-body text-center">
+                    <i class="bi bi-file-earmark-text-fill icon-contratos"></i>
+                    <h5 class="card-title mt-3">Contratos</h5>
+                    <p class="card-text text-muted">Control y registro de contratos.</p>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Tarjeta Pagos -->
-    <div class="col-12 col-sm-6 col-lg-3">
-      <div class="card admin-card shadow-lg border-0" (click)="navegarA('pagos')">
-        <div class="card-body text-center">
-          <i class="bi bi-cash-stack icon-pagos"></i>
-          <h5 class="card-title mt-3">Pagos</h5>
-          <p class="card-text text-muted">Gestión de cobros y transacciones.</p>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card admin-card shadow-lg" (click)="navegarA('pagos')">
+                <div class="card-body text-center">
+                    <i class="bi bi-cash-stack icon-pagos"></i>
+                    <h5 class="card-title mt-3">Pagos</h5>
+                    <p class="card-text text-muted">Gestión de cobros y transacciones.</p>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    
-  </div>
+        
+    </div>
 </div>
 
 
-<!-- Footer -->
 <app-footer-admin></app-footer-admin>
