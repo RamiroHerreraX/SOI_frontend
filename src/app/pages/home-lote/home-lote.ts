@@ -2,12 +2,14 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoteService } from '../../services/lote';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { FooterComponent } from "../footer/footer.component";
+import { ScrollTopComponent } from "../scroll-top/scroll-top.component";
 
 @Component({
   selector: 'app-home-lote',
   templateUrl: './home-lote.html',
   styleUrls: ['./home-lote.css'],
-  imports: [CommonModule],
+  imports: [CommonModule, FooterComponent, ScrollTopComponent],
   standalone: true
 })
 export class HomeLoteComponent implements OnInit {
