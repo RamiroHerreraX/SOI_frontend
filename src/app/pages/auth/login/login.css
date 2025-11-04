@@ -1,0 +1,129 @@
+/* === GENERAL PAGE LAYOUT === */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  /* Usamos un fondo más neutro o el color de fondo de tu aplicación */
+  background-color: #f0f0f0; 
+}
+
+/* === CARD CONTAINER === */
+.card {
+  background: white;
+  padding: 40px;
+  border-radius: 12px; /* Ligeramente más redondeado */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  border-top: 5px solid #B8860B; /* Toque dorado en la parte superior */
+}
+
+/* === HEADER & TYPOGRAPHY === */
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #1A1A1A; /* Negro elegante */
+  font-weight: 700;
+}
+
+/* === FORM ELEMENTS === */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #555;
+  transition: color 0.2s;
+}
+
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box; 
+  font-size: 16px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Énfasis plateado/dorado al enfocar un campo */
+input:focus {
+    border-color: #A9A9A9; /* Plateado al enfocar */
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.2); /* Sutil resplandor dorado */
+}
+
+
+/* === BOTÓN DE ACCIÓN (DORADO) === */
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  /* Fondo dorado */
+  background-color: #B8860B; 
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  /* Dorado un poco más oscuro o con sombra */
+  background-color: #DAA520; 
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(184, 134, 11, 0.4);
+}
+
+.btn-primary:disabled {
+  /* Estilo para el botón deshabilitado (plateado suave) */
+  background-color: #dcdcdc; 
+  color: #888;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* === MENSAJES DE VALIDACIÓN === */
+.error-message {
+  color: #dc3545; /* Rojo estándar para errores */
+  font-size: 0.85em;
+  margin-top: 5px;
+}
+
+.alert.error {
+  /* Mantener el estilo de alerta de error estándar */
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+/* === ENLACES DE PIE DE PÁGINA === */
+.footer-links {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 0.95em;
+  color: #666;
+}
+
+.footer-links a {
+  /* El enlace de registro también usa el dorado */
+  color: #B8860B; 
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: #DAA520;
+  text-decoration: underline;
+}

@@ -7,6 +7,8 @@ import { Cliente } from './pages/cliente/cliente';
 import { Pagos } from './pages/pagos/pagos';
 import { Contratos } from './pages/contratos/contratos';
 import { Usuarios } from './pages/usuarios/usuarios';
+import { Login } from './pages/auth/login/login';
+import { Register } from './pages/auth/register/register';
 
 export const routes: Routes = [
   { path: '', component: HomeLoteComponent },   // Ruta principal
@@ -15,6 +17,8 @@ export const routes: Routes = [
   { path: 'clientes', component: Cliente },
   { path: 'pagos', component: Pagos },
   { path: 'usuarios', component: Usuarios },
-   { path: 'contratos', component: Contratos },
+  { path: 'contratos', component: Contratos },
+  { path: 'auth/login', component: Login },
+  { path: 'auth/registro', component: Register },
   { path: '**', redirectTo: '' }       // Cualquier ruta desconocida redirige a Home
 ];
