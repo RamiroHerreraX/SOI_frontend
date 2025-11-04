@@ -42,25 +42,63 @@
   box-shadow: 0 2px 6px rgba(184, 134, 11, 0.3);
 }
 
-/* === FOOTER === */
-footer {
-  background-color: #1A1A1A; /* negro elegante */
-  color: #B8860B; /* texto dorado */
-  padding: 30px 0;
-  text-align: center;
+/* Fondo con imagen */
+.welcome-section {
+  position: relative;
+  min-height: 100vh;
+  background-image: url('/assets/lote1.jpg'); /* cambia la ruta a tu imagen */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* efecto parallax */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
-footer a {
-  color: #C0C0C0; /* links gris */
-  text-decoration: none;
+/* Capa de oscurecimiento encima del fondo */
+.welcome-section .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.55); /* oscurece la imagen */
+  z-index: 1;
+}
+
+/* Contenedor principal */
+.welcome-section .container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Efecto dorado en el texto */
+.text-gold-shine {
+  color: #d4af37;
+  text-shadow: 0 0 10px rgba(212,175,55,0.6);
+}
+
+/* Sombra suave para legibilidad */
+.text-shadow {
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+
+/* Botón dorado */
+.btn-gold {
+  background-color: #d4af37;
+  border: none;
+  color: #fff;
   font-weight: 600;
-  transition: all 0.3s ease;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-footer a:hover {
-  color: #B8860B; /* dorado brillante al hover */
-  text-shadow: 0 0 4px rgba(255,215,0,0.4);
+.btn-gold:hover {
+  background-color: #b89625;
+  transform: scale(1.05);
 }
+
+
 
 /* === BOTONES === */
 .btn-gold {
@@ -166,56 +204,3 @@ body {
   padding: 1.5rem;
   position: relative;
 }
-
-
-/* === BOTÓN SCROLL TOP === */
-.btn-scroll-top {
-  background: #B8860B;
-  color: #FFFFFF;
-}
-.btn-scroll-top:hover {
-  background: #FFD700;
-  color: #1A1A1A;
-}
-
-
-
-
-
-
-.btn-scroll-top,
-.btn-scroll-down {
-  position: fixed;
-  right: 20px;
-  z-index: 999;
-  border: none;
-  border-radius: 50%;
-  padding: 12px 15px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-scroll-top {
-  bottom: 70px;
-  background-color: #B8860B;
-  color: #fff;
-}
-
-.btn-scroll-top:hover {
-  background-color: #B8860B;
-  color: #1A1A1A;
-}
-
-.btn-scroll-down {
-  bottom: 20px;
-  background-color: #1A1A1A;
-  color: #fff;
-}
-
-.btn-scroll-down:hover {
-  background-color: #B8860B;
-  color: #fff;
-}
-
-
