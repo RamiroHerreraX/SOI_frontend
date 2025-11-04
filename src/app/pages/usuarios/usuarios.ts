@@ -5,13 +5,14 @@ import { UsersService, User } from '../../services/users.service';
 import { HeaderAdmin } from "../../shared/header-admin/header-admin";
 import { FooterAdmin } from "../../shared/footer-admin/footer-admin";
 import { UserFilterPipe } from '../../pipes/user-filter.pipe';
+import { ScrollTopComponent } from "../scroll-top/scroll-top.component";
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderAdmin, FooterAdmin, UserFilterPipe],
+  imports: [CommonModule, FormsModule, HeaderAdmin, FooterAdmin, UserFilterPipe,ScrollTopComponent],
   templateUrl: './usuarios.html',
   styleUrls: ['./usuarios.css']
 })
