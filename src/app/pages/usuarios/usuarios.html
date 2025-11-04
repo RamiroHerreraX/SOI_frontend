@@ -1,0 +1,179 @@
+<div class="usuarios-container container mt-5 pt-4">
+  <h2 class="text-center mb-4">Gestión de Usuarios</h2>
+
+  <!-- 🔹 FORMULARIO DE CREACIÓN -->
+  <div class="form-container card p-4 shadow-sm" *ngIf="!modoEdicion; else editarForm">
+    <h3 class="mb-3">Registrar nuevo usuario</h3>
+    <form #userForm="ngForm" (ngSubmit)="crearUsuario(userForm)" novalidate>
+
+      <!-- Usuario -->
+      <div class="mb-3">
+        <label>Usuario</label>
+        <input type="text" class="form-control"
+          [(ngModel)]="nuevoUsuario.usuario" name="usuario"
+          #usuario="ngModel" required pattern="^[a-zA-Z0-9_]+$" />
+        <div *ngIf="usuario.invalid && (usuario.touched || userForm.submitted)" class="invalid-feedback d-block">
+          El usuario es obligatorio y solo debe contener letras, números o guiones bajos.
+        </div>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="mb-3">
+        <label>Contraseña</label>
+        <input type="password" class="form-control"
+          [(ngModel)]="nuevoUsuario.password" name="password"
+          #password="ngModel" required minlength="6" />
+        <div *ngIf="password.invalid && (password.touched || userForm.submitted)" class="invalid-feedback d-block">
+          La contraseña es obligatoria y debe tener al menos 6 caracteres.
+        </div>
+      </div>
+
+      <!-- Rol -->
+      <div class="mb-3">
+        <label>Rol</label>
+        <select class="form-select" [(ngModel)]="nuevoUsuario.rol" name="rol" #rol="ngModel" required>
+          <option value="" disabled selected>Seleccione un rol</option>
+          <option value="secretaria">Secretaria</option>
+          <option value="encargado">Encargado</option>
+        </select>
+        <div *ngIf="rol.invalid && (rol.touched || userForm.submitted)" class="invalid-feedback d-block">
+          El rol es obligatorio.
+        </div>
+      </div>
+
+      <!-- Correo -->
+      <div class="mb-3">
+        <label>Correo</label>
+        <input type="email" class="form-control"
+          [(ngModel)]="nuevoUsuario.correo" name="correo"
+          #correo="ngModel" required email />
+        <div *ngIf="correo.invalid && (correo.touched || userForm.submitted)" class="invalid-feedback d-block">
+          Ingrese un correo electrónico válido.
+        </div>
+      </div>
+
+      <!-- Teléfono -->
+      <div class="mb-3">
+        <label>Teléfono</label>
+        <input
+          type="tel"
+          class="form-control"
+          [(ngModel)]="nuevoUsuario.telefono"
+          name="telefono"
+          #telefono="ngModel"
+          maxlength="10"
+          pattern="^[0-9]{10}$"
+          (input)="validarTelefono($event)"
+          required
+        />
+        <div *ngIf="telefono.invalid && (telefono.touched || userForm.submitted)" class="invalid-feedback d-block">
+          El teléfono debe contener exactamente 10 dígitos numéricos.
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button class="btn btn-gold me-2" type="submit" [disabled]="userForm.invalid">Guardar Usuario</button>
+        <button class="btn btn-silver" type="reset">Limpiar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- 🔹 FORMULARIO DE EDICIÓN -->
+<!-- 🔹 FORMULARIO DE EDICIÓN -->
+<ng-template #editarForm>
+  <div class="form-container card p-4 shadow-sm" *ngIf="usuarioSeleccionado">
+    <h3 class="mb-3">Editar usuario</h3>
+    <form #editForm="ngForm" (ngSubmit)="actualizarUsuario()" novalidate>
+
+      <div class="mb-3">
+        <label>Usuario</label>
+        <input type="text" class="form-control"
+               [(ngModel)]="usuarioSeleccionado.usuario"
+               name="usuario"
+               #usuarioEdit="ngModel" required />
+        <div *ngIf="usuarioEdit.invalid && (usuarioEdit.touched || editForm.submitted)"
+             class="invalid-feedback d-block">
+          El nombre de usuario es obligatorio.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label>Rol</label>
+        <select class="form-select"
+                [(ngModel)]="usuarioSeleccionado.rol"
+                name="rol"
+                #rolEdit="ngModel"
+                required>
+          <option value="secretaria">Secretaria</option>
+          <option value="encargado">Encargado</option>
+        </select>
+        <div *ngIf="rolEdit.invalid && (rolEdit.touched || editForm.submitted)"
+             class="invalid-feedback d-block">
+          El rol es obligatorio.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label>Correo</label>
+        <input type="email" class="form-control"
+               [(ngModel)]="usuarioSeleccionado.correo"
+               name="correo"
+               #correoEdit="ngModel" required email />
+        <div *ngIf="correoEdit.invalid && (correoEdit.touched || editForm.submitted)"
+             class="invalid-feedback d-block">
+          Ingrese un correo electrónico válido.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label>Teléfono</label>
+        <input type="tel" class="form-control"
+               [(ngModel)]="usuarioSeleccionado.telefono"
+               name="telefono"
+               #telefonoEdit="ngModel"
+               pattern="^[0-9]{10}$" />
+        <div *ngIf="telefonoEdit.invalid && telefonoEdit.touched"
+             class="invalid-feedback d-block">
+          El teléfono debe contener 10 dígitos.
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button class="btn btn-gold me-2" type="submit">Actualizar</button>
+        <button class="btn btn-silver" type="button" (click)="cancelarEdicion()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+
+  <!-- 🔹 TABLA -->
+  <div class="card mt-4 shadow-sm p-3">
+    <h3 class="mb-3 text-center">Lista de Usuarios</h3>
+    <table class="table table-striped align-middle text-center">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Usuario</th>
+          <th>Rol</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of usuarios">
+          <td>{{ u.id_user }}</td>
+          <td>{{ u.usuario }}</td>
+          <td>{{ u.rol }}</td>
+          <td>{{ u.correo }}</td>
+          <td>{{ u.telefono }}</td>
+          <td>
+            <button class="btn btn-gold btn-sm me-2" (click)="editarUsuario(u)">✏️ Editar</button>
+            <button class="btn btn-silver btn-sm" (click)="eliminarUsuario(u.id_user!)">🗑️ Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
