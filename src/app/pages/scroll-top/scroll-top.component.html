@@ -1,0 +1,8 @@
+<button
+  *ngIf="showButton"
+  class="btn-scroll"
+  [title]="isAtBottom ? 'Ir al inicio' : 'Ir al final'"
+  (click)="scrollToggle()"
+>
+  <i class="fas" [ngClass]="isAtBottom ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+</button>
