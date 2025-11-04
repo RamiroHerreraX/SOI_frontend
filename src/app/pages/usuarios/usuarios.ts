@@ -4,27 +4,33 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { UsersService, User } from '../../services/users.service';
 import { HeaderAdmin } from "../../shared/header-admin/header-admin";
 import { FooterAdmin } from "../../shared/footer-admin/footer-admin";
+import { UserFilterPipe } from '../../pipes/user-filter.pipe';
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderAdmin, FooterAdmin],
+  imports: [CommonModule, FormsModule, HeaderAdmin, FooterAdmin, UserFilterPipe],
   templateUrl: './usuarios.html',
   styleUrls: ['./usuarios.css']
 })
 export class Usuarios implements OnInit {
 
   usuarios: User[] = [];
+  usuariosFiltrados: User[] = [];
+
   usuarioSeleccionado: User | null = null;
   modoEdicion = false;
+  mostrarFormulario = false;
 
-  filtroNombre: string = '';
-  filtroCorreo: string = '';
-  filtroTelefono: string = '';
-  filtroRol: string = '';
+  // 🔹 Filtros
+  filtroNombre = '';
+  filtroCorreo = '';
+  filtroTelefono = '';
+  filtroRol = '';
 
+  // 🔹 Usuario nuevo
   nuevoUsuario: User = {
     usuario: '',
     password: '',
@@ -39,22 +45,16 @@ export class Usuarios implements OnInit {
     this.cargarUsuarios();
   }
 
-  // 🔹 Filtro dinámico sin Pipe
-  get usuariosFiltrados(): User[] {
-    return this.usuarios.filter(u =>
-      u.usuario.toLowerCase().includes(this.filtroNombre.toLowerCase()) &&
-      u.correo.toLowerCase().includes(this.filtroCorreo.toLowerCase()) &&
-      u.telefono.toLowerCase().includes(this.filtroTelefono.toLowerCase()) &&
-      u.rol.toLowerCase().includes(this.filtroRol.toLowerCase())
-    );
-  }
-
   // ================================
   // 🔹 Cargar todos los usuarios
   // ================================
   cargarUsuarios(): void {
     this.usersService.getUsers().subscribe({
-      next: (data) => this.usuarios = data,
+      next: (data) => {
+        console.log('✅ Usuarios cargados:', data);
+        this.usuarios = data;
+        this.usuariosFiltrados = data;
+      },
       error: (err) => this.mostrarError(err, 'Error al cargar los usuarios.')
     });
   }
@@ -89,13 +89,14 @@ export class Usuarios implements OnInit {
   editarUsuario(usuario: User): void {
     this.usuarioSeleccionado = { ...usuario };
     this.modoEdicion = true;
+    this.mostrarFormulario = true;
   }
 
   // ================================
   // 🔹 Actualizar usuario
   // ================================
   actualizarUsuario(): void {
-    if (!this.usuarioSeleccionado || !this.usuarioSeleccionado.id_user) {
+    if (!this.usuarioSeleccionado?.id_user) {
       this.showToast('No se ha seleccionado un usuario válido.', 'danger');
       return;
     }
@@ -131,15 +132,22 @@ export class Usuarios implements OnInit {
   cancelarEdicion(): void {
     this.usuarioSeleccionado = null;
     this.modoEdicion = false;
+    this.mostrarFormulario = false;
   }
 
   // ================================
   // 🔹 Limpiar formulario
   // ================================
   limpiarFormulario(form: NgForm): void {
-    form.resetForm({
-      rol: 'secretaria'
-    });
+    form.resetForm({ rol: 'secretaria' });
+  }
+
+  // ================================
+  // 🔹 Validar teléfono
+  // ================================
+  validarTelefono(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.replace(/[^0-9]/g, '').slice(0, 10);
   }
 
   // ================================
@@ -154,14 +162,15 @@ export class Usuarios implements OnInit {
 
       if (body) body.innerHTML = mensaje;
 
+      // Reset y aplicar color
       toastEl.className = toastEl.className.replace(/\btext-bg-\S+/g, '');
       toastEl.classList.add(`text-bg-${tipo}`);
 
       if (title) {
         title.textContent =
-          tipo === 'success' ? 'Éxito' :
-          tipo === 'danger' ? 'Error' :
-          'Advertencia';
+          tipo === 'success' ? '✅ Éxito' :
+          tipo === 'danger' ? '❌ Error' :
+          '⚠️ Advertencia';
       }
 
       bsToast.show();
@@ -172,32 +181,30 @@ export class Usuarios implements OnInit {
   // 🔹 Manejo centralizado de errores
   // ================================
   mostrarError(err: any, mensajePorDefecto: string): void {
-    console.error('Detalles del error:', err);
+    console.error('❗ Detalles del error:', err);
 
     let mensaje = mensajePorDefecto;
 
     if (err.status === 0) {
-      mensaje = '❌ No se puede conectar con el servidor. Verifica tu conexión.';
+      mensaje = '🚫 No se puede conectar con el servidor. Verifica tu conexión.';
     } else if (err.status === 400) {
-      mensaje = err.error?.message || 'Solicitud incorrecta. Verifica los datos.';
+      mensaje = err.error?.message || 'Solicitud incorrecta. Verifica los datos enviados.';
     } else if (err.status === 404) {
-      mensaje = 'Recurso no encontrado.';
+      mensaje = '🔍 El recurso solicitado no existe.';
     } else if (err.status === 409) {
-      mensaje = err.error?.message || 'El correo o teléfono ya están registrados.';
+      mensaje = err.error?.message || '⚠️ El correo o teléfono ya están registrados.';
     } else if (err.status === 500) {
-      mensaje = err.error?.message || 'Error interno del servidor.';
+      // 🔸 Caso que mencionas específicamente:
+      // HttpErrorResponse 500 con message "El correo o teléfono ya están registrados."
+      if (err.error?.message?.includes('registrados')) {
+        mensaje = '⚠️ El correo o teléfono ya están registrados. Por favor verifica los datos.';
+      } else {
+        mensaje = err.error?.message || '💥 Error interno del servidor. Intenta nuevamente.';
+      }
+    } else {
+      mensaje = err.error?.message || mensajePorDefecto;
     }
 
     this.showToast(mensaje, 'danger');
   }
-
-  validarTelefono(event: Event): void {
-  const input = event.target as HTMLInputElement;
-  // Reemplaza cualquier carácter que no sea número
-  input.value = input.value.replace(/[^0-9]/g, '');
-  // Si el usuario pega más de 10 dígitos, los corta
-  if (input.value.length > 10) {
-    input.value = input.value.slice(0, 10);
-  }
-}
 }
