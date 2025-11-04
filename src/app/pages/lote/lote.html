@@ -29,7 +29,7 @@
                         
                         <p class="card-subtitle text-muted mb-2" style="font-size: 0.9rem;">
                             <i class="bi bi-geo-alt-fill me-1"></i>
-                            {{ lote.nombre_colonia_nueva || 'Colonia Desconocida' }} | {{ lote.nombre_ciudad }}, {{ lote.nombre_estado }}
+                            {{ lote.colonia || 'Colonia Desconocida' }} | {{ lote.nombre_ciudad }}, {{ lote.nombre_estado }}
                         </p>
 
                         <hr class="my-2">
@@ -161,12 +161,10 @@
                         <div class="col-md-3">
                             <label class="form-label">Código Postal <span class="text-danger">*</span></label>
                             <input
-                                type="text"
-                                class="form-control"
+                                type="text" class="form-control"
                                 maxlength="5"
                                 minlength="5"
                                 pattern="[0-9]{5}"
-                                type="number"
                                 name="codigoPostal"
                                 [(ngModel)]="codigoPostal"
                                 (input)="buscarPorCodigoPostal()"
@@ -175,6 +173,7 @@
                                 #cp="ngModel"
                                 [class.is-invalid]="(cp.invalid && (cp.touched || loteForm.submitted)) || (cp.valid && !cpEsValido)"
                             />
+
                             <div *ngIf="cp.invalid && (cp.touched || loteForm.submitted)" class="invalid-feedback">
                                 El CP es obligatorio y debe ser de 5 dígitos numéricos.
                             </div>

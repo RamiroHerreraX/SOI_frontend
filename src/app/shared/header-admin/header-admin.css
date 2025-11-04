@@ -1,4 +1,4 @@
-/* === NAVBAR === */
+/* === NAVBAR GENERAL === */
 .navbar {
   position: fixed;
   --navbar-height: 80px;
@@ -9,6 +9,7 @@
   background-color: #FFFFFF; /* fondo blanco */
   border-bottom: 2px solid #B8860B; /* borde dorado */
   box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  padding: 10px 0; /* Ajuste para dar espacio vertical */
 }
 
 .navbar-brand {
@@ -26,6 +27,7 @@
   object-fit: contain;
 }
 
+/* === ENLACES DE NAVEGACIÓN (USUARIO LOGEADO) === */
 .navbar-nav .nav-link {
   color: #1A1A1A !important; /* negro elegante */
   font-weight: 500;
@@ -43,6 +45,44 @@
   box-shadow: 0 2px 6px rgba(184, 134, 11, 0.3);
 }
 
+/* === BOTÓN "INICIAR SESIÓN" (USUARIO NO LOGEADO) === */
 
+/* Usamos un nombre de clase personalizado para el estilo plateado */
+.btn-auth-silver {
+  /* Fondo plateado/gris */
+  background-color: #A9A9A9; 
+  color: white !important;
+  border: 1px solid #808080; 
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
 
+.btn-auth-silver:hover {
+  /* Efecto dorado al pasar el ratón para resaltar la marca */
+  background-color: #B8860B; 
+  border-color: #DAA520;
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(184, 134, 11, 0.5);
+}
 
+/* Asegura que el texto en el dropdown sea legible */
+.dropdown-menu .dropdown-item-text {
+    padding: 0.5rem 1rem;
+    white-space: normal;
+}
+
+.dropdown-menu .text-primary {
+    color: #B8860B !important;
+}
+
+.dropdown-menu .text-success {
+    color: #4CAF50 !important;
+}
+
+/* Estilo para el botón de Cerrar Sesión en el Dropdown */
+.dropdown-menu .dropdown-item.text-danger:hover {
+    background-color: #f8d7da;
+}
