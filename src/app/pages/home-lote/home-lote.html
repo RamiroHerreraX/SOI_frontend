@@ -25,8 +25,8 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active" href="#inicio">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#lotes">Lotes</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/lotes">Lotes</a></li>
                     <li class="nav-item"><a class="nav-link" href="#nuevos">Nuevos</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
                 </ul>
@@ -73,51 +73,91 @@
                         <label class="btn btn-outline-dark fw-bold" for="all-lotes" (click)="filterType('')">Todos</label>
 
                         <input type="radio" class="btn-check" name="lote-type" id="plano-lotes" autocomplete="off">
-                        <label class="btn btn-outline-dark fw-bold" for="plano-lotes" (click)="filterType('plano')">Planos</label>
+                        <label class="btn btn-outline-dark fw-bold" for="plano-lotes" (click)="filterType('terreno')" [class.active]="activeFilter === 'terreno'">Terreno</label>
 
                         <input type="radio" class="btn-check" name="lote-type" id="premium-lotes" autocomplete="off">
-                        <label class="btn btn-outline-dark fw-bold" for="premium-lotes" (click)="filterType('premium')">Premium</label>
+                        <label class="btn btn-outline-dark fw-bold" for="premium-lotes" (click)="filterType('depto')" [class.active]="activeFilter === 'depto'">Departamento</label>
 
                         <input type="radio" class="btn-check" name="lote-type" id="irregular-lotes" autocomplete="off">
-                        <label class="btn btn-outline-dark fw-bold" for="irregular-lotes" (click)="filterType('irregular')">Irregulares</label>
+                        <label class="btn btn-outline-dark fw-bold" for="irregular-lotes" (click)="filterType('local')"[class.active]="activeFilter === 'local'">Local</label>
+
+                        <input type="radio" class="btn-check" name="lote-type" id="irregular-lotes" autocomplete="off">
+                        <label class="btn btn-outline-dark fw-bold" for="irregular-lotes" (click)="filterType('casa')"[class.active]="activeFilter === 'casa'">Casa</label>
                     </div>
+                    
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Lotes Disponibles -->
-    <section id="lotes" class="lotes-section py-5 bg-white">
-        <div class="container">
-            <h2 class="text-center mb-5 section-title text-dark">Lotes Disponibles</h2>
-            <div class="row g-4">
-                <div class="col-sm-6 col-md-6 col-lg-4" *ngFor="let lote of lotesFiltered">
-                    <div class="card lotes-card h-100 shadow-hover border-0 rounded-3 overflow-hidden">
-                        <div class="image-container">
-                            <img [src]="lote.foto" class="card-img-top lote-img" [alt]="lote.nombre">
-                            <span class="lote-badge badge text-dark" [class]="'bg-' + lote.tipo">{{lote.tipo | titlecase}}</span>
-                        </div>
-                        <div class="card-body d-flex flex-column p-4">
-                            <h5 class="card-title fw-bold text-dark mb-1">{{lote.nombre}}</h5>
-                            <p class="card-text flex-grow-1 text-secondary small">{{truncateText(lote.descripcion, 60)}}</p>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="precio-card text-gold fw-bolder">{{lote.precio}}</span>
-                                <span class="text-secondary"><i class="fas fa-ruler-combined me-1"></i> {{lote.dimensiones}}</span>
-                            </div>
-                            <div class="mt-auto d-grid gap-2 d-md-block">
-                                <button class="btn btn-gold btn-sm w-100 w-md-auto me-md-2 mb-2 mb-md-0" (click)="verDetalles(lote)">
-                                    <i class="fas fa-eye me-2"></i>Ver Detalles
-                                </button>
-                                <button class="btn btn-silver btn-sm w-100 w-md-auto" (click)="contactarWhatsApp(lote)">
-                                    <i class="fab fa-whatsapp me-2"></i>Contactar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <section id="lotes" class="lotes-section py-5 bg-white"> 
+  <div class="container">
+    <h2 class="text-center mb-5 section-title text-dark">Lotes Disponibles</h2>
+
+    <div class="row g-4">
+      <div class="col-sm-6 col-md-6 col-lg-4" *ngFor="let lote of lotesFiltered">
+        <div class="card lotes-card h-100 shadow-hover border-0 rounded-3 overflow-hidden">
+          
+          <!-- Imagen -->
+          <div class="image-container position-relative">
+            <img 
+              *ngIf="lote.imagen" 
+              [src]="'http://localhost:3000' + lote.imagen" 
+              alt="Imagen del lote" 
+              class="card-img-top">
+            <span 
+              class="lote-badge badge text-dark position-absolute top-0 start-0 m-2 px-3 py-2" 
+              [ngClass]="{'bg-warning': lote.tipo === 'terreno', 'bg-info': lote.tipo !== 'terreno'}">
+              {{ lote.tipo | titlecase }}
+            </span>
+          </div>
+
+          <!-- Contenido -->
+          <div class="card-body d-flex flex-column p-4">
+            <h5 class="card-title fw-bold text-dark mb-2">
+              Lote {{ lote.numlote }} - Manzana {{ lote.manzana }}
+            </h5>
+
+            <p class="card-text text-secondary small mb-2">
+                <i class="fas fa-map-marker-alt me-1"></i>
+                {{ lote.direccion }}, {{ lote.colonia_nombre }}, {{ lote.ciudad_nombre }}
+            </p>
+
+            <p class="card-text text-secondary small flex-grow-1">
+              {{ truncateText(lote.descripcion, 80) }}
+            </p>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="precio-card text-gold fw-bolder">
+                ${{ lote.precio | number:'1.0-0' }}
+              </span>
+              <span class="text-secondary">
+                <i class="fas fa-ruler-combined me-1"></i> {{ lote.superficie_m2 }} m²
+              </span>
             </div>
+
+            <div class="mt-auto d-grid gap-2 d-md-block">
+              <button 
+                class="btn btn-gold btn-sm w-100 w-md-auto me-md-2 mb-2 mb-md-0"
+                (click)="verDetalles(lote)">
+                <i class="fas fa-eye me-2"></i>Ver Detalles
+              </button>
+
+              <button 
+                class="btn btn-silver btn-sm w-100 w-md-auto"
+                (click)="contactarWhatsApp(lote)">
+                <i class="fab fa-whatsapp me-2"></i>Contactar
+              </button>
+            </div>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 
     <!-- Lotes Nuevos -->
     <section id="nuevos" class="nuevos-section py-5 bg-light-gray">
@@ -128,22 +168,22 @@
                     <div class="carousel-item" *ngFor="let lote of lotesNuevos; let i = index" [class.active]="i === 0">
                         <div class="row align-items-center bg-white p-4 p-md-5">
                             <div class="col-md-7">
-                                <img [src]="lote.foto" class="d-block w-100 rounded-3 carousel-img" [alt]="lote.nombre">
+                                <img *ngIf="lote.imagen" [src]="'http://localhost:3000' + lote.imagen" class="d-block w-100 rounded-3 carousel-img" [alt]="lote.nombre">
                             </div>
                             <div class="col-md-5 mt-4 mt-md-0">
                                 <div class="carousel-content text-dark">
-                                    <h3 class="text-gold fw-bolder mb-2">{{lote.nombre}}</h3>
+                                    <h3 class="text-gold fw-bolder mb-2">{{lote.numlote}}</h3>
                                     <p class="mb-3">{{lote.descripcion}}</p>
                                     <ul class="list-unstyled mb-4 small">
-                                        <li><i class="fas fa-map-marker-alt text-silver me-2"></i> {{lote.ubicacion}}</li>
-                                        <li><i class="fas fa-ruler-combined text-silver me-2"></i> {{lote.dimensiones}}</li>
+                                        <li><i class="fas fa-map-marker-alt text-silver me-2"></i> {{ lote.direccion }}, {{ lote.colonia_nombre }}, {{ lote.ciudad_nombre }}</li>
+                                        <li><i class="fas fa-ruler-combined text-silver me-2"></i> {{lote.superficie_m2}}</li>
                                     </ul>
                                     <h4 class="fw-bold mb-3">Precio: <span class="text-gold">{{lote.precio}}</span></h4>
                                     <div class="d-grid gap-2 d-sm-flex justify-content-start">
                                         <button class="btn btn-gold btn-sm" (click)="verDetalles(lote)">
                                             <i class="fas fa-eye me-2"></i>Ver Detalles
                                         </button>
-                                        <button class="btn btn-silver btn-sm" (click)="contactarWhatsApp(lote)">
+                                        <button   type="button" class="btn btn-silver btn-sm" (click)="contactarWhatsApp(lote)">
                                             <i class="fab fa-whatsapp me-2"></i>Contactar
                                         </button>
                                     </div>
@@ -165,55 +205,156 @@
     </section>
 
    <!-- Modal Detalles -->
-    <div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
-        <div class="modal-content modal-sm" (click)="preventClose($event)">
-            <div class="modal-header">
-                <h3 class="modal-title text-gold">{{loteSeleccionado?.nombre}}</h3>
-                <button class="modal-close" (click)="cerrarModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <img [src]="loteSeleccionado?.foto" [alt]="loteSeleccionado?.nombre" class="lote-imagen rounded mb-3">
-                <p class="text-light-silver">{{loteSeleccionado?.descripcion}}</p>
-                <div class="detalles-grid">
-                    <div class="detalle-item">
-                        <div class="detalle-titulo text-silver">Ubicación</div>
-                        <div class="detalle-valor fw-bold">{{loteSeleccionado?.ubicacion}}</div>
-                    </div>
-                    <div class="detalle-item">
-                        <div class="detalle-titulo text-silver">Dimensiones</div>
-                        <div class="detalle-valor fw-bold">{{loteSeleccionado?.dimensiones}}</div>
-                    </div>
-                    <div class="detalle-item">
-                        <div class="detalle-titulo text-silver">Servicios</div>
-                        <div class="detalle-valor fw-bold">{{loteSeleccionado?.servicios}}</div>
-                    </div>
-                    <div class="detalle-item">
-                        <div class="detalle-titulo text-silver">Tipo</div>
-                        <div class="detalle-valor fw-bold">{{loteSeleccionado?.tipo | titlecase}}</div>
-                    </div>
-                </div>
-                <div class="caracteristicas-section mt-3">
-                    <h4 class="text-gold mb-2">Características Destacadas</h4>
-                    <ul class="caracteristicas-lista text-light-silver">
-                        <li *ngFor="let caracteristica of loteSeleccionado?.caracteristicas"><i class="fas fa-check-circle me-2 text-gold"></i>{{caracteristica}}</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <h3 class="precio-destacado">{{loteSeleccionado?.precio}}</h3>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-silver btn-sm" (click)="contactarWhatsApp(loteSeleccionado)">
-                        <i class="fab fa-whatsapp me-2"></i>Contactar
-                    </button>
-                    <button class="btn btn-outline-light btn-sm" (click)="cerrarModal()">
-                        <i class="fas fa-times me-2"></i>Cerrar
-                    </button>
-                </div>
-            </div>
-        </div>
+ <div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
+  <div class="modal-content modal-lg" (click)="preventClose($event)">
+
+    <!-- HEADER -->
+    <div class="modal-header">
+      <h3 class="modal-title text-gold">
+        {{ loteSeleccionado?.tipo | titlecase }} - Lote #{{ loteSeleccionado?.numlote }}
+      </h3>
+      <button class="modal-close" (click)="cerrarModal()">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
+
+    <!-- BODY -->
+    <div class="modal-body">
+      <!-- Imagen -->
+      <img
+        [src]="loteSeleccionado?.imagen ? 'http://localhost:3000' + loteSeleccionado.imagen : 'assets/img/no-image.jpg'"
+        [alt]="loteSeleccionado?.tipo"
+        class="lote-imagen rounded mb-3 w-100"
+        style="max-height: 300px; object-fit: cover;"
+      />
+
+      <!-- Descripción -->
+      <p class="text-light-silver">
+        {{ loteSeleccionado?.descripcion || 'Sin descripción disponible.' }}
+      </p>
+
+      <!-- Información general -->
+      <div class="detalles-grid">
+        <div class="detalle-item">
+          <div class="detalle-titulo text-silver">Dirección</div>
+          <div class="detalle-valor fw-bold">
+            {{ loteSeleccionado?.direccion }},
+            {{ loteSeleccionado?.colonia_nombre }},
+            {{ loteSeleccionado?.ciudad_nombre }},
+            {{ loteSeleccionado?.estado_nombre }}
+          </div>
+        </div>
+
+        <div class="detalle-item">
+          <div class="detalle-titulo text-silver">Superficie</div>
+          <div class="detalle-valor fw-bold">
+            {{ loteSeleccionado?.superficie_m2 }} m²
+          </div>
+        </div>
+
+        <div class="detalle-item" *ngIf="loteSeleccionado?.num_habitaciones">
+          <div class="detalle-titulo text-silver">Habitaciones</div>
+          <div class="detalle-valor fw-bold">
+            {{ loteSeleccionado?.num_habitaciones }}
+          </div>
+        </div>
+
+        <div class="detalle-item" *ngIf="loteSeleccionado?.num_banos">
+          <div class="detalle-titulo text-silver">Baños</div>
+          <div class="detalle-valor fw-bold">
+            {{ loteSeleccionado?.num_banos }}
+          </div>
+        </div>
+
+        <div class="detalle-item" *ngIf="loteSeleccionado?.num_estacionamientos">
+          <div class="detalle-titulo text-silver">Estacionamientos</div>
+          <div class="detalle-valor fw-bold">
+            {{ loteSeleccionado?.num_estacionamientos }}
+          </div>
+        </div>
+
+        <div class="detalle-item" *ngIf="loteSeleccionado?.topografia">
+          <div class="detalle-titulo text-silver">Topografía</div>
+          <div class="detalle-valor fw-bold">
+            {{ loteSeleccionado?.topografia }}
+          </div>
+        </div>
+
+        <div class="detalle-item">
+          <div class="detalle-titulo text-silver">Estado</div>
+          <div class="detalle-valor fw-bold text-capitalize">
+            {{ loteSeleccionado?.estado_propiedad }}
+          </div>
+        </div>
+
+        <div class="detalle-item" *ngIf="loteSeleccionado?.fecha_disponibilidad">
+          <div class="detalle-titulo text-silver">Disponible desde</div>
+          <div class="detalle-valor fw-bold">
+            {{ loteSeleccionado?.fecha_disponibilidad | date:'longDate' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Servicios -->
+      <div class="caracteristicas-section mt-3" *ngIf="loteSeleccionado?.servicios">
+        <h4 class="text-gold mb-2">Servicios</h4>
+        <p class="text-light-silver">{{ loteSeleccionado?.servicios }}</p>
+      </div>
+
+      <!-- Documentación -->
+      <div class="caracteristicas-section mt-3" *ngIf="loteSeleccionado?.documentacion">
+        <h4 class="text-gold mb-2">Documentación</h4>
+        <p class="text-light-silver">{{ loteSeleccionado?.documentacion }}</p>
+      </div>
+
+      <!-- MAPA GOOGLE -->
+      <div class="mt-4">
+        <h4 class="text-gold mb-2">Ubicación en el mapa</h4>
+
+        <iframe
+          *ngIf="mapaURL"
+          class="rounded shadow"
+          width="100%"
+          height="300"
+          frameborder="0"
+          style="border:0"
+          [src]="mapaURL"
+          allowfullscreen
+        ></iframe>
+
+        <div class="text-center mt-2">
+          <a
+            (click)="abrirEnGoogleMaps(loteSeleccionado)"
+            target="_blank"
+            rel="noopener"
+            class="text-gold fw-bold"
+          >
+            <i class="fas fa-map-marker-alt me-2"></i>
+            Ver en Google Maps
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="modal-footer">
+      <h3 class="precio-destacado text-gold mb-0">
+        {{ loteSeleccionado?.precio | currency:'MXN':'symbol':'1.0-0' }}
+      </h3>
+      <div class="d-flex gap-2">
+        <button class="btn btn-silver btn-sm" (click)="contactarWhatsApp(loteSeleccionado)">
+          <i class="fab fa-whatsapp me-2"></i> Contactar
+        </button>
+        <button class="btn btn-outline-light btn-sm" (click)="cerrarModal()">
+          <i class="fas fa-times me-2"></i> Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
     <!-- Scroll Top Button -->
     <button class="btn-scroll-top" id="btnScrollTop" title="Ir al inicio">

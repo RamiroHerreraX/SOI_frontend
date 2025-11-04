@@ -1,6 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoteService } from '../../services/lote';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home-lote',
@@ -21,11 +22,15 @@ export class HomeLoteComponent implements OnInit {
   loteSeleccionado: any = null;
   mostrarModal = false;
   activeFilter = '';
+  mapaURL: SafeResourceUrl | null = null;
 
-  constructor(private loteService: LoteService) {}
+
+  constructor(private loteService: LoteService, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     this.cargarLotes();
+    this.cargarLotesNuevo();
+
   }
 
   cargarLotes() {
@@ -47,10 +52,11 @@ export class HomeLoteComponent implements OnInit {
   }
 
   verDetalles(lote: any) {
-    this.loteSeleccionado = lote;
-    this.mostrarModal = true;
-    document.body.style.overflow = 'hidden';
-  }
+  this.loteSeleccionado = lote;
+  this.mostrarModal = true;
+  document.body.style.overflow = 'hidden'; // evita que se desplace el fondo
+  this.generarMapaURL(lote);
+}
 
   cerrarModal() {
     this.mostrarModal = false;
@@ -67,6 +73,44 @@ export class HomeLoteComponent implements OnInit {
   preventClose(event: Event) {
     event.stopPropagation();
   }
+
+  
+  generarMapaURL(lote: any): void {
+    if (!lote) return;
+    const ubicacion = `${lote.direccion}, ${lote.colonia_nombre}, ${lote.ciudad_nombre}, ${lote.estado_nombre}`;
+    const query = encodeURIComponent(ubicacion);
+    const url = `https://www.google.com/maps?q=${query}&output=embed`;
+    this.mapaURL = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
+  abrirEnGoogleMaps(lote: any) {
+  const ubicacion = `${lote.direccion}, ${lote.colonia_nombre}, ${lote.ciudad_nombre}, ${lote.estado_nombre}`;
+  const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ubicacion)}`;
+  window.open(url, '_blank');
+}
+
+cargarLotesNuevo() {
+  this.loteService.getAll().subscribe({
+    next: (data) => {
+      // Ordena los lotes por fecha (los más nuevos primero)
+      this.lotes = data.sort((a, b) => {
+        const fechaA = new Date(a.fecha_registro || a.createdAt || 0).getTime();
+        const fechaB = new Date(b.fecha_registro || b.createdAt || 0).getTime();
+        return fechaB - fechaA; // descendente
+      });
+
+      // Guarda también la lista filtrada general
+      this.lotesFiltered = [...this.lotes];
+
+      // Toma los 3 más nuevos, por ejemplo
+      this.lotesNuevos = this.lotes.slice(0, 3);
+    },
+    error: (err) => {
+      console.error('Error al cargar lotes:', err);
+    }
+  });
+}
+
 
   truncateText(text: string, length: number): string {
     if (!text) return '';
