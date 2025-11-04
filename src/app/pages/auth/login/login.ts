@@ -5,14 +5,12 @@ import { RouterModule, Router } from '@angular/router'; // Para la navegación y
 
 // Asegúrate de que la ruta sea correcta a tu servicio
 import { Auth } from '../../../services/auth';
-import { HeaderAdmin } from "../../../shared/header-admin/header-admin";
-import { FooterAdmin } from "../../../shared/footer-admin/footer-admin";
 
 @Component({
   selector: 'app-login',
   standalone: true,
   // Importaciones necesarias para formularios y routing
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, HeaderAdmin, FooterAdmin],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule,],
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
 })
