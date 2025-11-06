@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
-// Define una interfaz para los datos del usuario (ajusta los campos según tu API)
-interface UserData {
+export interface UserData {
   nombre: string;
   nombreCompleto: string;
   rol: string;
@@ -15,15 +15,11 @@ interface UserData {
   providedIn: 'root'
 })
 export class Auth {
-  // BehaviorSubject para almacenar y emitir el estado de la sesión
   private currentUserSubject: BehaviorSubject<UserData | null>;
   public currentUser$: Observable<UserData | null>;
-  
-  // Puedes usar una URL base si no la tienes ya definida
-  // private apiUrl = 'URL_DE_TU_API/auth'; 
+  private apiUrl = 'http://localhost:3000/api/auth'; // Ajusta al puerto de tu backend
 
   constructor(private http: HttpClient, private router: Router) {
-    // Intenta cargar el usuario desde el almacenamiento local al iniciar
     const user = localStorage.getItem('currentUser');
     this.currentUserSubject = new BehaviorSubject<UserData | null>(user ? JSON.parse(user) : null);
     this.currentUser$ = this.currentUserSubject.asObservable();
@@ -33,42 +29,36 @@ export class Auth {
     return this.currentUserSubject.value;
   }
 
-  // --- MÉTODOS DE AUTENTICACIÓN ---
-
-  login(credentials: any): Observable<any> {
-    // Ejemplo de llamada POST (Asume que devuelve un token y los datos del usuario)
-    // return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
-    //   tap(response => {
-            // Suponemos que la respuesta es { token: '...', user: UserData }
-            const fakeUser: UserData = { 
-                nombre: 'Juan', 
-                nombreCompleto: 'Juan Pérez', 
-                rol: 'Administrador', 
-                correo: credentials.email 
-            };
-            localStorage.setItem('currentUser', JSON.stringify(fakeUser));
-            this.currentUserSubject.next(fakeUser);
-    //         return response;
-    //   })
-    // );
-    
-   
-    localStorage.setItem('currentUser', JSON.stringify(fakeUser));
-    this.currentUserSubject.next(fakeUser);
-    // Retorna un observable simulado (debes reemplazar esto con la llamada HTTP real)
-    return new Observable(observer => { observer.next({ success: true }); observer.complete(); });
+  // ---------------- LOGIN ----------------
+  login(credentials: { correo: string; password: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, credentials);
   }
 
+  // ---------------- VERIFY OTP ----------------
+ verifyOtp(payload: { correo: string; otp: string }): Observable<any> {
+  return this.http.post<{ token: string; user: UserData }>(`${this.apiUrl}/verify-otp`, payload).pipe(
+    tap((res) => {
+      if (res.token) {
+        localStorage.setItem('token', res.token);
+      }
+      if (res.user) {
+        localStorage.setItem('currentUser', JSON.stringify(res.user));
+        this.currentUserSubject.next(res.user);
+      }
+    })
+  );
+}
+
+
+  // ---------------- CERRAR SESIÓN ----------------
   cerrarSesion(): void {
-    // 1. Eliminar el token o usuario del almacenamiento local
     localStorage.removeItem('currentUser');
-    // 2. Notificar a los suscriptores que ya no hay usuario
+    localStorage.removeItem('token');
     this.currentUserSubject.next(null);
-    // 3. Redirigir al login
     this.router.navigate(['/auth/login']);
   }
 
   estaLogeado(): boolean {
-    return this.currentUserSubject.value !== null;
+    return !!this.currentUserSubject.value;
   }
 }

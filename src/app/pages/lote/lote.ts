@@ -8,6 +8,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { UsersService } from '../../services/users.service';
 import { HeaderAdmin } from "../../shared/header-admin/header-admin";
 import { FooterAdmin } from "../../shared/footer-admin/footer-admin";
+import Swal, { SweetAlertResult } from 'sweetalert2';
+
 
 declare var bootstrap: any;
 
@@ -50,13 +52,34 @@ export class Lote implements OnInit {
   selectedCiudad: any = null;
   coloniaSeleccionada: any;
   encargados: any[] = [];
-  selectedFile: File | null = null;
+  //imagenesSeleccionadas: File[] = [];
   previewImagen: string | ArrayBuffer | null = null;
+
   
-  // 💡 NUEVA PROPIEDAD PARA CONTROLAR EL ERROR DE ARCHIVO EN EL HTML
-  fileError: boolean = false; 
+
+  //  NUEVAS PROPIEDADES PARA DOCUMENTACIÓN
+  selectedDocumentacion: File | null = null;
+  documentacionError: boolean = false;
+  
+  //  NUEVA PROPIEDAD PARA CONTROLAR EL ERROR DE ARCHIVO EN EL HTML
+  fileError = false;
+  previewImagenes: string[] = [];
+  imagenesSeleccionadas: File[] = [];
 
   constructor(private loteService: LoteService, private ubicacionService: UbicacionService, private userService: UsersService) { }
+
+  serviciosDisponibles = [
+    'Luz',
+    'Agua',
+    'Drenaje',
+    'Internet',
+    'Teléfono',
+    'Pavimentación',
+    'Alumbrado público',
+    'Recolección de basura'
+  ];
+
+    serviciosSeleccionados: string[] = [];
 
   ngOnInit(): void {
     this.loadLotes();
@@ -73,6 +96,8 @@ export class Lote implements OnInit {
     if (modalElement) {
         modalElement.addEventListener('hidden.bs.modal', this.onModalClose.bind(this));
     }
+
+    
   }
 
   // === CRUD Lotes ===
@@ -98,10 +123,15 @@ export class Lote implements OnInit {
     this.isEdit = false;
     this.currentLote = {};
     this.previewImagen = null;  
-    this.selectedFile = null; 
+    this. imagenesSeleccionadas = []; 
     this.fileError = false; // 💡 Resetear error de archivo al abrir
     this.selectedEstado = null; // Reset para la validación
     this.selectedCiudad = null; // Reset para la validación
+    this.imagenesSeleccionadas = [];
+    this.previewImagenes = [];
+    this.fileError = false;
+    
+    
 
     // Muestra el modal y activa la bandera
     this.isModalOpen = true; 
@@ -140,9 +170,29 @@ editLote(lote: any): void {
   this.ciudades = [];
   this.colonias = [];
 
-  this.previewImagen = lote.imagen
+  
+
+      if (Array.isArray(lote.imagenes) && lote.imagenes.length > 0) {
+    this.previewImagenes = lote.imagenes.map((imgPath: string) => 
+      `http://localhost:3000${imgPath}`
+    );
+  } else if (lote.imagen) {
+    // Compatibilidad con datos antiguos (solo una imagen)
+    this.previewImagenes = [`http://localhost:3000${lote.imagen}`];
+    this.previewImagen = lote.imagen
     ? `http://localhost:3000${lote.imagen}`
     : null;
+  }
+
+  // Reset selección de nuevas imágenes
+  this.imagenesSeleccionadas = [];
+
+  // 📄 --- CARGAR DOCUMENTACIÓN EXISTENTE ---
+ // this.previewDocumentacion = lote.documentacion
+ //   ? `http://localhost:3000${lote.documentacion}`
+  //  : null;
+  //this.selectedDocumentacion = null; // reset al editar
+
   // Cargar ciudades si hay estado seleccionado
   if (this.selectedEstado) {
     this.ubicacionService.getCiudades(this.selectedEstado).subscribe({
@@ -180,11 +230,10 @@ editLote(lote: any): void {
   modal.show();
 }
 
-getImagenUrl(lote: any): string {
-    if (!lote.imagen) return 'assets/default-lote.jpg';
-    // Es importante que esta ruta refleje tu configuración de backend/servidor de archivos.
-    return `http://localhost:3000${lote.imagen}`; 
-  }
+getImagenUrl(imagen: string): string {
+  if (!imagen) return 'assets/default-lote.jpg';
+  return `http://localhost:3000${imagen}`;
+}
 
 
  onColoniaChange(event: any) {
@@ -204,37 +253,106 @@ getImagenUrl(lote: any): string {
   }
 }
 
-// 💡 FUNCIÓN ACTUALIZADA CON VALIDACIÓN DE TIPO DE ARCHIVO
-onFileSelected(event: any) {
-    const file: File = event.target.files[0];
-    
-    // 1. Resetear el estado de error y la selección
-    this.fileError = false; 
-    this.selectedFile = null;
-    this.previewImagen = null;
 
-    if (file) {
-      // 2. Validación: Chequear si el tipo de archivo es una imagen
+
+ // Maneja selección y deselección
+onServicioChange(servicio: string, event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.checked) {
+    if (!this.serviciosSeleccionados.includes(servicio)) {
+      this.serviciosSeleccionados.push(servicio);
+    }
+  } else {
+    this.serviciosSeleccionados = this.serviciosSeleccionados.filter(s => s !== servicio);
+  }
+}
+
+// Llamar a esto al guardar el lote
+guardarServiciosEnLote(): void {
+  this.currentLote.servicios = [...this.serviciosSeleccionados];
+  console.log('Servicios guardados:', this.currentLote.servicios);
+}
+
+// Llamar a esto cuando abras el modal para agregar un nuevo lote
+resetServicios(): void {
+  this.serviciosSeleccionados = [];
+}
+
+
+onFileSelected(event: any): void {
+  const files: FileList = event.target.files;
+
+  if (files && files.length > 0) {
+    Array.from(files).forEach((file) => {
+      // Validar que sea imagen
       if (!file.type.startsWith('image/')) {
         console.error("Tipo de archivo no válido. Solo se permiten imágenes.");
-        this.fileError = true; // Establecer error a true para mostrar el mensaje en el HTML
-        // Opcional: Limpiar el campo de archivo en el DOM si es posible, aunque es mejor dejar que el usuario reintente.
-        // event.target.value = ''; 
+        this.fileError = true;
         return;
       }
 
-      // Si la validación pasa:
-      this.selectedFile = file;
-      
-      // Mostrar preview de la imagen
+      this.fileError = false;
+
+      // Evitar duplicados (por nombre y tamaño)
+      const yaExiste = this.imagenesSeleccionadas.some(
+        (f) => f.name === file.name && f.size === file.size
+      );
+      if (yaExiste) return;
+
+      // Agregar archivo
+      this.imagenesSeleccionadas.push(file);
+
+      // Crear preview
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.previewImagen = reader.result as string;
+        this.previewImagenes.push(reader.result as string);
       };
       reader.readAsDataURL(file);
-    }
+    });
+
+    // limpiar el input file (para que permita volver a seleccionar el mismo archivo)
+    event.target.value = '';
+  }
 }
 
+addMoreImages(): void {
+  const fileInput = document.querySelector('input[type="file"][style="display: none;"]') as HTMLInputElement;
+  if (fileInput) fileInput.click();
+}
+
+// 🗑️ Quitar una imagen por índice
+eliminarImagen(index: number) {
+  this.imagenesSeleccionadas.splice(index, 1);
+  this.previewImagenes.splice(index, 1);
+}
+
+// 🔄 Limpiar imágenes (por ejemplo al cerrar el modal)
+resetearImagenes() {
+  this.imagenesSeleccionadas = [];
+  this.previewImagenes = [];
+  this.fileError = false;
+}
+
+onDocumentacionSelected(event: any) {
+    const file: File = event.target.files[0];
+    
+    // 1. Resetear el estado de error y la selección
+    this.documentacionError = false; 
+    this.selectedDocumentacion = null;
+
+    if (file) {
+      // 2. Validación: Chequear si el tipo de archivo es PDF
+      if (file.type !== 'application/pdf') {
+        console.error("Tipo de archivo no válido. Solo se permiten archivos PDF.");
+        this.documentacionError = true; // Establecer error a true
+        return;
+      }
+
+      // Si la validación pasa:
+      this.selectedDocumentacion = file;
+      this.showToast(`Archivo PDF "${file.name}" seleccionado.`, 'success');
+    }
+}
 
   saveLote(): void {
     // Nota: La validación principal ahora se hace con [disabled]="loteForm.invalid" en el HTML
@@ -246,6 +364,29 @@ onFileSelected(event: any) {
           this.showToast('No se puede guardar. Corrija el error del archivo de imagen.', 'danger');
           return;
         }
+        // 💡 NUEVA VALIDACIÓN PARA DOCUMENTACIÓN
+        if (this.documentacionError) {
+          this.showToast('No se puede guardar. Corrija el error del archivo de documentación (debe ser PDF).', 'danger');
+          return;
+        }
+
+         // asegurarse que valores están en rango
+          if (this.currentLote.precio < 1 || this.currentLote.precio > 100000000) {
+            this.showToast('El precio debe estar entre 1 y 100,000,000.');
+            return;
+          }
+          const camposEnteros = ['num_habitaciones','num_banos','num_estacionamientos'];
+          for (const c of camposEnteros) {
+            const v = Number(this.currentLote[c] ?? 0);
+            if (v < 0 || v > 99) {
+              this.showToast('Habitaciones/Baños/Estac. deben estar entre 0 y 99.');
+              return;
+            }
+          }
+          if (!/^\d{5}$/.test(this.codigoPostal ?? '')) {
+            this.showToast('El código postal debe tener 5 dígitos.');
+            return;
+          }
         // ************************************************************
         
         // Validación de seguridad/lógica (Mantenemos tu lógica de negocio)
@@ -317,9 +458,17 @@ onFileSelected(event: any) {
         formData.append('nombre_colonia_nueva', coloniaNombre || ''); 
         formData.append('codigo_postal', this.codigoPostal || '');
 
-        if (this.selectedFile) {
-            formData.append('imagen', this.selectedFile);
+        //if (this. imagenesSeleccionadas) {
+        //    formData.append('imagen', this. imagenesSeleccionadas);
+        //}
+        for (const file of this. imagenesSeleccionadas) {
+          formData.append('imagenes', file); // 👈 mismo nombre que en el backend
         }
+
+        // AGREGAR EL ARCHIVO PDF AL FORMDATA
+        if (this.selectedDocumentacion) {
+            formData.append('documentacion', this.selectedDocumentacion);
+        }
 
         // ----------------------------------------------------
         // PASO 3: LLAMADA AL SERVICIO (Sin cambios)
@@ -364,24 +513,46 @@ resetForm(): void {
   this.selectedEstado = null; // Cambiado a null
   this.selectedCiudad = null; // Cambiado a null
   this.previewImagen = null;
-  this.selectedFile = null;   
+  this. imagenesSeleccionadas = [];  
+  this.resetearImagenes();
   this.fileError = false; // 💡 Resetear error de archivo
+
+  this.selectedDocumentacion = null;
+  this.documentacionError = false;
+
+// Cerrar modal después de un guardado exitoso
+  const modalElement = document.getElementById('loteModal');
+  if (modalElement) {
+      const modal = bootstrap.Modal.getInstance(modalElement);
+      if (modal) modal.hide();
+  }
+  this.onModalClose();
 }
 
 
-  deleteLote(id: number): void {
-    if (confirm('¿Seguro que quieres eliminar este lote?')) {
-      this.loteService.delete(id)
-        .subscribe({
-          next: () => {
-                this.loadLotes();
-                this.showToast('Lote eliminado correctamente.', 'success'); // Notificación de éxito
-            },
-          error: err => this.showToast('Error al eliminar lote: ' + err.error?.error, 'danger') // Notificación de error
-        });
+deleteLote(id: number): void {
+ Swal.fire({
+    title: '¿Seguro que quieres eliminar este lote?',
+    text: 'Esta acción no se puede deshacer.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  }).then((result: SweetAlertResult) => {
+    if (result.isConfirmed) {
+      this.loteService.delete(id).subscribe({
+        next: () => {
+          this.loadLotes();
+          this.showToast('Lote eliminado correctamente.', 'success');
+        },
+        error: err => this.showToast('Error al eliminar lote: ' + err.error?.error, 'danger')
+      });
     }
-  }
+  });
 
+}
   //Ubicación
   onEstadoChange(event: any): void {
     // El evento viene del <select> y su valor es el id_estado
@@ -536,4 +707,72 @@ scrollToggle(): void {
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   }
 }
+
+
+
+// Recorta y fuerza el valor al rango, además de limitar los dígitos.
+clampValue(obj: any, prop: string, min: number, max: number, event: Event, maxDigits?: number) {
+  const input = event.target as HTMLInputElement;
+  let raw = input.value?.toString() ?? '';
+
+  // Eliminar todo lo que no sea dígito o signo negativo (si aplica)
+  raw = raw.replace(/[^\d-]/g, '');
+
+  // Limitar número de dígitos si se indicó
+  if (maxDigits && raw.length > maxDigits) {
+    raw = raw.slice(0, maxDigits);
+  }
+
+  let n = parseInt(raw, 10);
+  if (isNaN(n)) {
+    obj[prop] = raw === '' ? null : obj[prop];
+    input.value = raw;
+    return;
+  }
+
+  if (n < min) n = min;
+  if (n > max) n = max;
+
+  obj[prop] = n;
+  input.value = String(n);
+}
+
+
+// Maneja pegar en campos numéricos: evita valores fuera de rango o no numéricos
+onPasteNumber(event: ClipboardEvent, min: number, max: number) {
+  const pasted = (event.clipboardData?.getData('text') ?? '').replace(/[^\d-]/g, '');
+  const n = parseInt(pasted, 10);
+  if (isNaN(n) || n < min || n > max) {
+    event.preventDefault(); // evita pegar si no es válido
+  }
+}
+
+// Código postal: dejar sólo dígitos, máximo 5, sincroniza modelo y input
+onCpInput(event: Event) {
+  const input = event.target as HTMLInputElement;
+  let raw = (input.value ?? '').replace(/\D/g, '').slice(0, 5);
+  input.value = raw;
+  this.codigoPostal = raw;
+  // actualizar validación de CP que ya tienes (cpEsValido) si usas búsqueda
+  if (raw.length === 5) {
+    this.buscarPorCodigoPostal(); // tu función ya existente
+  } else {
+    this.cpEsValido = false; // o la lógica que uses
+  }
+}
+
+// Pegar en CP: limpiar y limitar a 5 dígitos
+onCpPaste(event: ClipboardEvent) {
+  const pasted = (event.clipboardData?.getData('text') ?? '').replace(/\D/g, '').slice(0,5);
+  if (!pasted) { event.preventDefault(); return; }
+  // reemplaza el portapapeles en el campo (mejor manejar en next tick)
+  const input = event.target as HTMLInputElement;
+  setTimeout(() => {
+    input.value = pasted;
+    this.codigoPostal = pasted;
+    if (pasted.length === 5) this.buscarPorCodigoPostal();
+  }, 0);
+}
+
+
 }

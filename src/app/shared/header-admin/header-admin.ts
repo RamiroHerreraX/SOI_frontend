@@ -20,20 +20,19 @@ interface UserData {
   styleUrls: ['./header-admin.css']
 })
 export class HeaderAdmin implements OnInit, OnDestroy {
-  // Inicializa a null
   usuario: UserData | null = null; 
-  // Propiedad para controlar la suscripción
   private userSubscription!: Subscription;
 
-  constructor(
-    private authService: Auth, 
-    private router: Router
-  ) {}
+  menuOpen = false;       // Controla collapse del menú en mobile
+  dropdownOpen = false;   // Controla dropdown de usuario
+
+  constructor(private authService: Auth, private router: Router) {}
 
   ngOnInit(): void {
-    // Nos suscribimos al observable del usuario para actualizar el componente
     this.userSubscription = this.authService.currentUser$.subscribe(user => {
       this.usuario = user;
+      // Si el usuario no está logeado, cerramos el dropdown
+      if (!user) this.dropdownOpen = false;
     });
   }
 
@@ -42,9 +41,6 @@ export class HeaderAdmin implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Es crucial desuscribirse para evitar fugas de memoria
-    if (this.userSubscription) {
-      this.userSubscription.unsubscribe();
-    }
+    if (this.userSubscription) this.userSubscription.unsubscribe();
   }
 }

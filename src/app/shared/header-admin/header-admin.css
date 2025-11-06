@@ -86,3 +86,8 @@
 .dropdown-menu .dropdown-item.text-danger:hover {
     background-color: #f8d7da;
 }
+.dropdown-menu {
+  min-width: 200px; /* ancho mínimo */
+  right: 0;          /* alineado al borde derecho del botón */
+  left: auto;        /* importante para sobrescribir */
+}
