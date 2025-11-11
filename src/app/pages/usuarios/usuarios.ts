@@ -169,8 +169,8 @@ export class Usuarios implements OnInit {
 
       if (title) {
         title.textContent =
-          tipo === 'success' ? '✅ Éxito' :
-          tipo === 'danger' ? '❌ Error' :
+          tipo === 'success' ? 'Éxito' :
+          tipo === 'danger' ? 'Error' :
           '⚠️ Advertencia';
       }
 
@@ -182,25 +182,25 @@ export class Usuarios implements OnInit {
   // 🔹 Manejo centralizado de errores
   // ================================
   mostrarError(err: any, mensajePorDefecto: string): void {
-    console.error('❗ Detalles del error:', err);
+    console.error(' Detalles del error:', err);
 
     let mensaje = mensajePorDefecto;
 
     if (err.status === 0) {
-      mensaje = '🚫 No se puede conectar con el servidor. Verifica tu conexión.';
+      mensaje = 'No se puede conectar con el servidor. Verifica tu conexión.';
     } else if (err.status === 400) {
       mensaje = err.error?.message || 'Solicitud incorrecta. Verifica los datos enviados.';
     } else if (err.status === 404) {
-      mensaje = '🔍 El recurso solicitado no existe.';
+      mensaje = 'El recurso solicitado no existe.';
     } else if (err.status === 409) {
-      mensaje = err.error?.message || '⚠️ El correo o teléfono ya están registrados.';
+      mensaje = err.error?.message || 'El correo o teléfono ya están registrados.';
     } else if (err.status === 500) {
       // 🔸 Caso que mencionas específicamente:
       // HttpErrorResponse 500 con message "El correo o teléfono ya están registrados."
       if (err.error?.message?.includes('registrados')) {
-        mensaje = '⚠️ El correo o teléfono ya están registrados. Por favor verifica los datos.';
+        mensaje = 'El correo o teléfono ya están registrados. Por favor verifica los datos.';
       } else {
-        mensaje = err.error?.message || '💥 Error interno del servidor. Intenta nuevamente.';
+        mensaje = err.error?.message || 'Error interno del servidor. Intenta nuevamente.';
       }
     } else {
       mensaje = err.error?.message || mensajePorDefecto;

@@ -248,15 +248,17 @@
 </div>
 
 <!-- 🔹 Toast Notifications -->
-<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
-  <div id="liveToast" class="toast text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex align-items-center">
-      <div class="toast-body">
-        Mensaje aquí
-      </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+
+<div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 2000;">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div class="toast-header">
+            <strong class="me-auto toast-title">Notificación</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            El mensaje del toast aparecerá aquí.
+        </div>
     </div>
-  </div>
 </div>
 <app-scroll-top></app-scroll-top>
 <app-footer-admin></app-footer-admin>
