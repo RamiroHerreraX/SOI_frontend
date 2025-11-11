@@ -1,40 +1,39 @@
-
 <div class="login-page">
   <div class="card">
-    <h2>Iniciar Sesión</h2>
+    <h2 *ngIf="step === 1">Iniciar Sesión</h2>
+    <h2 *ngIf="step === 2">Verificación OTP</h2>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="loginForm" (ngSubmit)="enviarLogin()">
 
-      <div *ngIf="errorMessage" class="alert error">
-        {{ errorMessage }}
-      </div>
+      <!-- Step 1: email y password -->
+      <div *ngIf="step === 1">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" type="email" formControlName="email">
+          <div *ngIf="email?.invalid && (email?.dirty || email?.touched)" class="error-message">
+            <span *ngIf="email?.errors?.['required']">El email es obligatorio.</span>
+            <span *ngIf="email?.errors?.['email']">Debe ingresar un email válido.</span>
+          </div>
+        </div>
 
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input id="email" type="email" formControlName="email">
-        
-        <div *ngIf="email?.invalid && (email?.dirty || email?.touched)" class="error-message">
-          <span *ngIf="email?.errors?.['required']">El email es obligatorio.</span>
-          <span *ngIf="email?.errors?.['email']">Debe ingresar un email válido.</span>
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input id="password" type="password" formControlName="password">
+          <div *ngIf="password?.invalid && (password?.dirty || password?.touched)" class="error-message">
+            <span *ngIf="password?.errors?.['required']">La contraseña es obligatoria.</span>
+            <span *ngIf="password?.errors?.['minlength']">Debe tener al menos 6 caracteres.</span>
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="password">Contraseña</label>
-        <input id="password" type="password" formControlName="password">
-        
-        <div *ngIf="password?.invalid && (password?.dirty || password?.touched)" class="error-message">
-          <span *ngIf="password?.errors?.['required']">La contraseña es obligatoria.</span>
-          <span *ngIf="password?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres.</span>
-        </div>
+      <!-- Step 2: OTP -->
+      <div *ngIf="step === 2" class="form-group">
+        <label for="otp">Código OTP</label>
+        <input id="otp" type="text" formControlName="otp">
       </div>
 
-      <button 
-        type="submit" 
-        [disabled]="loginForm.invalid" 
-        class="btn-primary"
-      >
-        Entrar
+      <button type="submit" class="btn-primary">
+        {{ step === 1 ? 'Entrar' : 'Verificar OTP' }}
       </button>
     </form>
   </div>
