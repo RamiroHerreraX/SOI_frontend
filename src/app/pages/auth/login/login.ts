@@ -18,6 +18,7 @@ export class Login implements OnInit {
   // Inicialización directa de la propiedad step
   step: number = 1; // 1 = login, 2 = OTP
   loginForm!: FormGroup;
+  isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -49,6 +50,27 @@ export class Login implements OnInit {
     return this.loginForm.get('otp');
   }
 
+  /**
+   * Método para restringir la entrada del input a solo números.
+   * @param event El evento de pulsación de tecla.
+   */
+  validateNumericInput(event: KeyboardEvent): boolean {
+    // Permite teclas de control (flechas, borrar, etc.)
+    const isControlKey = ['ArrowLeft', 'ArrowRight', 'Backspace', 'Tab'].includes(event.key);
+    
+    // Verifica si la tecla presionada es un dígito (0-9)
+    const isDigit = /\d/.test(event.key);
+
+    // Si es una tecla de control o un dígito, se permite la entrada.
+    if (isControlKey || isDigit) {
+      return true;
+    }
+
+    // Si no es ninguna de las anteriores, cancela la entrada de la tecla.
+    event.preventDefault();
+    return false;
+  }
+
   // ---------- Método principal (llamado por el (ngSubmit)) ----------
   enviarLogin(): void {
     if (this.step === 1) {
@@ -68,6 +90,8 @@ export class Login implements OnInit {
       return;
     }
 
+    this.isLoading = true;
+
     const credentials = {
       correo: this.email?.value,
       password: this.password?.value
@@ -81,9 +105,11 @@ export class Login implements OnInit {
         // Agregamos el validador 'required' al OTP para el paso 2
         this.otp?.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(6)]);
         this.otp?.updateValueAndValidity();
+        this.isLoading = false;
       },
       error: (err: any) => {
         Swal.fire('Error', err.error?.msg || 'Credenciales incorrectas', 'error');
+        this.isLoading = false;
       }
     });
   }
@@ -97,6 +123,8 @@ export class Login implements OnInit {
         // En este punto, el mensaje de error se mostrará automáticamente en el HTML
         return;
     }
+
+    
 
     const payload = {
       correo: this.email?.value, // Usamos el correo del paso 1

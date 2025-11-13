@@ -342,3 +342,12 @@ footer .social-icon {
   float: right;
   margin-top: 0.5rem;
 }
+
+
+h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #B8860B;
+  font-weight: 700;
+  font-size: 25px;
+}

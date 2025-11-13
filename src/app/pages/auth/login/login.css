@@ -106,7 +106,6 @@ input[type="text"]#otp {
 
 /* Para un estilo Azul Oscuro (Cobalto) de alto contraste */
 .btn-secondary {
-    /* Mantiene las propiedades de layout */
     width: 100%; 
     padding: 12px;
     border-radius: 6px;
@@ -114,18 +113,16 @@ input[type="text"]#otp {
     font-size: 17px;
     font-weight: 700;
     transition: background-color 0.3s, transform 0.2s;
-    
-    /* Colores clave: Azul */
-    background-color: #004c8c; /* Fondo Azul Oscuro */
-    color: white; /* Texto Blanco para máxima legibilidad */
-    border: 1px solid #003366; 
+    background-color: #92bfeb; 
+    color: white; 
+    border: 1px solid #5d9cdb; 
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background-color: #005aa3; /* Azul ligeramente más claro al pasar el ratón */
+    background-color: #519ddc; 
     color: white;
     transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(0, 76, 140, 0.4);
+    box-shadow: 0 3px 8px rgba(130, 199, 255, 0.4);
 }
 
 .btn-secondary:disabled {
