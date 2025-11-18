@@ -15,11 +15,10 @@ export const routes: Routes = [
   { path: '', component: HomeLoteComponent },   // Ruta principal
   { path: 'lotes', component: Lote, canActivate: [AuthGuard]  },  // CRUD de lotes
   { path: 'home', component: HomeAdmin, canActivate: [AuthGuard]},
-  { path: 'clientes', component: Cliente, canActivate: [AuthGuard] },
+  { path: 'clientes', component: ClienteComponent, canActivate: [AuthGuard] },
   { path: 'pagos', component: Pagos, canActivate: [AuthGuard] },
   { path: 'usuarios', component: Usuarios, canActivate: [AuthGuard] },
   { path: 'contratos', component: Contratos , canActivate: [AuthGuard]},
-
   { path: 'auth/login', component: Login },
   { path: '**', redirectTo: '' }       // Cualquier ruta desconocida redirige a Home
 ];
