@@ -9,16 +9,17 @@ import { Contratos } from './pages/contratos/contratos';
 import { Usuarios } from './pages/usuarios/usuarios';
 import { Login } from './pages/auth/login/login';
 import { Register } from './pages/auth/register/register';
-
+import {AuthGuard} from './guards/auth.guard'
+ 
 export const routes: Routes = [
   { path: '', component: HomeLoteComponent },   // Ruta principal
-  { path: 'lotes', component: Lote },  // CRUD de lotes
-  { path: 'home', component: HomeAdmin },
-  { path: 'clientes', component: ClienteComponent },
-  { path: 'pagos', component: Pagos },
-  { path: 'usuarios', component: Usuarios },
-  { path: 'contratos', component: Contratos },
+  { path: 'lotes', component: Lote, canActivate: [AuthGuard]  },  // CRUD de lotes
+  { path: 'home', component: HomeAdmin, canActivate: [AuthGuard]},
+  { path: 'clientes', component: Cliente, canActivate: [AuthGuard] },
+  { path: 'pagos', component: Pagos, canActivate: [AuthGuard] },
+  { path: 'usuarios', component: Usuarios, canActivate: [AuthGuard] },
+  { path: 'contratos', component: Contratos , canActivate: [AuthGuard]},
+
   { path: 'auth/login', component: Login },
-  { path: 'auth/registro', component: Register },
   { path: '**', redirectTo: '' }       // Cualquier ruta desconocida redirige a Home
 ];
