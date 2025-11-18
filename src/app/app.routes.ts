@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { HomeLoteComponent } from './pages/home-lote/home-lote';
 import { Lote } from '../app/pages/lote/lote';
 import { HomeAdmin } from './pages/home-admin/home-admin';
-import { Cliente } from './pages/cliente/cliente';
+import { ClienteComponent } from './pages/cliente/cliente';
 import { Pagos } from './pages/pagos/pagos';
 import { Contratos } from './pages/contratos/contratos';
 import { Usuarios } from './pages/usuarios/usuarios';
@@ -14,7 +14,7 @@ export const routes: Routes = [
   { path: '', component: HomeLoteComponent },   // Ruta principal
   { path: 'lotes', component: Lote },  // CRUD de lotes
   { path: 'home', component: HomeAdmin },
-  { path: 'clientes', component: Cliente },
+  { path: 'clientes', component: ClienteComponent },
   { path: 'pagos', component: Pagos },
   { path: 'usuarios', component: Usuarios },
   { path: 'contratos', component: Contratos },

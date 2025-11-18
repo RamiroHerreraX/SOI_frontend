@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class LoteService {
 
-  private apiUrl = 'http://localhost:3000/api/lotes'; // Cambiar según tu backend
+  private apiUrl = 'http://localhost:3000/api/lotes';
 
   constructor(private http: HttpClient) { }
 
