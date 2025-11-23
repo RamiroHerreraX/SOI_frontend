@@ -1,30 +1,38 @@
+/* Importamos Inter para mejor estética */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:host {
+  font-family: 'Inter', sans-serif;
+}
+
 /* === GENERAL PAGE LAYOUT === */
 .login-page {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  /* Usamos un fondo más neutro o el color de fondo de tu aplicación */
-  background-color: #f0f0f0; 
+  background-color: #f0f4f8; /* Fondo más suave */
 }
 
 /* === CARD CONTAINER === */
 .card {
   background: white;
   padding: 40px;
-  border-radius: 12px; /* Ligeramente más redondeado */
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
   width: 100%;
   max-width: 400px;
-  border-top: 5px solid #B8860B; /* Toque dorado en la parte superior */
+  border-top: 6px solid #B8860B; /* Toque dorado en la parte superior */
+  transition: all 0.3s ease-in-out;
 }
 
 /* === HEADER & TYPOGRAPHY === */
 h2 {
   text-align: center;
-  margin-bottom: 30px;
-  color: #1A1A1A; /* Negro elegante */
+  margin-bottom: 20px;
+  color: #1A1A1A;
   font-weight: 700;
+  font-size: 25px;
 }
 
 /* === FORM ELEMENTS === */
@@ -37,11 +45,12 @@ label {
   margin-bottom: 6px;
   font-weight: 600;
   color: #555;
-  transition: color 0.2s;
 }
 
+/* --- CRÍTICO: Incluir input[type="text"] para el OTP --- */
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+input[type="text"] { 
   width: 100%;
   padding: 12px;
   border: 1px solid #ccc;
@@ -51,11 +60,18 @@ input[type="password"] {
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Énfasis plateado/dorado al enfocar un campo */
 input:focus {
-    border-color: #A9A9A9; /* Plateado al enfocar */
+    border-color: #DAA520; /* Dorado al enfocar */
     outline: none;
-    box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.2); /* Sutil resplandor dorado */
+    box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.3); 
+}
+
+/* Estilo específico para el input OTP */
+input[type="text"]#otp {
+    text-align: center;
+    font-size: 15px;
+    letter-spacing: 5px; /* Más espacio para dígitos OTP */
+    font-weight: 700;
 }
 
 
@@ -63,7 +79,6 @@ input:focus {
 .btn-primary {
   width: 100%;
   padding: 12px;
-  /* Fondo dorado */
   background-color: #B8860B; 
   color: white;
   border: none;
@@ -76,54 +91,74 @@ input:focus {
 }
 
 .btn-primary:hover:not(:disabled) {
-  /* Dorado un poco más oscuro o con sombra */
   background-color: #DAA520; 
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(184, 134, 11, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(184, 134, 11, 0.5);
 }
 
 .btn-primary:disabled {
-  /* Estilo para el botón deshabilitado (plateado suave) */
   background-color: #dcdcdc; 
   color: #888;
   cursor: not-allowed;
   box-shadow: none;
 }
 
+
+/* Para un estilo Azul Oscuro (Cobalto) de alto contraste */
+.btn-secondary {
+    width: 100%; 
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 17px;
+    font-weight: 700;
+    transition: background-color 0.3s, transform 0.2s;
+    background-color: #92bfeb; 
+    color: white; 
+    border: 1px solid #5d9cdb; 
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: #519ddc; 
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(130, 199, 255, 0.4);
+}
+
+.btn-secondary:disabled {
+    background-color: #dcdcdc; 
+    color: #888;
+    cursor: not-allowed;
+}
+
 /* === MENSAJES DE VALIDACIÓN === */
 .error-message {
-  color: #dc3545; /* Rojo estándar para errores */
+  color: #dc3545; 
   font-size: 0.85em;
   margin-top: 5px;
+  font-weight: 500;
 }
 
-.alert.error {
-  /* Mantener el estilo de alerta de error estándar */
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 10px;
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
-  margin-bottom: 20px;
+/* Responsive adjustments */
+@media (max-width: 500px) {
+  .card {
+    margin: 20px;
+    padding: 30px 20px;
+  }
 }
 
-/* === ENLACES DE PIE DE PÁGINA === */
-.footer-links {
-  text-align: center;
-  margin-top: 25px;
-  font-size: 0.95em;
-  color: #666;
+/* Contenedor de notificación (simulación de Swal) */
+#notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
 }
 
-.footer-links a {
-  /* El enlace de registro también usa el dorado */
-  color: #B8860B; 
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s;
-}
-
-.footer-links a:hover {
-  color: #DAA520;
-  text-decoration: underline;
+/* === LOGO STYLING (NUEVO) === */
+.login-logo {
+    display: block; /* Para poder aplicar margin: auto */
+    margin: 0 auto 30px auto; /* Centrado horizontal y margen inferior */
+    max-width: 150px; /* Tamaño máximo del logo */
+    height: auto;
 }
