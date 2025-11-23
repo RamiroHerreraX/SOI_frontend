@@ -1,0 +1,86 @@
+<app-header-admin></app-header-admin>
+<br>
+<br>
+<div class="container home-admin-container mt-5 pt-3">
+  <div class="card p-4 shadow">
+    <h3 class="card-title text-center mb-4"> Crear Contrato de Venta</h3>
+    <p class="card-text text-center mb-4">
+      Completa los siguientes campos para registrar un nuevo contrato.
+    </p>
+
+    <form [formGroup]="contratoForm" (ngSubmit)="onSubmit()">
+      <div class="row g-3">
+
+        <!-- Lote -->
+        <div class="col-md-4">
+          <label class="form-label">ID del Lote <span class="text-danger">*</span></label>
+          <input type="number" formControlName="id_lote" class="form-control" placeholder="Ej: 101">
+        </div>
+
+        <!-- Correo -->
+        <div class="col-md-4">
+          <label class="form-label">Correo del Cliente <span class="text-danger">*</span></label>
+          <input type="email" formControlName="correo_cliente" class="form-control" placeholder="cliente@email.com">
+        </div>
+
+        <!-- Nombre -->
+        <div class="col-md-4">
+          <label class="form-label">Nombre</label>
+          <input type="text" formControlName="nombre" class="form-control" placeholder="Nombre del cliente" [readonly]="true">
+        </div>
+
+        <!-- Apellido Paterno -->
+        <div class="col-md-4">
+          <label class="form-label">Apellido Paterno</label>
+          <input type="text" formControlName="apellido_paterno" class="form-control" [readonly]="true">
+        </div>
+
+        <!-- Apellido Materno -->
+        <div class="col-md-4">
+          <label class="form-label">Apellido Materno</label>
+          <input type="text" formControlName="apellido_materno" class="form-control" [readonly]="true">
+        </div>
+
+        <!-- Teléfono -->
+        <div class="col-md-4">
+          <label class="form-label">Teléfono</label>
+          <input type="text" formControlName="telefono" class="form-control" placeholder="Ej: 5551234567" [readonly]="true">
+        </div>
+
+        <!-- Precio -->
+        <div class="col-md-4">
+          <label class="form-label">Precio Total <span class="text-danger">*</span></label>
+          <input type="number" formControlName="precio_total" class="form-control" placeholder="Ej: 500000">
+        </div>
+
+        <!-- Enganche -->
+        <div class="col-md-4">
+          <label class="form-label">Enganche <span class="text-danger">*</span></label>
+          <input type="number" formControlName="enganche" class="form-control" placeholder="Ej: 100000">
+        </div>
+
+        <!-- Plazo -->
+        <div class="col-md-4">
+          <label class="form-label">Plazo (meses) <span class="text-danger">*</span></label>
+          <input type="number" formControlName="plazo_meses" class="form-control" placeholder="Ej: 12">
+        </div>
+
+         <!-- Nombre Propietario -->
+        <div class="col-md-4">
+          <label class="form-label">Nombre del propietario <span class="text-danger">*</span></label>
+          <input type="text" formControlName="propietario_nombre" class="form-control" placeholder="Ej: Julia">
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <button class="btn btn-gold me-2" type="submit" [disabled]="enviando">
+          {{ enviando ? 'Creando...' : 'Registrar Contrato' }}
+        </button>
+        <button class="btn btn-silver" type="reset" (click)="contratoForm.reset({estado_contrato:'activo'})">
+          Limpiar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<app-footer-admin></app-footer-admin>
