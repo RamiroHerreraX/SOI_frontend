@@ -1,86 +1,168 @@
 <app-header-admin></app-header-admin>
-<br>
-<br>
+<br><br>
+
 <div class="container home-admin-container mt-5 pt-3">
   <div class="card p-4 shadow">
-    <h3 class="card-title text-center mb-4"> Crear Contrato de Venta</h3>
-    <p class="card-text text-center mb-4">
-      Completa los siguientes campos para registrar un nuevo contrato.
-    </p>
+
+    <h3 class="card-title text-center mb-4">Crear Contrato de Venta</h3>
 
     <form [formGroup]="contratoForm" (ngSubmit)="onSubmit()">
-      <div class="row g-3">
 
-        <!-- Lote -->
+      <!-- ========== SECCIÓN 1: BÚSQUEDA DEL LOTE ========== -->
+      <h5 class="mt-3 mb-3 text-primary">1. Buscar Lote</h5>
+      <div class="row g-3 bg-light p-3 rounded">
+
+        <!-- ID Lote -->
         <div class="col-md-4">
           <label class="form-label">ID del Lote <span class="text-danger">*</span></label>
-          <input type="number" formControlName="id_lote" class="form-control" placeholder="Ej: 101">
+          <input type="number" formControlName="id_lote" class="form-control" (keydown)="evitarNotacion($event)">
+
+          <div class="text-danger mt-1" *ngIf="contratoForm.get('id_lote')?.hasError('pattern')">
+            Solo se permiten números.
+          </div>
+
+          <div *ngIf="contratoForm.get('id_lote')?.errors?.['loteNoDisponible']" class="text-danger mt-1">
+            Este lote no está disponible (rentado, vendido o en proceso).
+          </div>
+
+          <div *ngIf="contratoForm.get('id_lote')?.errors?.['loteNoExiste']" class="text-danger mt-1">
+            No existe un lote con este ID.
+          </div>
         </div>
 
-        <!-- Correo -->
-        <div class="col-md-4">
-          <label class="form-label">Correo del Cliente <span class="text-danger">*</span></label>
-          <input type="email" formControlName="correo_cliente" class="form-control" placeholder="cliente@email.com">
+        <!-- DATOS DEL LOTE EN INPUTS READONLY -->
+        <div *ngIf="loteSeleccionado" class="row mt-3">
+
+          <div class="col-md-4">
+            <label class="form-label">Manzana</label>
+            <input type="text" class="form-control" [value]="loteSeleccionado.manzana" readonly>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Número de Lote</label>
+            <input type="text" class="form-control" [value]="loteSeleccionado.numlote" readonly>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Dirección</label>
+            <input type="text" class="form-control" [value]="loteSeleccionado.direccion" readonly>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Colonia</label>
+            <input type="text" class="form-control" [value]="loteSeleccionado.nombre_colonia" readonly>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Ciudad</label>
+            <input type="text" class="form-control" [value]="loteSeleccionado.nombre_ciudad" readonly>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Estado</label>
+            <input type="text" class="form-control" [value]="loteSeleccionado.nombre_estado" readonly>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Precio</label>
+            <input type="text" class="form-control" formControlName="precio_total" readonly>
+          </div>
+
+          <div class="col-md-4">
+          <label class="form-label">Nombre del Propietario</label>
+          <input type="text" class="form-control" [value]="loteSeleccionado?.propietario_nombre"  readonly>
         </div>
 
-        <!-- Nombre -->
-        <div class="col-md-4">
-          <label class="form-label">Nombre</label>
-          <input type="text" formControlName="nombre" class="form-control" placeholder="Nombre del cliente" [readonly]="true">
-        </div>
-
-        <!-- Apellido Paterno -->
-        <div class="col-md-4">
-          <label class="form-label">Apellido Paterno</label>
-          <input type="text" formControlName="apellido_paterno" class="form-control" [readonly]="true">
-        </div>
-
-        <!-- Apellido Materno -->
-        <div class="col-md-4">
-          <label class="form-label">Apellido Materno</label>
-          <input type="text" formControlName="apellido_materno" class="form-control" [readonly]="true">
-        </div>
-
-        <!-- Teléfono -->
-        <div class="col-md-4">
-          <label class="form-label">Teléfono</label>
-          <input type="text" formControlName="telefono" class="form-control" placeholder="Ej: 5551234567" [readonly]="true">
-        </div>
-
-        <!-- Precio -->
-        <div class="col-md-4">
-          <label class="form-label">Precio Total <span class="text-danger">*</span></label>
-          <input type="number" formControlName="precio_total" class="form-control" placeholder="Ej: 500000">
-        </div>
-
-        <!-- Enganche -->
-        <div class="col-md-4">
-          <label class="form-label">Enganche <span class="text-danger">*</span></label>
-          <input type="number" formControlName="enganche" class="form-control" placeholder="Ej: 100000">
-        </div>
-
-        <!-- Plazo -->
-        <div class="col-md-4">
-          <label class="form-label">Plazo (meses) <span class="text-danger">*</span></label>
-          <input type="number" formControlName="plazo_meses" class="form-control" placeholder="Ej: 12">
-        </div>
-
-         <!-- Nombre Propietario -->
-        <div class="col-md-4">
-          <label class="form-label">Nombre del propietario <span class="text-danger">*</span></label>
-          <input type="text" formControlName="propietario_nombre" class="form-control" placeholder="Ej: Julia">
         </div>
       </div>
 
+      <!-- ========== SECCIÓN 2: CLIENTE ========== -->
+      <h5 class="mt-4 mb-3 text-primary">2. Datos del Cliente</h5>
+      <div class="row g-3 bg-light p-3 rounded">
+
+        <div class="col-md-4">
+          <label class="form-label">Correo del Cliente <span class="text-danger">*</span></label>
+          <input type="email" formControlName="correo_cliente" class="form-control">
+          <div class="text-danger mt-1" *ngIf="contratoForm.get('correo_cliente')?.hasError('email')">
+            Ingresa un correo válido.
+          </div>
+          <div class="text-danger mt-1" *ngIf="contratoForm.get('correo_cliente')?.errors?.['correoNoExiste']">
+            No existe un cliente registrado con este correo.
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Nombre</label>
+          <input type="text" formControlName="nombre" class="form-control" readonly>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Apellido Paterno</label>
+          <input type="text" formControlName="apellido_paterno" class="form-control" readonly>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Apellido Materno</label>
+          <input type="text" formControlName="apellido_materno" class="form-control" readonly>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Teléfono</label>
+          <input type="text" formControlName="telefono" class="form-control" readonly>
+        </div>
+
+      </div>
+
+      <!-- ========== SECCIÓN 3: INFORMACIÓN DEL CONTRATO ========== -->
+      <h5 class="mt-4 mb-3 text-primary">3. Información del Contrato</h5>
+      <div class="row g-3 bg-light p-3 rounded">
+
+        <div class="col-md-4">
+          <label class="form-label">Enganche <span class="text-danger">*</span></label>
+          <input type="number" formControlName="enganche" class="form-control" (keydown)="evitarNotacion($event)">
+          <div class="text-danger mt-1" *ngIf="contratoForm.get('enganche')?.hasError('pattern')">
+            Solo se permiten números positivos.
+          </div>
+
+          <div class="text-danger mt-1" *ngIf="contratoForm.get('enganche')?.hasError('engancheMayor')">
+            El enganche debe ser menor o igual al precio total.
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Plazo (meses) <span class="text-danger">*</span></label>
+          <input type="number" formControlName="plazo_meses" class="form-control" (keydown)="evitarNotacion($event)">
+          <div class="text-danger mt-1" *ngIf="contratoForm.get('plazo_meses')?.hasError('min')">
+            Debe ser mínimo 1 mes.
+          </div>
+
+          <div class="text-danger mt-1" *ngIf="contratoForm.get('plazo_meses')?.hasError('max')">
+            El plazo máximo permitido es 12 meses.
+          </div>
+
+          <div class="text-danger mt-1" *ngIf="contratoForm.get('plazo_meses')?.hasError('pattern')">
+            Solo se permiten números enteros positivos.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BOTONES -->
       <div class="text-center mt-4">
-        <button class="btn btn-gold me-2" type="submit" [disabled]="enviando">
+        <button class="btn btn-gold me-2" type="submit" 
+                [disabled]="enviando || (loteSeleccionado?.estado_propiedad !== 'disponible')" >
           {{ enviando ? 'Creando...' : 'Registrar Contrato' }}
         </button>
-        <button class="btn btn-silver" type="reset" (click)="contratoForm.reset({estado_contrato:'activo'})">
+
+        <button class="btn btn-silver" type="reset" 
+                (click)="contratoForm.reset({estado_contrato:'activo'})">
           Limpiar
         </button>
       </div>
+
     </form>
+
   </div>
 </div>
+
 <app-footer-admin></app-footer-admin>

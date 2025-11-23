@@ -7,20 +7,25 @@ import { Observable } from 'rxjs';
 })
 export class ContratoService {
 
-   private apiUrl = 'http://localhost:3000/api/'; // ajusta tu puerto/backend
+   private apiUrl = 'http://localhost:3000/api/';
 
   constructor(private http: HttpClient) {}
 
   crearContrato(data: any): Observable<any> {
-    return this.http.post(`contratos/${this.apiUrl}/crear`, data);
+    return this.http.post(`${this.apiUrl}contratos/crear`, data);
   }
 
   obtenerContratos(): Observable<any[]> {
-    return this.http.get<any[]>(`contratos/${this.apiUrl}`);
+    return this.http.get<any[]>(`${this.apiUrl}contratos`);
   }
 
-  buscarClientePorCorreo(correo: string) {
-  return this.http.get<any>(`${this.apiUrl}clientes/buscar-por-correo?correo=${correo}`);
-}
+    buscarClientePorCorreo(correo: string) {
+    return this.http.get<any>(`${this.apiUrl}clientes/buscar-por-correo?correo=${correo}`);
+  }
+
+  obtenerLoteParaContrato(id: number) {
+    return this.http.get<any>(`${this.apiUrl}lotes/lote-contrato/${id}`);
+  }
+
 
 }
