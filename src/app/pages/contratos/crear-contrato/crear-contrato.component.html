@@ -158,6 +158,12 @@
                 (click)="contratoForm.reset({estado_contrato:'activo'})">
           Limpiar
         </button>
+
+        <div class="text-center mt-3">
+        <button type="button" class="btn btn-primary me-2" (click)="generarWordContrato()">Descargar Word</button>
+        <button type="button" class="btn btn-secondary" (click)="generarPDFContrato()">Descargar PDF</button>
+        </div>
+
       </div>
 
     </form>
