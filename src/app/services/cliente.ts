@@ -19,8 +19,16 @@ export interface Cliente {
 })
 export class ClienteService {
   private apiUrl = 'http://localhost:3000/api/clientes';
-
+  private pdfUrl = 'http://localhost:3000/pdfs/'; 
   constructor(private http: HttpClient) {}
+
+  /** Obtener URL pública de un PDF */
+
+getPdfUrl(nombreArchivo: string): string {
+  return `${this.pdfUrl}${nombreArchivo}`;
+}
+
+
 
   /** Obtener todos los clientes */
   getClientes(): Observable<Cliente[]> {
@@ -33,14 +41,48 @@ export class ClienteService {
   }
 
   /** Crear nuevo cliente */
-  crearCliente(cliente: Cliente): Observable<Cliente> {
-    return this.http.post<Cliente>(`${this.apiUrl}`, cliente);
-  }
+  crearCliente(cliente: Cliente): Observable<any> {
+  const formData = new FormData();
+
+  formData.append("nombre", cliente.nombre);
+  formData.append("apellido_paterno", cliente.apellido_paterno);
+  formData.append("apellido_materno", cliente.apellido_materno || "");
+  formData.append("correo", cliente.correo);
+  formData.append("telefono", cliente.telefono || "");
+  formData.append("curp", cliente.curp);
+  formData.append("clave_elector", cliente.clave_elector || "");
+
+  if (cliente.doc_identificacion)
+      formData.append("doc_identificacion", cliente.doc_identificacion);
+
+  if (cliente.doc_curp)
+      formData.append("doc_curp", cliente.doc_curp);
+
+  return this.http.post(`${this.apiUrl}`, formData);
+}
+
 
   /** Actualizar cliente por CURP */
-  actualizarCliente(curp: string, datos: Partial<Cliente>): Observable<any> {
-    return this.http.put(`${this.apiUrl}/actualizar`, { curp, datos });
-  }
+actualizarCliente(cliente: any): Observable<any> {
+  const formData = new FormData();
+
+  formData.append("curp", cliente.curp);
+  formData.append("nombre", cliente.nombre);
+  formData.append("apellido_paterno", cliente.apellido_paterno);
+  formData.append("apellido_materno", cliente.apellido_materno || "");
+  formData.append("correo", cliente.correo);
+  formData.append("telefono", cliente.telefono || "");
+  formData.append("clave_elector", cliente.clave_elector || "");
+
+  if (cliente.doc_identificacion)
+    formData.append("doc_identificacion", cliente.doc_identificacion);
+
+  if (cliente.doc_curp)
+    formData.append("doc_curp", cliente.doc_curp);
+
+  return this.http.put(`${this.apiUrl}/actualizar`, formData);
+}
+
 
   /** Eliminar cliente por CURP */
   eliminarCliente(curp: string): Observable<any> {
