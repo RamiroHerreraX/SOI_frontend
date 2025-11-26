@@ -144,8 +144,195 @@
             Solo se permiten números enteros positivos.
           </div>
         </div>
-
       </div>
+
+      <!-- ========== SECCIÓN 4: DATOS EXTRA PARA EL PDF (NO SE GUARDAN EN BD) ========== -->
+<h5 class="mt-4 mb-3 text-primary">4. Información Adicional del Predio</h5>
+<div class="row g-3 bg-light p-3 rounded">
+
+  <div class="col-md-6">
+    <label class="form-label">Nombre del Predio</label>
+    <input type="text" formControlName="nombre_predio" class="form-control">
+
+    <div *ngIf="contratoForm.get('nombre_predio')?.touched && contratoForm.get('nombre_predio')?.invalid" class="text-danger small">
+    <div *ngIf="contratoForm.get('nombre_predio')?.errors?.['required']">
+      El nombre del predio es obligatorio.
+    </div>
+    <div *ngIf="contratoForm.get('nombre_predio')?.errors?.['minlength']">
+      Debe tener al menos 3 caracteres.
+    </div>
+    <div *ngIf="contratoForm.get('nombre_predio')?.errors?.['pattern']">
+      Solo se permiten letras y espacios.
+    </div>
+  </div>
+  </div>
+
+    <h6 class="mt-3">Acreditando la propiedad con:</h6>
+
+  <div class="col-md-6">
+    <label class="form-label">Tipo de Documento</label>
+    <input type="text" formControlName="tipo_documento" class="form-control">
+
+    <div *ngIf="contratoForm.get('tipo_documento')?.touched && contratoForm.get('tipo_documento')?.invalid" class="text-danger small">
+    <div *ngIf="contratoForm.get('tipo_documento')?.errors?.['required']">
+      El tipo de documento es obligatorio.
+    </div>
+    <div *ngIf="contratoForm.get('nombre_predio')?.errors?.['pattern']">
+      Solo se permiten letras y espacios.
+    </div>
+  </div>
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Número / Folio de Escritura</label>
+    <input type="text" formControlName="folio_escritura" class="form-control">
+    <div *ngIf="contratoForm.get('folio_escritura')?.touched && contratoForm.get('folio_escritura')?.invalid" class="text-danger small">
+    <div *ngIf="contratoForm.get('folio_escritura')?.errors?.['required']">
+      El número o folio de escritura es obligatorio.
+    </div>
+    <div *ngIf="contratoForm.get('folio_escritura')?.errors?.['minlength']">
+      Debe tener al menos 3 caracteres.
+    </div>
+  </div>
+
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Fecha de Emisión</label>
+    <input type="date" formControlName="fecha_emision" class="form-control">
+    <div *ngIf="contratoForm.get('fecha_emision')?.touched && contratoForm.get('fecha_emision')?.invalid" class="text-danger small">
+    <div *ngIf="contratoForm.get('fecha_emision')?.errors?.['required']">
+      La fecha de emisión es obligatoria.
+    </div>
+    <div *ngIf="contratoForm.get('fecha_emision')?.errors?.['fechaFutura']">
+      La fecha no puede ser mayor a la fecha actual.
+    </div>
+</div>
+
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Registro Público (folios)</label>
+    <input type="text" formControlName="registro_publico" class="form-control">
+    <div *ngIf="contratoForm.get('registro_publico')?.touched && contratoForm.get('registro_publico')?.invalid" class="text-danger small">
+    <div *ngIf="contratoForm.get('registro_publico')?.errors?.['pattern']">
+      Solo se permiten letras, números y guiones.
+    </div>
+</div>
+
+  </div>
+
+  <h6 class="mt-3">Colindancias del Terreno</h6>
+
+  <div class="col-md-3">
+    <label class="form-label">Norte</label>
+    <input type="text" formControlName="colindancia_norte" class="form-control">
+    <div *ngIf="contratoForm.get('colindancia_norte')?.touched && contratoForm.get('colindancia_norte')?.invalid" class="text-danger small">
+    <div *ngIf="contratoForm.get('colindancia_norte')?.errors?.['minlength']">
+      La colindancia debe tener al menos 3 caracteres.
+    </div>
+</div>
+
+  </div>
+
+  <div class="col-md-3">
+    <label class="form-label">Sur</label>
+    <input type="text" formControlName="colindancia_sur" class="form-control">
+    <div *ngIf="contratoForm.get('colindancia_sur')?.touched && contratoForm.get('colindancia_sur')?.invalid" class="text-danger small">
+    <div *ngIf="contratoForm.get('colindancia_sur')?.errors?.['minlength']">
+      La colindancia debe tener al menos 3 caracteres.
+    </div>
+</div>
+
+  </div>
+
+  <div class="col-md-3">
+    <label class="form-label">Este</label>
+    <input type="text" formControlName="colindancia_este" class="form-control">
+    <div *ngIf="contratoForm.get('colindancia_este')?.touched && contratoForm.get('colindancia_este')?.invalid" class="text-danger small">
+    <div *ngIf="contratoForm.get('colindancia_este')?.errors?.['minlength']">
+      La colindancia debe tener al menos 3 caracteres.
+    </div>
+</div>
+
+  </div>
+
+  <div class="col-md-3">
+    <label class="form-label">Oeste</label>
+    <input type="text" formControlName="colindancia_oeste" class="form-control">
+    <div *ngIf="contratoForm.get('colindancia_oeste')?.touched && contratoForm.get('colindancia_oeste')?.invalid" class="text-danger small">
+    <div *ngIf="contratoForm.get('colindancia_oeste')?.errors?.['minlength']">
+      La colindancia debe tener al menos 3 caracteres.
+    </div>
+  </div>
+
+  </div>
+
+  <h6 class="mt-4">Medidas del Terreno (en metros)</h6>
+
+<div class="col-md-3">
+  <label class="form-label">Medida Norte (m)</label>
+  <input type="text" formControlName="medida_norte" class="form-control">
+
+  <div *ngIf="contratoForm.get('medida_norte')?.touched && contratoForm.get('medida_norte')?.invalid"
+       class="text-danger small">
+    <div *ngIf="contratoForm.get('medida_norte')?.errors?.['required']">
+      La medida es obligatoria.
+    </div>
+    <div *ngIf="contratoForm.get('medida_norte')?.errors?.['pattern']">
+      Solo se permiten números (ej. 10 o 10.5).
+    </div>
+  </div>
+</div>
+
+<div class="col-md-3">
+  <label class="form-label">Medida Sur (m)</label>
+  <input type="text" formControlName="medida_sur" class="form-control">
+
+  <div *ngIf="contratoForm.get('medida_sur')?.touched && contratoForm.get('medida_sur')?.invalid"
+       class="text-danger small">
+    <div *ngIf="contratoForm.get('medida_sur')?.errors?.['required']">
+      La medida es obligatoria.
+    </div>
+    <div *ngIf="contratoForm.get('medida_sur')?.errors?.['pattern']">
+      Solo se permiten números (ej. 12 o 12.3).
+    </div>
+  </div>
+</div>
+
+<div class="col-md-3">
+  <label class="form-label">Medida Este (m)</label>
+  <input type="text" formControlName="medida_este" class="form-control">
+
+  <div *ngIf="contratoForm.get('medida_este')?.touched && contratoForm.get('medida_este')?.invalid"
+       class="text-danger small">
+    <div *ngIf="contratoForm.get('medida_este')?.errors?.['required']">
+      La medida es obligatoria.
+    </div>
+    <div *ngIf="contratoForm.get('medida_este')?.errors?.['pattern']">
+      Solo se permiten números (ej. 15 o 15.8).
+    </div>
+  </div>
+</div>
+
+<div class="col-md-3">
+  <label class="form-label">Medida Oeste (m)</label>
+  <input type="text" formControlName="medida_oeste" class="form-control">
+
+  <div *ngIf="contratoForm.get('medida_oeste')?.touched && contratoForm.get('medida_oeste')?.invalid"
+       class="text-danger small">
+    <div *ngIf="contratoForm.get('medida_oeste')?.errors?.['required']">
+      La medida es obligatoria.
+    </div>
+    <div *ngIf="contratoForm.get('medida_oeste')?.errors?.['pattern']">
+      Solo se permiten números (ej. 14 o 14.2).
+    </div>
+  </div>
+</div>
+
+
+</div>
+
 
       <!-- BOTONES -->
       <div class="text-center mt-4">
