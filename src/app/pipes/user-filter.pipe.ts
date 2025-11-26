@@ -12,11 +12,12 @@ export class UserFilterPipe implements PipeTransform {
     filtroRol: string
   ): User[] {
     return usuarios.filter(u => {
-      const coincideRolFijo = u.rol === rolFijo;
+      const coincideRolFijo = rolFijo ? u.rol === rolFijo : true;
       const coincideFiltroRol = filtroRol ? u.rol === filtroRol : true;
       const coincideNombre = u.usuario.toLowerCase().includes((nombre || '').toLowerCase());
       const coincideCorreo = u.correo.toLowerCase().includes((correo || '').toLowerCase());
       const coincideTelefono = u.telefono?.includes(telefono || '');
+
       return coincideRolFijo && coincideFiltroRol && coincideNombre && coincideCorreo && coincideTelefono;
     });
   }

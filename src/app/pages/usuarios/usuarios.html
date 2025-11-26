@@ -166,84 +166,129 @@
   </div>
 
   <!-- 🔹 TABLAS -->
-  <div class="usuarios-tablas container-fluid mt-5">
-    <div class="row justify-content-center g-4">
-      <!-- SECRETARIAS -->
-      <div *ngIf="filtroRol === 'secretaria' || filtroRol === ''"
-           class="col-12"
-           [ngClass]="{'col-lg-6': filtroRol === '', 'col-lg-12': filtroRol === 'secretaria'}">
-        <div class="card shadow-sm h-100">
-          <div class="card-header bg-dark text-white text-center">
-            <h5 class="mb-0 text-gold">Secretarias</h5>
-          </div>
-          <div class="table-responsive">
-            <table class="table table-striped align-middle text-center mb-0">
-              <thead class="table-dark">
-                <tr>
-                  <th>Usuario</th>
-                  <th>Correo</th>
-                  <th>Teléfono</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let u of usuarios | userFilter:filtroNombre:filtroCorreo:filtroTelefono:'secretaria':filtroRol">
-                  <td>{{u.usuario}}</td>
-                  <td class="correo-wrap">{{u.correo}}</td>
-                  <td>{{u.telefono}}</td>
-                  <td>
-                    <button class="btn btn-gold btn-sm me-1" (click)="editarUsuario(u)">✏️</button>
-                    <button class="btn btn-silver btn-sm" (click)="eliminarUsuario(u.id_user!)">🗑️</button>
-                  </td>
-                </tr>
-                <tr *ngIf="!(usuarios | userFilter:filtroNombre:filtroCorreo:filtroTelefono:'secretaria':filtroRol).length">
-                  <td colspan="4" class="text-muted">No hay secretarias registradas</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+<!-- 🔹 TABLAS -->
+<div class="usuarios-tablas container-fluid mt-5">
+  <div class="row justify-content-center g-4">
 
-      <!-- ENCARGADOS -->
-      <div *ngIf="filtroRol === 'encargado' || filtroRol === ''"
-           class="col-12"
-           [ngClass]="{'col-lg-6': filtroRol === '', 'col-lg-12': filtroRol === 'encargado'}">
-        <div class="card shadow-sm h-100">
-          <div class="card-header bg-dark text-white text-center">
-            <h5 class="mb-0 text-gold">Encargados</h5>
-          </div>
-          <div class="table-responsive">
-            <table class="table table-striped align-middle text-center mb-0">
-              <thead class="table-dark">
-                <tr>
-                  <th>Usuario</th>
-                  <th>Correo</th>
-                  <th>Teléfono</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let u of usuarios | userFilter:filtroNombre:filtroCorreo:filtroTelefono:'encargado':filtroRol">
-                  <td>{{u.usuario}}</td>
-                  <td class="correo-wrap">{{u.correo}}</td>
-                  <td>{{u.telefono}}</td>
-                  <td>
-                    <button class="btn btn-gold btn-sm me-1" (click)="editarUsuario(u)">✏️</button>
-                    <button class="btn btn-silver btn-sm" (click)="eliminarUsuario(u.id_user!)">🗑️</button>
-                  </td>
-                </tr>
-                <tr *ngIf="!(usuarios | userFilter:filtroNombre:filtroCorreo:filtroTelefono:'encargado':filtroRol).length">
-                  <td colspan="4" class="text-muted">No hay encargados registrados</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+    <!-- 🎯 TABLA ÚNICA PARA TODOS LOS ROLES -->
+    <div *ngIf="filtroRol === ''" class="col-12">
+  <div class="card shadow-sm h-100">
+    <div class="card-header bg-dark text-white text-center">
+      <h5 class="mb-0 text-gold">Todos los Usuarios</h5>
+    </div>
 
+    <div class="table-responsive">
+      <table class="table table-striped align-middle text-center mb-0">
+        <thead class="table-dark">
+          <tr>
+            <th>Usuario</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Puesto</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of usuarios | userFilter:filtroNombre:filtroCorreo:filtroTelefono:'' :''">
+            <td>{{u.usuario}}</td>
+            <td class="correo-wrap">{{u.correo}}</td>
+            <td>{{u.telefono}}</td>
+            <td class="text-capitalize">{{u.rol}}</td>
+            <td>
+              <button class="btn btn-gold btn-sm me-1" (click)="editarUsuario(u)">✏️</button>
+              <button class="btn btn-silver btn-sm" (click)="eliminarUsuario(u.id_user!)">🗑️</button>
+            </td>
+          </tr>
+
+          <tr *ngIf="!(usuarios | userFilter:filtroNombre:filtroCorreo:filtroTelefono:'all':'all').length">
+            <td colspan="5" class="text-muted">No hay mas usuarios registrados</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
+</div>
+
+
+
+    <!-- 🎀 SECRETARIAS (solo cuando filtroRol es secretaria) -->
+    <div *ngIf="filtroRol === 'secretaria'" class="col-12">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-dark text-white text-center">
+          <h5 class="mb-0 text-gold">Secretarias</h5>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-striped align-middle text-center mb-0">
+            <thead class="table-dark">
+              <tr>
+                <th>Usuario</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of usuarios | userFilter:filtroNombre:filtroCorreo:filtroTelefono:'secretaria':filtroRol">
+                <td>{{u.usuario}}</td>
+                <td class="correo-wrap">{{u.correo}}</td>
+                <td>{{u.telefono}}</td>
+                <td>
+                  <button class="btn btn-gold btn-sm me-1" (click)="editarUsuario(u)">✏️</button>
+                  <button class="btn btn-silver btn-sm" (click)="eliminarUsuario(u.id_user!)">🗑️</button>
+                </td>
+              </tr>
+
+              <tr *ngIf="!(usuarios | userFilter:filtroNombre:filtroCorreo:filtroTelefono:'secretaria':filtroRol).length">
+                <td colspan="4" class="text-muted">No hay secretarias registradas</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 🧑‍💼 ENCARGADOS (solo cuando filtroRol es encargado) -->
+    <div *ngIf="filtroRol === 'encargado'" class="col-12">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-dark text-white text-center">
+          <h5 class="mb-0 text-gold">Encargados</h5>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-striped align-middle text-center mb-0">
+            <thead class="table-dark">
+              <tr>
+                <th>Usuario</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of usuarios | userFilter:filtroNombre:filtroCorreo:filtroTelefono:'encargado':filtroRol">
+                <td>{{u.usuario}}</td>
+                <td class="correo-wrap">{{u.correo}}</td>
+                <td>{{u.telefono}}</td>
+                <td>
+                  <button class="btn btn-gold btn-sm me-1" (click)="editarUsuario(u)">✏️</button>
+                  <button class="btn btn-silver btn-sm" (click)="eliminarUsuario(u.id_user!)">🗑️</button>
+                </td>
+              </tr>
+
+              <tr *ngIf="!(usuarios | userFilter:filtroNombre:filtroCorreo:filtroTelefono:'encargado':filtroRol).length">
+                <td colspan="4" class="text-muted">No hay encargados registrados</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 
 </div>
 
