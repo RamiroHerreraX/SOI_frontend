@@ -41,6 +41,8 @@ export class Lote implements OnInit {
   ciudades: any[] = [];
   colonias: any[] = [];
   codigoPostal: string = '';
+  // PROPIEDAD PARA VISUALIZAR el lote
+  loteEnVista: any = {};
 
   // No usamos estos FormControls en el template, pero se mantienen por si los usas para lógica reactiva.
   estadoControl = new FormControl(); 
@@ -65,6 +67,12 @@ export class Lote implements OnInit {
   fileError = false;
   previewImagenes: string[] = [];
   imagenesSeleccionadas: File[] = [];
+
+  // ==================================
+  // === NUEVAS VARIABLES PARA EL WIZARD ===
+  // ==================================
+  currentStep: number = 1; // Inicializa en el primer paso
+  totalSteps: number = 3;  // Número total de pasos definidos
 
   constructor(private loteService: LoteService, private ubicacionService: UbicacionService, private userService: UsersService) { }
 
@@ -119,6 +127,8 @@ export class Lote implements OnInit {
 }
 
 
+
+
   openForm(): void {
     this.isEdit = false;
     this.currentLote = {};
@@ -130,6 +140,9 @@ export class Lote implements OnInit {
     this.imagenesSeleccionadas = [];
     this.previewImagenes = [];
     this.fileError = false;
+
+    // Reinicia el paso al abrir el modal (o al iniciar una edición)
+    this.currentStep = 1;
     
     
 
@@ -137,6 +150,36 @@ export class Lote implements OnInit {
     this.isModalOpen = true; 
     const modal = new bootstrap.Modal(document.getElementById('loteModal')!);
     modal.show();
+  }
+
+  // ==================================
+  // === NUEVAS FUNCIONES DE NAVEGACIÓN ===
+  // ==================================
+
+  // Función para avanzar al siguiente paso
+  nextStep() {
+    // Aquí podrías añadir una validación específica para el paso actual si lo necesitas
+    if (this.currentStep < this.totalSteps) {
+      this.currentStep++;
+    }
+    // Opcional: enfocar el inicio del modal al cambiar de paso
+    // document.querySelector('.modal-body')?.scrollTop = 0;
+  }
+
+  // Función para cambiar al paso especificado
+  goToStep(step: number) {
+    if (step >= 1 && step <= this.totalSteps) {
+      // Opcional: Podrías añadir validaciones aquí antes de permitir el cambio de paso
+      // Por ejemplo: if (this.currentStep === 1 && !this.isStep1Valid()) return;
+      this.currentStep = step;
+    }
+  }
+
+  // Función para retroceder al paso anterior
+  prevStep() {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+    }
   }
   
 onModalClose(): void {
@@ -334,24 +377,24 @@ resetearImagenes() {
 }
 
 onDocumentacionSelected(event: any) {
-    const file: File = event.target.files[0];
-    
-    // 1. Resetear el estado de error y la selección
-    this.documentacionError = false; 
-    this.selectedDocumentacion = null;
+    const file: File = event.target.files[0];
+    
+    // 1. Resetear el estado de error y la selección
+    this.documentacionError = false; 
+    this.selectedDocumentacion = null;
 
-    if (file) {
-      // 2. Validación: Chequear si el tipo de archivo es PDF
-      if (file.type !== 'application/pdf') {
-        console.error("Tipo de archivo no válido. Solo se permiten archivos PDF.");
-        this.documentacionError = true; // Establecer error a true
-        return;
-      }
+    if (file) {
+      // 2. Validación: Chequear si el tipo de archivo es PDF
+      if (file.type !== 'application/pdf') {
+        console.error("Tipo de archivo no válido. Solo se permiten archivos PDF.");
+        this.documentacionError = true; // Establecer error a true
+        return;
+      }
 
-      // Si la validación pasa:
-      this.selectedDocumentacion = file;
-      this.showToast(`Archivo PDF "${file.name}" seleccionado.`, 'success');
-    }
+      // Si la validación pasa:
+      this.selectedDocumentacion = file;
+      this.showToast(`Archivo PDF "${file.name}" seleccionado.`, 'success');
+    }
 }
 
   saveLote(): void {
@@ -365,10 +408,10 @@ onDocumentacionSelected(event: any) {
           return;
         }
         // 💡 NUEVA VALIDACIÓN PARA DOCUMENTACIÓN
-        if (this.documentacionError) {
-          this.showToast('No se puede guardar. Corrija el error del archivo de documentación (debe ser PDF).', 'danger');
-          return;
-        }
+        if (this.documentacionError) {
+          this.showToast('No se puede guardar. Corrija el error del archivo de documentación (debe ser PDF).', 'danger');
+          return;
+        }
 
          // asegurarse que valores están en rango
           if (this.currentLote.precio < 1 || this.currentLote.precio > 100000000) {
@@ -467,8 +510,8 @@ onDocumentacionSelected(event: any) {
 
         // AGREGAR EL ARCHIVO PDF AL FORMDATA
         if (this.selectedDocumentacion) {
-            formData.append('documentacion', this.selectedDocumentacion);
-        }
+            formData.append('documentacion', this.selectedDocumentacion);
+        }
 
         // ----------------------------------------------------
         // PASO 3: LLAMADA AL SERVICIO (Sin cambios)
@@ -523,8 +566,8 @@ resetForm(): void {
 // Cerrar modal después de un guardado exitoso
   const modalElement = document.getElementById('loteModal');
   if (modalElement) {
-      const modal = bootstrap.Modal.getInstance(modalElement);
-      if (modal) modal.hide();
+      const modal = bootstrap.Modal.getInstance(modalElement);
+      if (modal) modal.hide();
   }
   this.onModalClose();
 }
@@ -774,5 +817,50 @@ onCpPaste(event: ClipboardEvent) {
   }, 0);
 }
 
+// === Método para Ver Detalles del Lote ===
+// === Método para Ver Detalles del Lote (Versión Corregida) ===
+// === Método para Ver Detalles del Lote (Versión Final) ===
+viewLote(lote: any): void {
+    // 1. CLONAR Y CONFIGURAR DATOS
+    this.loteEnVista = { ...lote }; 
 
+    // Mapeo de Servicios (se mantiene igual)
+    if (typeof this.loteEnVista.servicios === 'string' && this.loteEnVista.servicios) {
+        this.loteEnVista.serviciosArray = this.loteEnVista.servicios.split(',').map((s: string) => s.trim());
+    } else if (Array.isArray(this.loteEnVista.servicios)) {
+        this.loteEnVista.serviciosArray = this.loteEnVista.servicios;
+    } else {
+        this.loteEnVista.serviciosArray = [];
+    }
+
+    // 2. MAPEO DE ENTIDADES A PROPIEDADES PLANAS (¡CLAVE!)
+    
+    // Asignamos una propiedad plana para el nombre del Encargado
+    const user = this.encargados.find(u => u.id == this.loteEnVista.id_user);
+    this.loteEnVista.nombreEncargado = user ? user.nombre : 'N/A';
+
+    // Asignamos una propiedad plana para el nombre del Estado
+    const estado = this.estados.find(e => e.id_estado == this.loteEnVista.id_estado);
+    this.loteEnVista.nombreEstado = estado ? estado.nombre : 'N/A';
+    
+    // La ciudad es asíncrona, la inicializamos y luego la actualizamos
+    this.loteEnVista.nombreCiudad = 'Cargando...'; 
+
+    if (this.loteEnVista.id_ciudad && this.loteEnVista.id_estado) {
+        // Carga ASÍNCRONA: Obtiene el nombre de la ciudad
+        this.ubicacionService.getCiudades(this.loteEnVista.id_estado).subscribe({
+            next: (ciudades) => {
+                const ciudad = ciudades.find(c => c.id_ciudad == this.loteEnVista.id_ciudad);
+                this.loteEnVista.nombreCiudad = ciudad ? ciudad.nombre : 'N/A';
+            },
+            error: () => this.loteEnVista.nombreCiudad = 'N/A'
+        });
+    } else {
+        this.loteEnVista.nombreCiudad = 'N/A';
+    }
+
+    // 3. ABRIR EL MODAL
+    const modal = new bootstrap.Modal(document.getElementById('detalleModal')!);
+    modal.show();
+}
 }

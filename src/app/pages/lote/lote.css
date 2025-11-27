@@ -43,6 +43,23 @@ body {
     box-shadow: 0 4px 12px rgba(192, 192, 192, 0.4);
 }
 
+/* NUEVO: Botón Amatista para navegación (Anterior/Siguiente) */
+.btn-amatista {
+    background-color: #935cc9; /* Tono de Amatista */
+    color: #FFFFFF;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    padding: 10px 20px;
+}
+
+.btn-amatista:hover {
+    background-color: #AA80FF; /* Tono más claro de Amatista al hover */
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(153, 102, 204, 0.4);
+}
+
 /* ================================== */
 /* === NAVBAR === */
 /* ================================== */
@@ -350,4 +367,267 @@ h3 {
   color: #B8860B;
   font-weight: 700;
   font-size: 25px;
+}
+
+/* ================================== */
+/* === AJUSTES DE MODAL DE DETALLES === */
+/* ================================== */
+
+/* Estilo para el header dorado del nuevo modal de detalle */
+.modal-header.bg-gold {
+    background-color: #B8860B; /* Dorado elegante */
+    color: #FFFFFF;
+    border-bottom: 1px solid #FFD700;
+}
+
+/* Estilo para los títulos dentro del modal */
+.modal-body h4 {
+    color: #B8860B;
+    font-weight: 600;
+    border-bottom: 2px solid #EEEEEE;
+    padding-bottom: 5px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+/* Listas de detalles (para parecer más limpio) */
+.list-group-item {
+    border: none; /* Eliminar bordes de Bootstrap list-group-item */
+    padding: 5px 0;
+    background-color: transparent;
+    color: #444;
+}
+
+/* Estilo para imágenes dentro del modal (carrusel) */
+.carousel-inner img {
+    max-height: 300px; /* Limitar la altura para que se vea bien */
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* ================================== */
+/* === AJUSTES DE MODAL DE DETALLES (AÑADIDOS) === */
+/* ================================== */
+
+/* ================================== */
+/* === BOTÓN DE BRONCE (VER DETALLES) === */
+/* ================================== */
+.btn-bronze {
+    background-color: #CD7F32; /* Bronce estándar */
+    color: #FFFFFF;
+    font-weight: 600;
+    border: 1px solid #CD7F32;
+    border-radius: 8px; 
+    transition: all 0.3s ease;
+    padding: 10px 20px;
+}
+
+.btn-bronze:hover {
+    background-color: #DAA520; /* Tono más dorado/cobre para el hover */
+    color: #1A1A1A; 
+    border-color: #DAA520;
+    box-shadow: 0 4px 12px rgba(205, 127, 50, 0.4); /* Sombra con matiz bronce */
+}
+
+/* ================================== */
+/* === BOTÓN DE CANCELAR (ROJO SOBRIO) === */
+/* ================================== */
+.btn-cancel-red {
+  background-color: #a02f2d; /* Rojo ladrillo oscuro (Sienna) - Más claro que el anterior, pero sobrio */
+  color: #FFFFFF;
+  font-weight: 600;
+  border: 1px solid #a02f2d;
+  border-radius: 8px; 
+  transition: all 0.3s ease;
+  padding: 10px 20px;
+}
+
+.btn-cancel-red:hover {
+  background-color: #c42727; /* Tono de "firebrick" para el hover - un rojo más vivo pero aún elegante */
+  color: #FFFFFF; 
+  border-color: #c42727;
+  box-shadow: 0 4px 12px rgba(160, 45, 45, 0.4); /* Sombra con el matiz del color base */
+}
+/* 🛑 REPARACIÓN DEL ENCABEZADO DEL MODAL (Eliminar franja blanca) */
+.modal-header {
+ padding: 1rem; /* Asegura un padding estándar */
+ margin: 0; /* **IMPORTANTE:** Elimina cualquier margen residual */
+ border-bottom: 1px solid #dee2e6; /* Borde sutil */
+}
+/* Estilo para el header dorado del nuevo modal de detalle */
+.modal-header.bg-gold {
+ background-color: #B8860B; /* Dorado elegante */
+ color: #FFFFFF;
+ border-bottom: none; /* Eliminar el borde para un look más limpio */
+}
+
+/* Nuevo estilo para centrar y dimensionar mejor las imágenes en el modal */
+.detalle-img-container {
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ width: 100%;
+ max-height: 400px; /* Limita la altura del contenedor */
+ overflow: hidden;
+ margin-bottom: 20px;
+}
+.detalle-img-container img {
+ max-width: 90%; /* Hace que abarque más */
+ height: auto;
+ object-fit: contain; /* Asegura que la imagen se vea completa */
+ border-radius: 8px;
+ border: 3px solid #E0E0E0; /* Borde sutil para destacar */
+}
+
+/* Modificar el estilo de la lista para el diseño de 2 columnas */
+.list-detalle {
+ padding-left: 0;
+ list-style: none;
+}
+.list-detalle li {
+ display: flex;
+ justify-content: space-between;
+ padding: 8px 0;
+ border-bottom: 1px dashed #E0E0E0; /* Separador sutil */
+}
+.list-detalle li strong {
+ color: #1A1A1A; /* Color del texto de la etiqueta (ej: Precio) */
+}
+.list-detalle li span {
+ color: #444; /* Color del valor (ej: $100,000.00) */
+ font-weight: 500;
+}
+
+
+/* ================================== */
+/* === AJUSTES DE CARRUSEL EN MODAL === */
+/* ================================== */
+
+/* Asegura que los controles sean visibles y tengan contraste */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #1A1A1A; /* Fondo oscuro para el icono */
+    border-radius: 50%;
+    padding: 12px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.carousel-control-prev:hover .carousel-control-prev-icon,
+.carousel-control-next:hover .carousel-control-next-icon {
+    background-color: #B8860B; /* Dorado al hover para el icono */
+    opacity: 1;
+}
+
+/* El contenedor ya fue centrado con .detalle-img-container en la respuesta anterior,
+   asegurando que el carrusel toma el 100% del ancho del contenedor y la imagen un 90%
+   para lograr el efecto de centrado y visualización amplia. */
+
+/* Estilo para imágenes dentro del modal (carrusel) - (Confirmar que tienes esto) */
+.detalle-img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 400px; 
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+.detalle-img-container img {
+    max-width: 90%; 
+    height: auto;
+    object-fit: contain; 
+    border-radius: 8px;
+    border: 3px solid #E0E0E0; 
+}
+
+/* ================================== */
+/* === AJUSTES DE CARRUSEL EN MODAL === */
+/* ================================== */
+
+/* Contenedor principal para la imagen y el carrusel */
+.detalle-img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    /* Mantenemos un ancho máximo para que no se extienda demasiado en pantallas grandes */
+    max-width: 95%; 
+    margin: 0 auto 20px auto; /* 👈 Centrar el contenedor dentro del modal-body */
+    max-height: 400px;
+    overflow: hidden;
+}
+
+/* El elemento del carrusel, asegurando que tome el ancho completo del contenedor */
+#carouselDetalle {
+    width: 100%;
+}
+
+/* La imagen dentro del carrusel */
+.detalle-img-container img {
+    /* Ocupa todo el espacio disponible dentro de .detalle-img-container */
+    max-width: 100%; 
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 3px solid #E0E0E0;
+}
+
+
+/* ================================== */
+/* === FORM WIZARD (Pasos) - VERDE ESMERALDA === */
+/* ================================== */
+
+/* Contenedor del wrapper para que los pasos queden debajo del header */
+.progress-container-wrapper {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #f8f9fa; 
+    padding: 10px 20px;
+    border-bottom: 1px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+}
+
+/* Estilo base de cada paso clickeable (GRIS TOPO ELEGANTE - Inactivo) */
+.progress-item-clickable {
+    padding: 8px 15px;
+    border-radius: 20px;
+    background-color: #6C757D; /* Gris Topo Elegante */
+    color: #FFFFFF;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-align: center;
+    flex-grow: 1; 
+    margin: 0 5px;
+    cursor: pointer;
+    white-space: nowrap; 
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Efecto hover para los pasos inactivos */
+.progress-item-clickable:hover:not(.active) {
+    background-color: #7D858D; /* Ligeramente más claro al pasar el mouse */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+/* Estilo del paso ACTIVO (VERDE ESMERALDA) */
+.progress-item-clickable.active {
+    background-color: #00A36C; /* Verde Esmeralda (un tono vibrante) */
+    color: #FFFFFF;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0, 163, 108, 0.5); /* Sombra enfocada en el color activo */
+    transform: translateY(-2px); 
+}
+
+/* Asegura que el título del modal sea el Dorado fuerte (si no se modificó antes) */
+.modal-header.bg-gold {
+    background-color: #B8860B !important; 
+    color: white !important;
+}
+
+/* Asegura que el contenido de cada paso tenga un padding interno */
+.form-step {
+    padding: 15px 0;
 }

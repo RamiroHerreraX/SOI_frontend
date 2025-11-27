@@ -17,12 +17,10 @@
     <div class="collapse navbar-collapse justify-content-end" [class.show]="menuOpen">
       <ul class="navbar-nav align-items-center">
 
-        <!-- Usuario logeado -->
-        <li class="nav-item dropdown" *ngIf="usuario">
+        <li class="nav-item dropdown" *ngIf="usuario" #dropdownMenu>
           <a 
             class="nav-link dropdown-toggle text-dark fw-bold" 
-            
-            (click)="dropdownOpen = !dropdownOpen"
+            (click)="dropdownOpen = !dropdownOpen; $event.stopPropagation()"
           >
             {{ usuario.nombre }} 
           </a>
@@ -40,7 +38,6 @@
           </ul>
         </li>
 
-        <!-- Usuario no logeado -->
         <li class="nav-item" *ngIf="!usuario">
           <a class="btn btn-auth-silver btn-sm" routerLink="/auth/login">
             Iniciar Sesión

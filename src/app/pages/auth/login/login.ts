@@ -100,7 +100,16 @@ export class Login implements OnInit {
     // Llamada al servicio de login
     this.authService.login(credentials).subscribe({
       next: (res: any) => {
-        Swal.fire('Éxito', res.msg || 'Código enviado a su correo', 'success');
+        // 💡 Swal.fire personalizado para ÉXITO
+        Swal.fire({
+          title: 'Éxito', 
+          text: res.msg || 'Código enviado a su correo', 
+          icon: 'success',
+          customClass: {
+            popup: 'mi-popup-personalizado', 
+            confirmButton: 'mi-boton-dorado',
+          }
+        });
         this.step = 2; 
         // Agregamos el validador 'required' al OTP para el paso 2
         this.otp?.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(6)]);

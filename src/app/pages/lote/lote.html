@@ -3,8 +3,8 @@
 <section id="lotes" class="py-5 content-margin-top" *ngIf="!isModalOpen">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3>Lotes Disponibles</h3>
-            <button class="btn btn-gold" (click)="openForm()">Nuevo Lote</button>
+            <h3>Inmuebles Disponibles</h3>
+            <button class="btn btn-gold" (click)="openForm()">Nuevo Inmueble</button>
         </div>
         
         <div class="row g-4">
@@ -22,7 +22,6 @@
         {{ lote.estado_propiedad | titlecase }}
       </span>
 
-      <!-- Carrusel de imágenes -->
       <div id="carousel-{{ lote.id_propiedad }}" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
           <div *ngFor="let img of lote.imagenes; let i = index" 
@@ -34,7 +33,6 @@
                  style="height: 200px; object-fit: cover;">
           </div>
         </div>
-        <!-- Controles -->
         <button class="carousel-control-prev" 
         type="button" 
         [attr.data-bs-target]="'#carousel-' + lote.id_propiedad" 
@@ -95,10 +93,13 @@
         <hr class="my-2">
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+            <button class="btn btn-bronze btn-sm " (click)="viewLote(lote)">
+              <i class="bi bi-eye"></i>  Ver
+            </button>
           <button class="btn btn-silver btn-sm" (click)="editLote(lote)">
             <i class="bi bi-pencil-fill"></i> Editar
           </button>
-          <button class="btn btn-danger btn-sm" (click)="deleteLote(lote.id_propiedad)">
+          <button class="btn btn-cancel-red btn-sm" (click)="deleteLote(lote.id_propiedad)">
             <i class="bi bi-trash-fill"></i> Eliminar
           </button>
         </div>
@@ -111,463 +112,597 @@
 </section>
 
 <div class="modal fade" id="loteModal" tabindex="-1" aria-labelledby="loteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-secondary text-white">
-                <h5 class="modal-title" id="loteModalLabel">{{ isEdit ? 'Editar Lote' : 'Nuevo Lote' }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="onModalClose()"></button>
+            <div class="modal-header bg-gold text-white"> <h5 class="modal-title" id="loteModalLabel">
+                    <i class="bi bi-building me-2"></i> {{ isEdit ? 'Editar Inmueble' : 'Nuevo Inmueble' }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" (click)="onModalClose()"></button>
             </div>
+            
+            <div class="progress-container-wrapper">
+                <div class="progress-item-clickable" [class.active]="currentStep === 1" (click)="goToStep(1)">1. Básicos y Ubicación</div>
+                <div class="progress-item-clickable" [class.active]="currentStep === 2" (click)="goToStep(2)">2. Características</div>
+                <div class="progress-item-clickable" [class.active]="currentStep === 3" (click)="goToStep(3)">3. Medios y Docs</div>
+            </div>
+            
             <div class="modal-body">
                 <form (ngSubmit)="saveLote()" #loteForm="ngForm">
                     <div class="row g-3">
-                        <div class="col-md-3">
-                            <label class="form-label">Tipo <span class="text-danger">*</span></label>
-                            <select 
-                                class="form-select" 
-                                [(ngModel)]="currentLote.tipo" 
-                                name="tipo" 
-                                required
-                                #tipo="ngModel"
-                                [class.is-invalid]="tipo.invalid && (tipo.touched || loteForm.submitted)">
-                                <option [ngValue]="null">Seleccionar Tipo</option>
-                                <option value="casa">Casa</option>
-                                <option value="depto">Departamento</option>
-                                <option value="terreno">Terreno</option>
-                                <option value="local">Local</option>
-                                <option value="otro">Otro</option>
-                            </select>
-                            <div *ngIf="tipo.invalid && (tipo.touched || loteForm.submitted)" class="invalid-feedback">
-                                El tipo es obligatorio.
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Número de Lote <span class="text-danger">*</span></label>
-                            <input
-                                class="form-control"
-                                [(ngModel)]="currentLote.numLote"
-                                name="numLote"
-                                type="number"
-                                pattern="[0-9]+"
-                                required
-                                #numLote="ngModel"
-                                [class.is-invalid]="numLote.invalid && (numLote.touched || loteForm.submitted)"
-                            />
-                            <div *ngIf="numLote.invalid && (numLote.touched || loteForm.submitted)" class="invalid-feedback">
-                                El número de lote es obligatorio y solo debe contener dígitos.
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Manzana</label>
-                            <input 
-                                class="form-control" 
-                                [(ngModel)]="currentLote.manzana" 
-                                name="manzana"
-                                pattern="[a-zA-Z0-9-]+"
-                                #manzana="ngModel"
-                                [class.is-invalid]="manzana.invalid && manzana.touched"
-                            />
-                            <div *ngIf="manzana.invalid && manzana.touched" class="invalid-feedback">
-                                Solo puede contener letras, números y guiones.
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Dirección <span class="text-danger">*</span></label>
-                            <input
-                                class="form-control"
-                                [(ngModel)]="currentLote.direccion"
-                                name="direccion"
-                                required
-                                #direccion="ngModel"
-                                [class.is-invalid]="direccion.invalid && (direccion.touched || loteForm.submitted)"
-                            />
-                            <div *ngIf="direccion.invalid && (direccion.touched || loteForm.submitted)" class="invalid-feedback">
-                                La dirección es obligatoria.
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Código Postal <span class="text-danger">*</span></label>
-                           <input type="text" class="form-control"
-                                maxlength="5" minlength="5" pattern="[0-9]{5}"
-                                name="codigoPostal"
-                                [(ngModel)]="codigoPostal"
-                                (input)="onCpInput($event)"
-                                (paste)="onCpPaste($event)"
-                                placeholder="Ej. 37904"
-                                required
-                                #cp="ngModel" />
-
-                            <div *ngIf="cp.invalid && (cp.touched || loteForm.submitted)" class="invalid-feedback">
-                                El CP es obligatorio y debe ser de 5 dígitos numéricos.
-                            </div>
-                            <div *ngIf="cp.valid && !cpEsValido" class="invalid-feedback d-block">
-                                El código postal ingresado no es válido o no fue encontrado.
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Estado <span class="text-danger">*</span></label>
-                            <select
-                                class="form-select"
-                                name="id_estado"
-                                [(ngModel)]="selectedEstado"
-                                (change)="onEstadoChange($event)"
-                                required
-                                #estado="ngModel"
-                                [class.is-invalid]="estado.invalid && (estado.touched || loteForm.submitted)"
-                            >
-                                <option [ngValue]="null">Seleccionar Estado</option>
-                                <option *ngFor="let estado of estados" [value]="estado.id_estado">
-                                    {{ estado.nombre_estado }}
-                                </option>
-                            </select>
-                            <div *ngIf="estado.invalid && (estado.touched || loteForm.submitted)" class="invalid-feedback">
-                                El estado es obligatorio.
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Ciudad <span class="text-danger">*</span></label>
-                            <select
-                                class="form-select"
-                                name="id_ciudad"
-                                [(ngModel)]="selectedCiudad"
-                                (change)="onCiudadChange($event)"
-                                required
-                                #ciudad="ngModel"
-                                [class.is-invalid]="ciudad.invalid && (ciudad.touched || loteForm.submitted)"
-                            >
-                                <option [ngValue]="null">Seleccionar Ciudad</option>
-                                <option *ngFor="let ciudad of ciudades" [value]="ciudad.id_ciudad">
-                                    {{ ciudad.nombre_ciudad }}
-                                </option>
-                            </select>
-                            <div *ngIf="ciudad.invalid && (ciudad.touched || loteForm.submitted)" class="invalid-feedback">
-                                La ciudad es obligatoria.
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Colonia <span class="text-danger">*</span></label>
-                            <ng-select
-                                [items]="colonias"
-                                bindLabel="nombre_colonia"
-                                bindValue="nombre_colonia"
-                                [addTag]="true"
-                                placeholder="Selecciona o escribe una colonia"
-                                [(ngModel)]="currentLote.nombre_colonia_nueva"
-                                name="id_colonia"
-                                [clearable]="true"
-                                (change)="onColoniaChange($event)"
-                                [required]="true"
-                                #colonia="ngModel"
-                                class="ng-select-bootstrap bg-white border rounded"
-                                [searchable]="true">
-                            </ng-select>
-                            <div *ngIf="colonia.invalid && (colonia.touched || loteForm.submitted)" class="invalid-feedback d-block">
-                                La colonia es obligatoria.
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Precio <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control"
-                                [(ngModel)]="currentLote.precio"
-                                name="precio"
-                                [required]="true"
-                                min="1" max="100000000"
-                                (input)="clampValue(currentLote, 'precio', 1, 100000000, $event, 8)"
-                                (paste)="onPasteNumber($event, 1, 100000000)"
-                                #precio="ngModel" 
-                                [class.is-invalid]="precio.invalid && (precio.touched || loteForm.submitted)"/>
-                            <div *ngIf="precio.errors && (precio.touched || loteForm.submitted)" class="invalid-feedback">
-                                <div *ngIf="precio.errors['required']">El precio es obligatorio.</div>
-                                <div *ngIf="precio.errors['min']">El precio debe ser mayor a 0.</div>
-                                <div *ngIf="precio.errors['max']">El precio no puede exceder los 100 millones.</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Valor Avalúo</label>
-                            <input
-                                type="number"
-                                class="form-control"
-                                [(ngModel)]="currentLote.valor_avaluo"
-                                name="valor_avaluo"
-                                min="0"
-                                #avaluo="ngModel"
-                                [class.is-invalid]="avaluo.invalid && avaluo.touched"
-                            />
-                            <div *ngIf="avaluo.invalid && avaluo.touched" class="invalid-feedback">
-                                Debe ser un valor positivo.
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Superficie m² <span class="text-danger">*</span></label>
-                            <input
-                                type="number"
-                                class="form-control"
-                                [(ngModel)]="currentLote.superficie_m2"
-                                name="superficie_m2"
-                                required
-                                min="1"
-                                #superficie="ngModel"
-                                [class.is-invalid]="superficie.invalid && (superficie.touched || loteForm.submitted)"
-                            />
-                            <div *ngIf="superficie.invalid && (superficie.touched || loteForm.submitted)" class="invalid-feedback">
-                                La superficie es obligatoria y debe ser mayor a 0.
-                            </div>
-                        </div>
-
-                        <div class="col-md-3" *ngIf="currentLote.tipo === 'casa' || currentLote.tipo === 'depto'">
-                            <label class="form-label">Habitaciones</label>
-                           <input type="number" class="form-control"
-                                [(ngModel)]="currentLote.num_habitaciones"
-                                name="num_habitaciones"
-                                min="0" max="99"
-                                (input)="clampValue(currentLote, 'num_habitaciones', 0, 99, $event, 2)"
-                                (paste)="onPasteNumber($event, 0, 99)" 
-                                #hab="ngModel"
-                                [class.is-invalid]="hab.invalid && (hab.touched || loteForm.submitted)" />
-                             <div *ngIf="hab.errors && (hab.touched || loteForm.submitted)" class="invalid-feedback">
-                                <div *ngIf="hab.errors['min']">Debe ser un número positivo.</div>
-                                <div *ngIf="hab.errors['max']">No puede superar 99 habitaciones.</div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3" *ngIf="currentLote.tipo === 'casa' || currentLote.tipo === 'depto'">
-                            <label class="form-label">Baños</label>
-                           <input type="number" class="form-control"
-                                [(ngModel)]="currentLote.num_banos"
-                                name="num_banos"
-                                min="0" max="99"
-                                (input)="clampValue(currentLote, 'num_banos', 0, 99, $event,2)"
-                                (paste)="onPasteNumber($event, 0, 99)"
-                                #banos="ngModel"  
-                                [class.is-invalid]="banos.invalid && (banos.touched || loteForm.submitted)" />
-                            <div *ngIf="banos.errors && (banos.touched || loteForm.submitted)" class="invalid-feedback">
-                                <div *ngIf="banos.errors['min']">Debe ser un número positivo.</div>
-                                <div *ngIf="banos.errors['max']">No puede superar 99 baños.</div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3" *ngIf="currentLote.tipo === 'casa' || currentLote.tipo === 'depto'">
-                            <label class="form-label">Estacionamientos</label>
-                           <input type="number" class="form-control"
-                                [(ngModel)]="currentLote.num_estacionamientos"
-                                name="num_estacionamientos"
-                                min="0" max="99"
-                                (input)="clampValue(currentLote, 'num_estacionamientos', 0, 99, $event, 2)"
-                                (paste)="onPasteNumber($event, 0, 99)"
-                                #estac="ngModel"
-                                [class.is-invalid]="estac.invalid && (estac.touched || loteForm.submitted)" />
-                            
-                            <div *ngIf="estac.errors && (estac.touched || loteForm.submitted)" class="invalid-feedback">
-                                <div *ngIf="estac.errors['min']">Debe ser un número positivo.</div>
-                                <div *ngIf="estac.errors['max']">No puede superar 99 estacionamientos.</div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Servicios</label>
-                            <input
-                                class="form-control"
-                                [(ngModel)]="currentLote.servicios"
-                                name="servicios"
-                                placeholder="Ej. Luz, agua, drenaje..."
-                            />
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Topografía</label>
-                            <input class="form-control" [(ngModel)]="currentLote.topografia" name="topografia" />
-                        </div>
-
-                       
-
-                        <div class="col-md-3">
-                            <label class="form-label">Estado Propiedad <span class="text-danger">*</span></label>
-                            <select
-                                class="form-select"
-                                [(ngModel)]="currentLote.estado_propiedad"
-                                name="estado_propiedad"
-                                required
-                                #estadoProp="ngModel"
-                                [class.is-invalid]="estadoProp.invalid && (estadoProp.touched || loteForm.submitted)"
-                            >
-                                <option [ngValue]="null">Seleccionar Estado</option>
-                                <option value="disponible">Disponible</option>
-                                <option value="rentada">Rentada</option>
-                                <option value="vendida">Vendida</option>
-                                <option value="en proceso">En Proceso</option>
-                            </select>
-                            <div *ngIf="estadoProp.invalid && (estadoProp.touched || loteForm.submitted)" class="invalid-feedback">
-                                El estado de la propiedad es obligatorio.
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                        <label class="form-label">Fecha Disponibilidad</label>
-                        <input
-                            type="date"
-                            class="form-control"
-                            [(ngModel)]="currentLote.fecha_disponibilidad"
-                            name="fecha_disponibilidad"
-                            min="2000-01-01"
-                            #fechaDisponibilidad="ngModel"
-                            [class.is-invalid]="fechaDisponibilidad.invalid && (fechaDisponibilidad.touched || loteForm.submitted)"
-                            required
-                        />
-
-                        <div *ngIf="fechaDisponibilidad.errors && (fechaDisponibilidad.touched || loteForm.submitted)" class="invalid-feedback">
-                            <div *ngIf="fechaDisponibilidad.errors['required']">La fecha de disponibilidad es obligatoria.</div>
-                        </div>
-                        </div>
-
-                      
-
-
-                        <div class="col-md-6">
-                            <label class="form-label">Descripción</label>
-                            <textarea
-                                class="form-control"
-                                rows="3"
-                                [(ngModel)]="currentLote.descripcion"
-                                name="descripcion"
-                            ></textarea>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">A quién dirigirse (Encargado) <span class="text-danger">*</span></label>
-                            <select 
-                                class="form-select" 
-                                [(ngModel)]="currentLote.id_user" 
-                                name="id_user" 
-                                required
-                                #encargado="ngModel"
-                                [class.is-invalid]="encargado.invalid && (encargado.touched || loteForm.submitted)">
-                                <option [ngValue]="null">Seleccionar Encargado</option>
-                                <option *ngFor="let encargado of encargados" [value]="encargado.id_user">
-                                    {{ encargado.usuario }}
-                                </option>
-                            </select>
-                            <div *ngIf="encargado.invalid && (encargado.touched || loteForm.submitted)" class="invalid-feedback">
-                                El encargado es obligatorio.
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label>Imágenes</label>
-
-                            <!-- Botón para elegir archivos -->
-                            <div *ngIf="imagenesSeleccionadas.length === 0">
-                                <input
-                                type="file"
-                                accept="image/*" 
-                                multiple
-                                (change)="onFileSelected($event)"
-                                class="form-control"
-                                />
-                            </div>
-
-                            <!-- Botón para agregar más imágenes -->
-                            <div *ngIf="imagenesSeleccionadas.length > 0">
-                                <button
-                                class="btn btn-outline-secondary"
-                                type="button"
-                                (click)="addMoreImages()"
-                                >
-                                Agregar más imágenes
-                                </button>
-                            </div>
-
-                            <p class="text-muted mt-2">
-                                Puede cargar una o varias imágenes.
-                                <ng-container *ngIf="imagenesSeleccionadas.length === 0">
-                                Seleccione al menos una para comenzar.
-                                </ng-container>
-                                <ng-container *ngIf="imagenesSeleccionadas.length > 0">
-                                Para agregar más, haga clic en <strong>"Agregar más imágenes"</strong>.
-                                </ng-container>
-                            </p>
-
-                            <!-- Vista previa -->
-                            <div *ngIf="previewImagenes?.length" class="mt-3 d-flex flex-wrap gap-2">
-                                <div
-                                *ngFor="let img of previewImagenes; let i = index"
-                                class="position-relative"
-                                style="display: inline-block;"
-                                >
-                                <img
-                                    [src]="img"
-                                    alt="Vista previa"
-                                    class="img-thumbnail"
-                                    style="max-height: 120px; width: auto;" />
-                                <button
-                                    type="button"
-                                    class="btn btn-sm btn-danger position-absolute top-0 end-0"
-                                    style="border-radius: 50%; transform: translate(30%, -30%);"
-                                    (click)="eliminarImagen(i)"
-                                    title="Eliminar imagen"
-                                >
-                                    &times;
-                                </button>
+                        
+                        <div *ngIf="currentStep === 1" class="form-step w-100">
+                            <h4>Paso 1 de {{ totalSteps }}: Detalles Básicos y Ubicación</h4>
+                            <hr>
+                            <div class="row g-3">
+                                
+                                <div class="col-md-3">
+                                    <label class="form-label">Tipo <span class="text-danger">*</span></label>
+                                    <select 
+                                        class="form-select" 
+                                        [(ngModel)]="currentLote.tipo" 
+                                        name="tipo" 
+                                        required
+                                        #tipo="ngModel"
+                                        [class.is-invalid]="tipo.invalid && (tipo.touched || loteForm.submitted)">
+                                        <option [ngValue]="null">Seleccionar Tipo</option>
+                                        <option value="casa">Casa</option>
+                                        <option value="depto">Departamento</option>
+                                        <option value="terreno">Terreno</option>
+                                        <option value="local">Local</option>
+                                        <option value="otro">Otro</option>
+                                    </select>
+                                    <div *ngIf="tipo.invalid && (tipo.touched || loteForm.submitted)" class="invalid-feedback">
+                                        El tipo es obligatorio.
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- Input oculto reutilizable para agregar más imágenes -->
-                            <input
-                                #fileInput
-                                type="file"
-                                multiple
-                                accept="image/*" 
-                                (change)="onFileSelected($event)"
-                                style="display: none;"
-                            />
-                            </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Número de Lote <span class="text-danger">*</span></label>
+                                    <input
+                                        class="form-control"
+                                        [(ngModel)]="currentLote.numLote"
+                                        name="numLote"
+                                        type="number"
+                                        pattern="[0-9]+"
+                                        required
+                                        #numLote="ngModel"
+                                        [class.is-invalid]="numLote.invalid && (numLote.touched || loteForm.submitted)"
+                                    />
+                                    <div *ngIf="numLote.invalid && (numLote.touched || loteForm.submitted)" class="invalid-feedback">
+                                        El número de lote es obligatorio y solo debe contener dígitos.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label">Manzana</label>
+                                    <input 
+                                        class="form-control" 
+                                        [(ngModel)]="currentLote.manzana" 
+                                        name="manzana"
+                                        pattern="[a-zA-Z0-9-]+"
+                                        #manzana="ngModel"
+                                        [class.is-invalid]="manzana.invalid && manzana.touched"
+                                    />
+                                    <div *ngIf="manzana.invalid && manzana.touched" class="invalid-feedback">
+                                        Solo puede contener letras, números y guiones.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label">Dirección <span class="text-danger">*</span></label>
+                                    <input
+                                        class="form-control"
+                                        [(ngModel)]="currentLote.direccion"
+                                        name="direccion"
+                                        required
+                                        #direccion="ngModel"
+                                        [class.is-invalid]="direccion.invalid && (direccion.touched || loteForm.submitted)"
+                                    />
+                                    <div *ngIf="direccion.invalid && (direccion.touched || loteForm.submitted)" class="invalid-feedback">
+                                        La dirección es obligatoria.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label">Código Postal <span class="text-danger">*</span></label>
+                                   <input type="text" class="form-control"
+                                        maxlength="5" minlength="5" pattern="[0-9]{5}"
+                                        name="codigoPostal"
+                                        [(ngModel)]="codigoPostal"
+                                        (input)="onCpInput($event)"
+                                        (paste)="onCpPaste($event)"
+                                        placeholder="Ej. 37904"
+                                        required
+                                        #cp="ngModel" />
+
+                                    <div *ngIf="cp.invalid && (cp.touched || loteForm.submitted)" class="invalid-feedback">
+                                        El CP es obligatorio y debe ser de 5 dígitos numéricos.
+                                    </div>
+                                    <div *ngIf="cp.valid && !cpEsValido" class="invalid-feedback d-block">
+                                        El código postal ingresado no es válido o no fue encontrado.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label">Estado <span class="text-danger">*</span></label>
+                                    <select
+                                        class="form-select"
+                                        name="id_estado"
+                                        [(ngModel)]="selectedEstado"
+                                        (change)="onEstadoChange($event)"
+                                        required
+                                        #estado="ngModel"
+                                        [class.is-invalid]="estado.invalid && (estado.touched || loteForm.submitted)"
+                                    >
+                                        <option [ngValue]="null">Seleccionar Estado</option>
+                                        <option *ngFor="let estado of estados" [value]="estado.id_estado">
+                                            {{ estado.nombre_estado }}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="estado.invalid && (estado.touched || loteForm.submitted)" class="invalid-feedback">
+                                        El estado es obligatorio.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label">Ciudad <span class="text-danger">*</span></label>
+                                    <select
+                                        class="form-select"
+                                        name="id_ciudad"
+                                        [(ngModel)]="selectedCiudad"
+                                        (change)="onCiudadChange($event)"
+                                        required
+                                        #ciudad="ngModel"
+                                        [class.is-invalid]="ciudad.invalid && (ciudad.touched || loteForm.submitted)"
+                                    >
+                                        <option [ngValue]="null">Seleccionar Ciudad</option>
+                                        <option *ngFor="let ciudad of ciudades" [value]="ciudad.id_ciudad">
+                                            {{ ciudad.nombre_ciudad }}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="ciudad.invalid && (ciudad.touched || loteForm.submitted)" class="invalid-feedback">
+                                        La ciudad es obligatoria.
+                                    </div >
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label">Colonia <span class="text-danger">*</span></label>
+                                    <ng-select
+                                        [items]="colonias"
+                                        bindLabel="nombre_colonia"
+                                        bindValue="nombre_colonia"
+                                        [addTag]="true"
+                                        placeholder="Selecciona o escribe una colonia"
+                                        [(ngModel)]="currentLote.nombre_colonia_nueva"
+                                        name="id_colonia"
+                                        [clearable]="true"
+                                        (change)="onColoniaChange($event)"
+                                        [required]="true"
+                                        #colonia="ngModel"
+                                        class="ng-select-bootstrap bg-white border rounded"
+                                        [searchable]="true">
+                                    </ng-select>
+                                    <div *ngIf="colonia.invalid && (colonia.touched || loteForm.submitted)" class="invalid-feedback d-block">
+                                        La colonia es obligatoria.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label">Precio <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control"
+                                        [(ngModel)]="currentLote.precio"
+                                        name="precio"
+                                        [required]="true"
+                                        min="1" max="100000000"
+                                        (input)="clampValue(currentLote, 'precio', 1, 100000000, $event, 8)"
+                                        (paste)="onPasteNumber($event, 1, 100000000)"
+                                        #precio="ngModel" 
+                                        [class.is-invalid]="precio.invalid && (precio.touched || loteForm.submitted)"/>
+                                    <div *ngIf="precio.errors && (precio.touched || loteForm.submitted)" class="invalid-feedback">
+                                        <div *ngIf="precio.errors['required']">El precio es obligatorio.</div>
+                                        <div *ngIf="precio.errors['min']">El precio debe ser mayor a 0.</div>
+                                        <div *ngIf="precio.errors['max']">El precio no puede exceder los 100 millones.</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <label class="form-label">Valor Avalúo</label>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        [(ngModel)]="currentLote.valor_avaluo"
+                                        name="valor_avaluo"
+                                        min="0"
+                                        #avaluo="ngModel"
+                                        [class.is-invalid]="avaluo.invalid && avaluo.touched"
+                                    />
+                                    <div *ngIf="avaluo.invalid && avaluo.touched" class="invalid-feedback">
+                                        Debe ser un valor positivo.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label">Estado Propiedad <span class="text-danger">*</span></label>
+                                    <select
+                                        class="form-select"
+                                        [(ngModel)]="currentLote.estado_propiedad"
+                                        name="estado_propiedad"
+                                        required
+                                        #estadoProp="ngModel"
+                                        [class.is-invalid]="estadoProp.invalid && (estadoProp.touched || loteForm.submitted)"
+                                    >
+                                        <option [ngValue]="null">Seleccionar Estado</option>
+                                        <option value="disponible">Disponible</option>
+                                        <option value="rentada">Rentada</option>
+                                        <option value="vendida">Vendida</option>
+                                        <option value="en proceso">En Proceso</option>
+                                    </select>
+                                    <div *ngIf="estadoProp.invalid && (estadoProp.touched || loteForm.submitted)" class="invalid-feedback">
+                                        El estado de la propiedad es obligatorio.
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <label class="form-label">Fecha Disponibilidad</label>
+                                    <input
+                                        type="date"
+                                        class="form-control"
+                                        [(ngModel)]="currentLote.fecha_disponibilidad"
+                                        name="fecha_disponibilidad"
+                                        min="2000-01-01"
+                                        #fechaDisponibilidad="ngModel"
+                                        [class.is-invalid]="fechaDisponibilidad.invalid && (fechaDisponibilidad.touched || loteForm.submitted)"
+                                        required
+                                    />
+                                    <div *ngIf="fechaDisponibilidad.errors && (fechaDisponibilidad.touched || loteForm.submitted)" class="invalid-feedback">
+                                        <div *ngIf="fechaDisponibilidad.errors['required']">La fecha de disponibilidad es obligatoria.</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label">A quién dirigirse (Encargado) <span class="text-danger">*</span></label>
+                                    <select 
+                                        class="form-select" 
+                                        [(ngModel)]="currentLote.id_user" 
+                                        name="id_user" 
+                                        required
+                                        #encargado="ngModel"
+                                        [class.is-invalid]="encargado.invalid && (encargado.touched || loteForm.submitted)">
+                                        <option [ngValue]="null">Seleccionar Encargado</option>
+                                        <option *ngFor="let encargado of encargados" [value]="encargado.id_user">
+                                            {{ encargado.usuario }}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="encargado.invalid && (encargado.touched || loteForm.submitted)" class="invalid-feedback">
+                                        El encargado es obligatorio.
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3"></div>
+                                <div class="col-md-3"></div>
+                                <div class="col-md-3"></div>
 
 
+                            </div> </div> <div *ngIf="currentStep === 2" class="form-step w-100">
+                            <h4>Paso 2 de {{ totalSteps }}: Características y Superficie</h4>
+                            <hr>
+                            <div class="row g-3">
+                                
+                                <div class="col-md-3">
+                                    <label class="form-label">Superficie m² <span class="text-danger">*</span></label>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        [(ngModel)]="currentLote.superficie_m2"
+                                        name="superficie_m2"
+                                        required
+                                        min="1"
+                                        #superficie="ngModel"
+                                        [class.is-invalid]="superficie.invalid && (superficie.touched || loteForm.submitted)"
+                                    />
+                                    <div *ngIf="superficie.invalid && (superficie.touched || loteForm.submitted)" class="invalid-feedback">
+                                        La superficie es obligatoria y debe ser mayor a 0.
+                                    </div>
+                                </div>
 
+                                <div class="col-md-3" *ngIf="currentLote.tipo === 'casa' || currentLote.tipo === 'depto'">
+                                    <label class="form-label">Habitaciones</label>
+                                   <input type="number" class="form-control"
+                                        [(ngModel)]="currentLote.num_habitaciones"
+                                        name="num_habitaciones"
+                                        min="0" max="99"
+                                        (input)="clampValue(currentLote, 'num_habitaciones', 0, 99, $event, 2)"
+                                        (paste)="onPasteNumber($event, 0, 99)" 
+                                        #hab="ngModel"
+                                        [class.is-invalid]="hab.invalid && (hab.touched || loteForm.submitted)" />
+                                     <div *ngIf="hab.errors && (hab.touched || loteForm.submitted)" class="invalid-feedback">
+                                        <div *ngIf="hab.errors['min']">Debe ser un número positivo.</div>
+                                        <div *ngIf="hab.errors['max']">No puede superar 99 habitaciones.</div>
+                                    </div>
+                                </div>
 
+                                <div class="col-md-3" *ngIf="currentLote.tipo === 'casa' || currentLote.tipo === 'depto'">
+                                    <label class="form-label">Baños</label>
+                                   <input type="number" class="form-control"
+                                        [(ngModel)]="currentLote.num_banos"
+                                        name="num_banos"
+                                        min="0" max="99"
+                                        (input)="clampValue(currentLote, 'num_banos', 0, 99, $event,2)"
+                                        (paste)="onPasteNumber($event, 0, 99)"
+                                        #banos="ngModel"  
+                                        [class.is-invalid]="banos.invalid && (banos.touched || loteForm.submitted)" />
+                                    <div *ngIf="banos.errors && (banos.touched || loteForm.submitted)" class="invalid-feedback">
+                                        <div *ngIf="banos.errors['min']">Debe ser un número positivo.</div>
+                                        <div *ngIf="banos.errors['max']">No puede superar 99 baños.</div>
+                                    </div>
+                                </div>
 
-                        <div class="col-md-6">
-                            <label for="documentacion_pdf" class="form-label">Archivo de Documentación (PDF)</label>
-                            <input 
-                                class="form-control" 
-                                type="file" 
-                                id="documentacion_pdf" 
-                                (change)="onDocumentacionSelected($event)" 
-                                accept="application/pdf">
-                            <div *ngIf="documentacionError" class="form-text text-danger fw-bold">
-                                Archivo no válido. La documentación debe ser un archivo **PDF**.
-                            </div>
-                            <div *ngIf="selectedDocumentacion" class="form-text text-success">
-                                Archivo seleccionado: {{ selectedDocumentacion.name }}
-                            </div>
-                            
-                            
-                        </div>
+                                <div class="col-md-3" *ngIf="currentLote.tipo === 'casa' || currentLote.tipo === 'depto'">
+                                    <label class="form-label">Estacionamientos</label>
+                                   <input type="number" class="form-control"
+                                        [(ngModel)]="currentLote.num_estacionamientos"
+                                        name="num_estacionamientos"
+                                        min="0" max="99"
+                                        (input)="clampValue(currentLote, 'num_estacionamientos', 0, 99, $event, 2)"
+                                        (paste)="onPasteNumber($event, 0, 99)"
+                                        #estac="ngModel"
+                                        [class.is-invalid]="estac.invalid && (estac.touched || loteForm.submitted)" />
+                                    
+                                    <div *ngIf="estac.errors && (estac.touched || loteForm.submitted)" class="invalid-feedback">
+                                        <div *ngIf="estac.errors['min']">Debe ser un número positivo.</div>
+                                        <div *ngIf="estac.errors['max']">No puede superar 99 estacionamientos.</div>
+                                    </div>
+                                </div>
 
+                                <div class="col-md-3">
+                                    <label class="form-label">Servicios</label>
+                                    <input
+                                        class="form-control"
+                                        [(ngModel)]="currentLote.servicios"
+                                        name="servicios"
+                                        placeholder="Ej. Luz, agua, drenaje..."
+                                    />
+                                </div>
 
-                    </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Topografía</label>
+                                    <input class="form-control" [(ngModel)]="currentLote.topografia" name="topografia" />
+                                </div>
+                                
+                                <ng-container *ngIf="currentLote.tipo !== 'casa' && currentLote.tipo !== 'depto'">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-3"></div>
+                                </ng-container>
 
-                    <div class="mt-4 text-end">
-                        <button type="submit" class="btn btn-gold px-4" [disabled]="loteForm.invalid">
-                            {{ isEdit ? 'Actualizar' : 'Guardar' }}
-                        </button>
-                    </div>
-                </form>
+                            </div> </div> <div *ngIf="currentStep === 3" class="form-step w-100">
+                            <h4>Paso 3 de {{ totalSteps }}: Descripción y Medios</h4>
+                            <hr>
+                            <div class="row g-3">
+                                
+                                <div class="col-md-12">
+                                    <label class="form-label">Descripción</label>
+                                    <textarea
+                                        class="form-control"
+                                        rows="3"
+                                        [(ngModel)]="currentLote.descripcion"
+                                        name="descripcion"
+                                    ></textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label>Imágenes</label>
+
+                                    <div *ngIf="imagenesSeleccionadas.length === 0">
+                                        <input
+                                        type="file"
+                                        accept="image/*" 
+                                        multiple
+                                        (change)="onFileSelected($event)"
+                                        class="form-control"
+                                        />
+                                    </div>
+
+                                    <div *ngIf="imagenesSeleccionadas.length > 0">
+                                        <button
+                                        class="btn btn-outline-secondary"
+                                        type="button"
+                                        (click)="addMoreImages()"
+                                        >
+                                        Agregar más imágenes
+                                        </button>
+                                    </div>
+
+                                    <p class="text-muted mt-2">
+                                        Puede cargar una o varias imágenes.
+                                        <ng-container *ngIf="imagenesSeleccionadas.length === 0">
+                                        Seleccione al menos una para comenzar.
+                                        </ng-container>
+                                        <ng-container *ngIf="imagenesSeleccionadas.length > 0">
+                                        Para agregar más, haga clic en <strong>"Agregar más imágenes"</strong>.
+                                        </ng-container>
+                                    </p>
+
+                                    <div *ngIf="previewImagenes?.length" class="mt-3 d-flex flex-wrap gap-2">
+                                        <div
+                                        *ngFor="let img of previewImagenes; let i = index"
+                                        class="position-relative"
+                                        style="display: inline-block;"
+                                        >
+                                        <img
+                                            [src]="img"
+                                            alt="Vista previa"
+                                            class="img-thumbnail"
+                                            style="max-height: 120px; width: auto;" />
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-danger position-absolute top-0 end-0"
+                                            style="border-radius: 50%; transform: translate(30%, -30%);"
+                                            (click)="eliminarImagen(i)"
+                                            title="Eliminar imagen"
+                                        >
+                                            &times;
+                                        </button>
+                                        </div>
+                                    </div>
+
+                                    <input
+                                        #fileInput
+                                        type="file"
+                                        multiple
+                                        accept="image/*" 
+                                        (change)="onFileSelected($event)"
+                                        style="display: none;"
+                                    />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="documentacion_pdf" class="form-label">Archivo de Documentación (PDF)</label>
+                                    <input 
+                                        class="form-control" 
+                                        type="file" 
+                                        id="documentacion_pdf" 
+                                        (change)="onDocumentacionSelected($event)" 
+                                        accept="application/pdf">
+                                    <div *ngIf="documentacionError" class="form-text text-danger fw-bold">
+                                        Archivo no válido. La documentación debe ser un archivo **PDF**.
+                                    </div>
+                                    <div *ngIf="selectedDocumentacion" class="form-text text-success">
+                                        Archivo seleccionado: {{ selectedDocumentacion.name }}
+                                    </div>
+                                </div>
+
+                            </div> </div> </div> </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-silver" data-bs-dismiss="modal" (click)="onModalClose()">Cancelar</button>
+
+                <button type="button" class="btn btn-amatista" (click)="prevStep()" *ngIf="currentStep > 1">
+                    <i class="bi bi-arrow-left"></i> Anterior
+                </button>
+
+                <button type="button" class="btn btn-amatista" (click)="nextStep()" *ngIf="currentStep < totalSteps">
+                    Siguiente <i class="bi bi-arrow-right"></i>
+                </button>
+
+                <button type="submit" form="loteForm" class="btn btn-gold" *ngIf="currentStep === totalSteps" [disabled]="!loteForm.valid">
+                    <i class="bi bi-save"></i> {{ isEdit ? 'Actualizar Lote' : 'Guardar Lote' }}
+                </button>
             </div>
         </div>
     </div>
 </div>
+<div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+            <div class="modal-header bg-gold text-white"> 
+        <h5 class="modal-title" id="detalleModalLabel">
+          <i class="bi bi-eye"></i> Detalles del {{loteEnVista.tipo}}: {{ loteEnVista.numLote }}
+        </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        
+                <h4>Imágenes</h4>
+                <div class="detalle-img-container mb-4">
+                        <div id="carouselDetalle" class="carousel slide w-100" data-bs-ride="carousel"> 
+                            <div class="carousel-inner">
+                                                <ng-container *ngIf="loteEnVista.imagenes && loteEnVista.imagenes.length > 0">
+                                    <div class="carousel-item" 
+                                        *ngFor="let imgPath of loteEnVista.imagenes; let i = index" 
+                                        [class.active]="i === 0">
+                                        <img [src]="getImagenUrl(imgPath)" class="d-block w-100" alt="Imagen de Lote">
+                                    </div>
+                                </ng-container>
+                                                <div class="carousel-item active" *ngIf="!loteEnVista.imagenes || loteEnVista.imagenes.length === 0">
+                                    <img src="assets/default-lote.jpg" class="d-block w-100" alt="Sin imagen">
+                                </div>
+                            </div>
 
+                                        <ng-container *ngIf="loteEnVista.imagenes && loteEnVista.imagenes.length > 1">
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselDetalle" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Anterior</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselDetalle" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Siguiente</span>
+                                </button>
+                            </ng-container>
+                        </div>
+                    </div>
+                    
+        
+        <hr>
+        
+                <h4>Información Principal</h4>
+        <div class="row mb-4">
+                    <div class="col-md-6">
+            <ul class="list-detalle">
+              <li><strong>Tipo:</strong> <span>{{ loteEnVista.tipo | uppercase }}</span></li>
+              <li><strong>Precio:</strong> <span>{{ loteEnVista.precio | currency:'USD':'symbol':'1.2-2' }}</span></li>
+              <li><strong>Estado de Propiedad:</strong> <span>{{ loteEnVista.estado_propiedad }}</span></li>
+            </ul>
+          </div>
+                    <div class="col-md-6">
+            <ul class="list-detalle">
+              <li><strong>Superficie (m²):</strong> <span>{{ loteEnVista.superficie_m2 }}</span></li>
+              <li><strong>Valor Avalúo:</strong> <span>{{ loteEnVista.valor_avaluo ? (loteEnVista.valor_avaluo | currency:'USD':'symbol':'1.2-2') : 'N/A' }}</span></li>
+              <li><strong>Encargado:</strong> <span>{{ loteEnVista.user?.nombre || 'N/A' }}</span></li>
+            </ul>
+          </div>
+        </div>
+        
+                <h4>Ubicación</h4>
+        <div class="row mb-4">
+                    <div class="col-md-6">
+            <ul class="list-detalle">
+              <li><strong>Estado:</strong> <span>{{ loteEnVista.estado?.nombre || 'N/A' }}</span></li>
+              <li><strong>Ciudad:</strong> <span>{{ loteEnVista.ciudad?.nombre || 'N/A' }}</span></li>
+              <li><strong>C.P.:</strong> <span>{{ loteEnVista.codigo_postal }}</span></li>
+            </ul>
+          </div>
+                    <div class="col-md-6">
+            <ul class="list-detalle">
+              <li><strong>Colonia:</strong> <span>{{ loteEnVista.nombre_colonia_nueva || (loteEnVista.colonia ? loteEnVista.colonia.nombre : 'N/A') }}</span></li>
+              <li><strong>Dirección:</strong> <span>{{ loteEnVista.direccion }}</span></li>
+              <li><strong>Manzana:</strong> <span>{{ loteEnVista.manzana || 'N/A' }}</span></li>
+            </ul>
+          </div>
+        </div>
 
+                <ng-container *ngIf="loteEnVista.tipo === 'casa' || loteEnVista.tipo === 'departamento'">
+          <h4>Detalles de Construcción</h4>
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <ul class="list-detalle">
+                <li><strong>Habitaciones:</strong> <span>{{ loteEnVista.num_habitaciones || 0 }}</span></li>
+                <li><strong>Baños:</strong> <span>{{ loteEnVista.num_banos || 0 }}</span></li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <ul class="list-detalle">
+                <li><strong>Estacionamientos:</strong> <span>{{ loteEnVista.num_estacionamientos || 0 }}</span></li>
+                <li><strong>Topografía:</strong> <span>{{ loteEnVista.topografia || 'Plana' }}</span></li>
+              </ul>
+            </div>
+          </div>
+        </ng-container>
 
-
+                <h4>Servicios Disponibles</h4>
+                
+        <h4>Descripción</h4>
+                
+        <h4>Documentación PDF</h4>
+                
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-silver" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
 <app-footer-admin></app-footer-admin>
 
 <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 2000;">
@@ -582,7 +717,6 @@
     </div>
 </div>
 
-<!-- Modal de confirmación -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">

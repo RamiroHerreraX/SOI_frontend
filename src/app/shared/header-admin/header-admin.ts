@@ -1,4 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { 
+  Component, OnInit, OnDestroy, HostListener, 
+  ElementRef, ViewChild 
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router'; // Para usar routerLink
 import { Subscription } from 'rxjs';
@@ -26,6 +29,10 @@ export class HeaderAdmin implements OnInit, OnDestroy {
   menuOpen = false;       // Controla collapse del menú en mobile
   dropdownOpen = false;   // Controla dropdown de usuario
 
+  // Obtiene la referencia al elemento <li> del dropdown mediante la variable de plantilla #dropdownMenu
+  // Usamos static: false para asegurar que Angular lo busque después de que *ngIf lo muestre.
+  @ViewChild('dropdownMenu', { static: false }) dropdownMenuRef!: ElementRef;
+
   constructor(private authService: Auth, private router: Router) {}
 
   ngOnInit(): void {
@@ -42,5 +49,24 @@ export class HeaderAdmin implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.userSubscription) this.userSubscription.unsubscribe();
+  }
+
+ 
+/**
+   * Escucha clics en todo el documento para cerrar el dropdown de usuario
+   * si el clic no ocurrió dentro del elemento del dropdown.
+   */
+  @HostListener('document:click', ['$event'])
+  hostClick(event: MouseEvent): void {
+    // 🛑 COMPROBACIÓN DE SEGURIDAD CLAVE: Si el dropdown no está abierto O la referencia no existe, salimos.
+    if (!this.dropdownOpen || !this.dropdownMenuRef) return;
+
+    // 1. Verificar si el clic ocurrió DENTRO del elemento del dropdown (el <li>)
+    const clickedInsideDropdown = this.dropdownMenuRef.nativeElement.contains(event.target as Node);
+
+    // 2. Si el clic NO fue dentro, cerramos el dropdown.
+    if (!clickedInsideDropdown) {
+      this.dropdownOpen = false;
+    }
   }
 }
