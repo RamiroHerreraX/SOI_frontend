@@ -1,14 +1,234 @@
 <app-header-admin></app-header-admin>
 
-<!-- Contenido principal -->
-<div class="container mt-5 pt-5 home-admin-container">
-  <h2 class="text-center fw-bold mb-4">Bienvenido al Panel de Pagos</h2>
+<section id="pagos" class="py-5 content-margin-top">
+  <div class="container">
+
+    <h3>Resumen de Pagos</h3>
+
+    <div class="row g-4">
+      <div class="col-md-4" *ngFor="let r of resumen">
+        <div class="card shadow-sm card-lote">
+
+          <div class="card-body">
+
+            <h5 class="card-title text-gold mb-1">
+              {{ r.nombre }} {{ r.apellido_paterno }}
+            </h5>
+
+            <p class="card-subtitle text-muted mb-2" style="font-size: 0.9rem;">
+              <i class="bi bi-file-text"></i> Contrato: {{ r.id_contrato }}
+            </p>
+
+            <hr class="my-2">
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div>
+                <small class="text-uppercase text-secondary d-block">Precio Total</small>
+                <strong class="fs-6 text-success">${{ r.precio_total | number }}</strong>
+              </div>
+              <div class="text-end">
+                <small class="text-uppercase text-secondary d-block">Enganche</small>
+                <strong class="fs-6">${{ r.enganche | number }}</strong>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div>
+                <small class="text-uppercase text-secondary d-block">Total Pagado</small>
+                <strong class="fs-6 text-primary">${{ r.total_pagado | number }}</strong>
+              </div>
+              <div class="text-end">
+                <small class="text-uppercase text-secondary d-block">Saldo Pendiente</small>
+                <strong class="fs-6" [class.text-danger]="r.saldo_restante > 0" 
+                          [class.text-success]="r.saldo_restante <= 0">
+                  ${{ r.saldo_restante | number }}
+                </strong>
+              </div>
+            </div>
+
+            <hr class="my-2">
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+              <button class="btn btn-bronze btn-sm" (click)="verPagos(r)">
+                <i class="bi bi-eye"></i> Ver Pagos
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Modal para ver pagos -->
+<div class="modal fade show" [ngClass]="{'d-block': showModalPagos}" *ngIf="showModalPagos">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-gold">
+          <i class="bi bi-file-text"></i> Contrato: {{ contratoSeleccionado }}
+          <span class="badge bg-danger ms-2" *ngIf="detalleContrato?.saldo_pendiente > 0">
+            SALDO PENDIENTE
+          </span>
+          <span class="badge bg-success ms-2" *ngIf="detalleContrato?.saldo_pendiente <= 0">
+            LIQUIDADO
+          </span>
+        </h5>
+        <button type="button" class="btn-close" (click)="cerrarModalPagos()"></button>
+      </div>
+      
+      <div class="modal-body">
+        
+        <!-- Resumen del contrato -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-3 text-muted">Resumen del Contrato</h6>
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>Cliente:</strong> {{ detalleContrato?.nombre }} {{ detalleContrato?.apellido_paterno }}</p>
+                <p><strong>Precio Total:</strong> ${{ detalleContrato?.precio_total | number }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Enganche:</strong> ${{ detalleContrato?.enganche | number }}</p>
+                <p><strong>Total Pagado:</strong> ${{ detalleContrato?.total_pagado | number }}</p>
+                <p><strong>Saldo Pendiente:</strong> 
+                  <span [class.text-danger]="detalleContrato?.saldo_pendiente > 0" 
+                        [class.text-success]="detalleContrato?.saldo_pendiente <= 0"
+                        class="fw-bold">
+                    ${{ detalleContrato?.saldo_pendiente | number }}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla de pagos -->
+        <h6 class="mb-3">Historial de Pagos</h6>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th># Pago</th>
+                <th>Fecha</th>
+                <th>Monto</th>
+                <th>Método</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let pago of pagosContrato">
+                <td>{{ pago.numero_pago }}</td>
+                <td>{{ pago.fecha_pago | date:'dd/MM/yyyy' }}</td>
+                <td>${{ pago.monto | number }}</td>
+                <td>{{ pago.metodo_pago }}</td>
+                <td>{{ pago.descripcion || '-' }}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary" (click)="descargarRecibo(pago.id_pago)">
+                    <i class="bi bi-download"></i> Recibo
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="pagosContrato.length === 0">
+                <td colspan="6" class="text-center text-muted py-4">
+                  <i class="bi bi-receipt display-6 d-block mb-2"></i>
+                  No hay pagos registrados para este contrato
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      
+      <div class="modal-footer">
+        <!-- Botón para enviar notificación -->
+        <button type="button" class="btn btn-warning me-auto" 
+                (click)="enviarNotificacionPago()"
+                *ngIf="detalleContrato?.saldo_pendiente > 0"
+                [disabled]="!detalleContrato">
+          <i class="bi bi-envelope"></i> Enviar Recordatorio
+        </button>
+        
+        <button type="button" class="btn btn-secondary" (click)="cerrarModalPagos()">
+          <i class="bi bi-x-circle"></i> Cerrar
+        </button>
+        <button type="button" class="btn btn-bronze" (click)="abrirModalNuevoPago()">
+          <i class="bi bi-plus-circle"></i> Registrar Pago
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
-
-<!-- Footer -->
-<footer class="footer-admin py-3 mt-5">
-  <div class="container text-center">
-    <p class="text-light-silver mb-0 small">&copy; 2025 Inmobiliaria INDES. Todos los derechos reservados.</p>
+<!-- Modal para nuevo pago -->
+<div class="modal fade show" [ngClass]="{'d-block': showModalNuevoPago}" *ngIf="showModalNuevoPago">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-gold">
+          <i class="bi bi-plus-circle"></i> Registrar Nuevo Pago
+        </h5>
+        <button type="button" class="btn-close" (click)="cerrarModalNuevoPago()"></button>
+      </div>
+      
+      <div class="modal-body">
+        <form (ngSubmit)="registrarPago()" #pagoForm="ngForm">
+          <div class="mb-3">
+            <label class="form-label">Contrato</label>
+            <input type="text" class="form-control" [value]="contratoSeleccionado" disabled>
+            <small class="text-muted">Cliente: {{ detalleContrato?.nombre }} {{ detalleContrato?.apellido_paterno }}</small>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Monto *</label>
+            <input type="number" class="form-control" [(ngModel)]="nuevoPago.monto" 
+                   name="monto" step="0.01" min="0.01" required
+                   [max]="detalleContrato?.saldo_pendiente || 999999999">
+            <div class="form-text">
+              Saldo pendiente: ${{ detalleContrato?.saldo_pendiente | number }}
+              <span *ngIf="detalleContrato?.saldo_pendiente > 0 && nuevoPago.monto > detalleContrato?.saldo_pendiente" 
+                    class="text-danger">
+                ⚠️ El monto excede el saldo pendiente
+              </span>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Método de Pago *</label>
+            <select class="form-select" [(ngModel)]="nuevoPago.metodo_pago" name="metodo_pago" required>
+              <option value="" disabled selected>Seleccionar método</option>
+              <option value="efectivo">Efectivo</option>
+              <option value="transferencia">Transferencia</option>
+              <option value="tarjeta">Tarjeta</option>
+              <option value="cheque">Cheque</option>
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Descripción (opcional)</label>
+            <textarea class="form-control" [(ngModel)]="nuevoPago.descripcion" 
+                      name="descripcion" rows="3" placeholder="Ej: Pago correspondiente al mes de..."></textarea>
+          </div>
+          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cerrarModalNuevoPago()">
+              <i class="bi bi-x-circle"></i> Cancelar
+            </button>
+            <button type="submit" class="btn btn-bronze" [disabled]="!pagoForm.valid || nuevoPago.monto <= 0">
+              <i class="bi bi-check-circle"></i> Registrar Pago
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-</footer>
+</div>
+
+<!-- Overlay para modales -->
+<div class="modal-backdrop fade show" *ngIf="showModalPagos || showModalNuevoPago"></div>
+
+<app-footer-admin></app-footer-admin>
