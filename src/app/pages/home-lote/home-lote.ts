@@ -1,15 +1,27 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy, 
+  ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoteService } from '../../services/lote';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FooterComponent } from "../footer/footer.component";
 import { ScrollTopComponent } from "../scroll-top/scroll-top.component";
+import { Subscription } from 'rxjs';
+import { Auth } from '../../services/auth';
+import { RouterModule, Router } from '@angular/router';
+
+// Define la interfaz de usuario para usarla en el componente
+interface UserData {
+  nombre: string;
+  nombreCompleto: string;
+  rol: string;
+  correo: string;
+}
 
 @Component({
   selector: 'app-home-lote',
   templateUrl: './home-lote.html',
   styleUrls: ['./home-lote.css'],
-  imports: [CommonModule, FooterComponent, ScrollTopComponent],
+  imports: [CommonModule, FooterComponent, ScrollTopComponent,  RouterModule],
   standalone: true
 })
 export class HomeLoteComponent implements OnInit {
@@ -26,12 +38,27 @@ export class HomeLoteComponent implements OnInit {
   activeFilter = '';
   mapaURL: SafeResourceUrl | null = null;
 
+  usuario: UserData | null = null; 
+  private userSubscription!: Subscription;
 
-  constructor(private loteService: LoteService, private sanitizer: DomSanitizer) {}
+  menuOpen = false;       // Controla collapse del menú en mobile
+  dropdownOpen = false;   // Controla dropdown de usuario
+
+  // Obtiene la referencia al elemento <li> del dropdown mediante la variable de plantilla #dropdownMenu
+  // Usamos static: false para asegurar que Angular lo busque después de que *ngIf lo muestre.
+  @ViewChild('dropdownMenu', { static: false }) dropdownMenuRef!: ElementRef;
+
+
+  constructor(private loteService: LoteService, private sanitizer: DomSanitizer, private authService: Auth) {}
 
   ngOnInit(): void {
     this.cargarLotes();
     this.cargarLotesNuevo();
+     this.userSubscription = this.authService.currentUser$.subscribe(user => {
+      this.usuario = user;
+      // Si el usuario no está logeado, cerramos el dropdown
+      if (!user) this.dropdownOpen = false;
+    });
 
   }
 
@@ -162,5 +189,30 @@ scrollToggle(): void {
         link.classList.add('active');
       }
     });
+  }
+
+  cerrarSesion(): void {
+    this.authService.cerrarSesion();
+  }
+
+  ngOnDestroy(): void {
+    if (this.userSubscription) this.userSubscription.unsubscribe();
+  }
+  /**
+   * Escucha clics en todo el documento para cerrar el dropdown de usuario
+   * si el clic no ocurrió dentro del elemento del dropdown.
+   */
+  @HostListener('document:click', ['$event'])
+  hostClick(event: MouseEvent): void {
+    // 🛑 COMPROBACIÓN DE SEGURIDAD CLAVE: Si el dropdown no está abierto O la referencia no existe, salimos.
+    if (!this.dropdownOpen || !this.dropdownMenuRef) return;
+
+    // 1. Verificar si el clic ocurrió DENTRO del elemento del dropdown (el <li>)
+    const clickedInsideDropdown = this.dropdownMenuRef.nativeElement.contains(event.target as Node);
+
+    // 2. Si el clic NO fue dentro, cerramos el dropdown.
+    if (!clickedInsideDropdown) {
+      this.dropdownOpen = false;
+    }
   }
 }

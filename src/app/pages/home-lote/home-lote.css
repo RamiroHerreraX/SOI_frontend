@@ -204,3 +204,87 @@ body {
   padding: 1.5rem;
   position: relative;
 }
+
+
+/* === BOTÓN "INICIAR SESIÓN" (USUARIO NO LOGEADO) === */
+.btn-auth-silver {
+  background-color: #A9A9A9; 
+  color: white !important;
+  border: 1px solid #808080; 
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-auth-silver:hover {
+  background-color: #B8860B; 
+  border-color: #DAA520;
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(184, 134, 11, 0.5);
+}
+
+/* === ESTILOS DEL DROPDOWN DEL USUARIO (AJUSTADOS) === */
+
+.dropdown-menu {
+  min-width: 220px; 
+  right: 0;
+  left: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(184, 134, 11, 0.5); /* Borde sutil dorado */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25); 
+  padding: 0; /* Quitamos el padding global para controlar el espaciado interno en los <li> */
+  overflow: hidden; /* Asegura que los bordes redondeados se apliquen bien */
+}
+
+/* Contenedor del nombre, email y rol */
+.dropdown-menu .dropdown-item-text {
+    padding: 0.75rem 1rem;
+    white-space: normal;
+}
+
+/* Nombre del usuario - Destacado */
+.dropdown-menu .text-primary {
+    color: #B8860B !important; /* Dorado de la marca */
+    font-size: 1.1rem;
+    font-weight: 700 !important; /* Más peso para el nombre */
+}
+
+/* Correo y Rol */
+.dropdown-menu .text-muted,
+.dropdown-menu .text-success {
+    padding: 0 1rem 0.5rem 1rem; /* Ajustar padding para centrar */
+    display: block; /* Asegurar que ocupan su propia línea */
+}
+
+/* Rol */
+.dropdown-menu .text-success {
+    color: #CD7F32 !important; /* 🌟 CAMBIO CLAVE: Usamos el dorado para el rol */
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Divisor mejorado */
+.dropdown-menu .dropdown-divider {
+    margin: 0.5rem 0;
+    border-color: #f0f0f0; /* Color muy suave */
+    border-width: 2px;
+}
+
+/* Botón de Cerrar Sesión */
+.dropdown-menu .dropdown-item.text-danger {
+    /* Usamos 'dropdown-item' que ya tiene hover de Bootstrap, solo ajustamos color y padding */
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+}
+
+.dropdown-menu .dropdown-item.text-danger:hover {
+    background-color: #fce4e4; 
+    color: #D32F2F !important;
+}
+
+/* Opcional: Centrar y dar espacio a los iconos */
+.dropdown-menu .dropdown-item i {
+    width: 20px;
+}
