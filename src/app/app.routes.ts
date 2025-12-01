@@ -15,7 +15,7 @@ import { VerContratoComponent } from './pages/contratos/ver-contrato/ver-contrat
  
 export const routes: Routes = [
   { path: '', component: HomeLoteComponent },   // Ruta principal
-  { path: 'lotes', component: Lote, canActivate: [AuthGuard]  },  // CRUD de lotes
+  { path: 'inmuebles', component: Lote, canActivate: [AuthGuard]  },  // CRUD de lotes
   { path: 'home', component: HomeAdmin, canActivate: [AuthGuard]},
   { path: 'clientes', component: ClienteComponent, canActivate: [AuthGuard] },
   { path: 'pagos', component: Pagos, canActivate: [AuthGuard] },

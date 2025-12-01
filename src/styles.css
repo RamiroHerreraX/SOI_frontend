@@ -1,1 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+/* Estilos para el Breadcrumb (Opcional, si el texto es muy grande) */
+.breadcrumb {
+    font-size: 0.9rem; /* Reduce ligeramente el tamaño de la fuente */
+    padding-left: 0; /* Asegura que no haya padding no deseado */
+}
+
+.breadcrumb-item a {
+    color: #6C757D !important; /* Gris Topo Elegante para enlaces inactivos */
+}
+
+.breadcrumb-item.active {
+    color: #1A1A1A !important; /* Color oscuro para el elemento actual */
+}

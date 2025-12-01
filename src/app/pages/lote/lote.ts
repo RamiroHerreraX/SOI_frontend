@@ -9,6 +9,7 @@ import { UsersService } from '../../services/users.service';
 import { HeaderAdmin } from "../../shared/header-admin/header-admin";
 import { FooterAdmin } from "../../shared/footer-admin/footer-admin";
 import Swal, { SweetAlertResult } from 'sweetalert2';
+import { ScrollTopComponent } from "../scroll-top/scroll-top.component";
 
 
 declare var bootstrap: any;
@@ -23,7 +24,8 @@ declare var bootstrap: any;
     HttpClientModule,
     NgSelectModule,
     HeaderAdmin,
-    FooterAdmin
+    FooterAdmin,
+    ScrollTopComponent
 ],
   templateUrl: './lote.html',
   styleUrls: ['./lote.css']
