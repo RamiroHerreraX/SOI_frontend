@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet, provideRouter } from '@angular/router';
+import { RouterModule, RouterOutlet, provideRouter } from '@angular/router';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { importProvidersFrom } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
@@ -8,7 +8,7 @@ import { routes } from './app.routes';
 @Component({
   selector: 'app-root',
   standalone: true,         // obligatorio para imports en el componente
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, RouterModule],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })

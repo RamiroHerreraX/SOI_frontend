@@ -1,0 +1,36 @@
+table {
+  font-size: 14px;
+}
+
+.badge {
+  font-size: 13px;
+  padding: 6px 10px;
+}
+
+.custom-breadcrumb {
+  background-color: #ffffff; /* Fondo blanco */
+}
+
+.custom-breadcrumb .breadcrumb-item a {
+  color: #000000; /* Enlaces normales en negro */
+  text-decoration: none;
+}
+
+.custom-breadcrumb .breadcrumb-item a.breadcrumb-home {
+  color: #e6c200; /* Inicio en amarillo */
+  font-weight: bold;
+}
+
+.custom-breadcrumb .breadcrumb-item a:hover {
+  text-decoration: underline;
+}
+
+.custom-breadcrumb .breadcrumb-item.active {
+  color: #000000; /* Paso actual en negro */
+  font-weight: bold;
+}
+
+h2 {
+  color: #B8860B;
+  font-weight: 700;
+}

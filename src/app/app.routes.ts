@@ -11,6 +11,7 @@ import { Login } from './pages/auth/login/login';
 import { Register } from './pages/auth/register/register';
 import { CrearContratoComponent } from './pages/contratos/crear-contrato/crear-contrato.component';
 import {AuthGuard} from './guards/auth.guard'
+import { VerContratoComponent } from './pages/contratos/ver-contrato/ver-contrato.component';
  
 export const routes: Routes = [
   { path: '', component: HomeLoteComponent },   // Ruta principal
@@ -20,6 +21,7 @@ export const routes: Routes = [
   { path: 'pagos', component: Pagos, canActivate: [AuthGuard] },
   { path: 'usuarios', component: Usuarios, canActivate: [AuthGuard] },
   { path: 'contratos', component: CrearContratoComponent , canActivate: [AuthGuard]},
+  { path: 'Vercontratos', component: VerContratoComponent , canActivate: [AuthGuard]},
   { path: 'auth/login', component: Login },
   { path: '**', redirectTo: '' }
 ];

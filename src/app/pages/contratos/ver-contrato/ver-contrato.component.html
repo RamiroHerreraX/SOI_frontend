@@ -1,25 +1,55 @@
 <app-header-admin></app-header-admin>
+<br><br>
+<br><br>
+
+<nav aria-label="breadcrumb" class="px-4">
+  <ol class="breadcrumb custom-breadcrumb p-2 rounded">
+    <li class="breadcrumb-item">
+      <a [routerLink]="['/home']" class="breadcrumb-home">Inicio</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Contratos
+    </li>
+  </ol>
+</nav>
 
 <div class="container mt-5 pt-4">
+
   <h2 class="text-center mb-4">Lista de Contratos Registrados</h2>
 
+  <!-- LOADER -->
   <div *ngIf="cargando" class="text-center">
     <div class="spinner-border" role="status"></div>
     <p class="mt-2">Cargando contratos...</p>
   </div>
 
-  <div *ngIf="!cargando && contratos.length === 0" class="alert alert-warning">
+  <!-- ALERTA SIN DATOS -->
+  <div *ngIf="!cargando && contratos.length === 0" class="alert alert-warning text-center">
     No hay contratos registrados.
   </div>
 
+  <!-- BUSCADOR RESPONSIVO -->
+  <div class="mb-3">
+    <input 
+      type="text" 
+      class="form-control mx-auto"
+      style="max-width: 300px;"
+      placeholder="Buscar cliente..." 
+      [(ngModel)]="busqueda"
+      (input)="filtrarContratos()">
+  </div>
+
+  <!-- TABLA RESPONSIVA -->
   <div *ngIf="contratos.length > 0" class="table-responsive shadow p-3 bg-white rounded">
     <table class="table table-striped table-hover text-center align-middle">
       <thead class="table-dark">
         <tr>
-          <th>ID</th>
           <th>Cliente</th>
-          <th>Lote</th>
+          <th>Folio Lote</th>
           <th>Precio Total</th>
+          <th>Enganche</th>
+          <th>Plazo (Meses)</th>
+          <th>Mensualidad</th>
           <th>Estado</th>
           <th>Fecha Creación</th>
           <th>Acciones</th>
@@ -27,30 +57,31 @@
       </thead>
 
       <tbody>
-        <tr *ngFor="let c of contratos">
-          <td>{{ c.id_contrato }}</td>
-          <td>{{ c.cliente_nombre }}</td>
+        <tr *ngFor="let c of contratosFiltrados">
+          <td>{{ c.cliente_nombre }} {{ c.apellido_paterno }} {{ c.apellido_materno }}</td>
           <td>{{ c.id_lote }}</td>
           <td>$ {{ c.precio_total }}</td>
+          <td>$ {{ c.enganche }}</td>
+          <td>{{ c.plazo_meses }}</td>
+          <td>$ {{ c.mensualidad }}</td>
+
           <td>
             <span class="badge bg-success" *ngIf="c.estado_contrato === 'activo'">Activo</span>
             <span class="badge bg-secondary" *ngIf="c.estado_contrato !== 'activo'">Inactivo</span>
           </td>
-          <td>{{ c.fecha_creacion | date: 'mediumDate' }}</td>
+
+          <td>{{ c.fecha_contrato | date: 'mediumDate' }}</td>
 
           <td>
             <button class="btn btn-primary btn-sm me-2" (click)="verDetalles(c)">
               Ver
-            </button>
-
-            <button class="btn btn-danger btn-sm" (click)="descargarPDF(c)">
-              PDF
             </button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+
 </div>
 
 <app-footer-admin></app-footer-admin>

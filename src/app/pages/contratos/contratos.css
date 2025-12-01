@@ -159,3 +159,12 @@ body {
 .container.mt-5.pt-5 {
   margin-top: 2rem !important; /* ajustable si no hay navbar */
 }
+
+table {
+  font-size: 14px;
+}
+
+.badge {
+  font-size: 13px;
+  padding: 6px 10px;
+}

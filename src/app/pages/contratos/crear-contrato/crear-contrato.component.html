@@ -1,5 +1,30 @@
 <app-header-admin></app-header-admin>
 <br><br>
+<br><br>
+
+<nav aria-label="breadcrumb" class="px-4">
+  <ol class="breadcrumb custom-breadcrumb p-2 rounded">
+    <li class="breadcrumb-item">
+      <a [routerLink]="['/home']" class="breadcrumb-home">Inicio</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+      Crear Contrato
+    </li>
+  </ol>
+</nav>
+
+
+<div class="text-end mt-3 px-4">
+     <a class="btn btn-dark" [routerLink]="['/Vercontratos']">
+        Ver todos los contratos
+    </a>
+</div>
+
+<br><br>
+
+    <h3 class="card-title text-center mb-4">Crear Contrato de Venta</h3>
+
+
 
 <div class="container home-admin-container mt-5 pt-3">
     <div class="card p-4 shadow">
@@ -7,13 +32,10 @@
             <div class="progress-item-clickable" [class.active]="currentStep === 1" (click)="goToStep(1)">1. Lote</div>
             <div class="progress-item-clickable" [class.active]="currentStep === 2" (click)="goToStep(2)">2. Cliente</div>
             <div class="progress-item-clickable" [class.active]="currentStep === 3" (click)="goToStep(3)">3. Contrato</div>
-            <div class="progress-item-clickable" [class.active]="currentStep === 4" (click)="goToStep(4)">4. Predio PDF</div>
+            <div class="progress-item-clickable" [class.active]="currentStep === 4" (click)="goToStep(4)">4. Predio</div>
             <div class="progress-item-clickable" [class.active]="currentStep === 5" (click)="goToStep(5)">5. Colindancias</div>
             <div class="progress-item-clickable" [class.active]="currentStep === 6" (click)="goToStep(6)">6. Firma</div>
         </div>
-
-                <h3 class="card-title text-center mb-4">Crear Contrato de Venta</h3>
-
         <form [formGroup]="contratoForm" (ngSubmit)="onSubmit()">
 
             <div class="form-step w-100" *ngIf="currentStep === 1">

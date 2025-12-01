@@ -79,7 +79,7 @@ h3.card-title {
   justify-content: space-between;
   align-items: center;
   padding: 18px;
-  background: #000000; /* Fondo negro sólido */
+  background: #ffffff; /* Fondo negro sólido */
   border-radius: 12px;
   margin-bottom: 25px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
@@ -87,15 +87,15 @@ h3.card-title {
   gap: 10px;
 }
 
-/* Botones/steps totalmente negros */
+/* Botones/steps totalmente blancos */
 .progress-item-clickable {
   flex: 1;
   min-width: 130px;
   text-align: center;
   padding: 12px 10px;
   font-weight: bold;
-  color: #ffffff;
-  background: #1a1a1a; /* Negro suave */
+  color: #000000;         /* Texto negro */
+  background: #ffffff;    /* Fondo blanco */
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.25s ease;
@@ -103,15 +103,37 @@ h3.card-title {
 }
 
 .progress-item-clickable:hover {
-  background: #333333; /* Gris oscuro al pasar mouse */
+  background: #f0f0f0; /* Gris muy claro al pasar mouse */
   transform: scale(1.04);
 }
 
 /* Step activo */
 .progress-item-clickable.active {
-  background: #ffffff;  /* Step activo blanco */
-  color: #000000;       /* Texto negro */
-  border-color: #ffffff;
-  box-shadow: 0 0 10px rgba(255,255,255,0.7);
+  background: #e6c200;  /* Step activo dorado */
+  color: #000000;        /* Texto negro */
+  border-color: #e6c200;
+  box-shadow: 0 0 10px rgba(230,194,0,0.7);
+}
+/* Breadcrumb personalizada */
+.custom-breadcrumb {
+  background-color: #ffffff; /* Fondo blanco */
 }
 
+.custom-breadcrumb .breadcrumb-item a {
+  color: #000000; /* Enlaces normales en negro */
+  text-decoration: none;
+}
+
+.custom-breadcrumb .breadcrumb-item a.breadcrumb-home {
+  color: #e6c200; /* Inicio en amarillo */
+  font-weight: bold;
+}
+
+.custom-breadcrumb .breadcrumb-item a:hover {
+  text-decoration: underline;
+}
+
+.custom-breadcrumb .breadcrumb-item.active {
+  color: #000000; /* Paso actual en negro */
+  font-weight: bold;
+}
