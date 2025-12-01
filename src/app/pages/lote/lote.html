@@ -572,7 +572,11 @@
                                         rows="3"
                                         [(ngModel)]="currentLote.descripcion"
                                         name="descripcion"
+                                        maxlength="500"  #descripcion="ngModel"
                                     ></textarea>
+                                    <small class="form-text text-muted text-end d-block">
+                                        {{ 500 - (currentLote.descripcion ? currentLote.descripcion.length : 0) }} caracteres restantes
+                                    </small>
                                 </div>
 
                                 <div class="col-md-6">
@@ -683,12 +687,14 @@
         </div>
     </div>
 </div>
+
+
 <div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
             <div class="modal-header bg-gold text-white"> 
         <h5 class="modal-title" id="detalleModalLabel">
-          <i class="bi bi-eye"></i> Detalles del {{loteEnVista.tipo}}: {{ loteEnVista.numLote }}
+          <i class="bi bi-eye"></i> Detalles del {{loteEnVista.tipo | titlecase}}: {{ loteEnVista.numLote }}
         </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -730,7 +736,7 @@
         <div class="row mb-4">
                     <div class="col-md-6">
             <ul class="list-detalle">
-              <li><strong>Tipo:</strong> <span>{{ loteEnVista.tipo | uppercase }}</span></li>
+              <li><strong>Tipo:</strong> <span>{{ loteEnVista.tipo | titlecase }}</span></li>
               <li><strong>Precio:</strong> <span>{{ loteEnVista.precio | currency:'USD':'symbol':'1.2-2' }}</span></li>
               
             </ul>
@@ -739,30 +745,30 @@
             <ul class="list-detalle">
               <li><strong>Superficie (m²):</strong> <span>{{ loteEnVista.superficie_m2 }}</span></li>
               <li><strong>Valor Avalúo:</strong> <span>{{ loteEnVista.valor_avaluo ? (loteEnVista.valor_avaluo | currency:'USD':'symbol':'1.2-2') : 'N/A' }}</span></li>
-              <li><strong>Encargado:</strong> <span>{{ loteEnVista.user?.nombre || 'N/A' }}</span></li>
+              <li><strong>Encargado:</strong> <span>{{ loteEnVista.nombreEncargado || 'N/A' }}</span></li>
             </ul>
           </div>
         </div>
         
-                <h4>Ubicación</h4>
-        <div class="row mb-4">
-                    <div class="col-md-6">
-            <ul class="list-detalle">
-              <li><strong>Estado:</strong> <span>{{ loteEnVista.estado?.nombre || 'N/A' }}</span></li>
-              <li><strong>Ciudad:</strong> <span>{{ loteEnVista.ciudad?.nombre || 'N/A' }}</span></li>
-              <li><strong>C.P.:</strong> <span>{{ loteEnVista.codigo_postal }}</span></li>
-            </ul>
-          </div>
-                    <div class="col-md-6">
-            <ul class="list-detalle">
-              <li><strong>Colonia:</strong> <span>{{ loteEnVista.nombre_colonia_nueva || (loteEnVista.colonia ? loteEnVista.colonia.nombre : 'N/A') }}</span></li>
-              <li><strong>Dirección:</strong> <span>{{ loteEnVista.direccion }}</span></li>
-              <li><strong>Manzana:</strong> <span>{{ loteEnVista.manzana || 'N/A' }}</span></li>
-            </ul>
-          </div>
-        </div>
+             <h4>Ubicación</h4>
+        <div class="row mb-4">
+                    <div class="col-md-12">
+            <ul class="list-detalle">
+              <li><strong>Estado:</strong> <span>{{ loteEnVista.nombreEstado || 'N/A' }}</span></li>
+              <li><strong>Ciudad:</strong> <span>{{ loteEnVista.nombreCiudad || 'N/A' }}</span></li>
+              <li><strong>C.P.:</strong> <span>{{ loteEnVista.codigo_postal }}</span></li>
+            </ul>
+          </div>
+            <div class="col-md-12">
+            <ul class="list-detalle">
+              <li><strong>Colonia:</strong> <span>{{ loteEnVista.nombreColonia || 'N/A' }}</span></li>
+              <li><strong>Dirección:</strong> <span>{{ loteEnVista.direccion }}</span></li>
+              <li><strong>Manzana:</strong> <span>{{ loteEnVista.manzana || 'N/A' }}</span></li>
+            </ul>
+          </div>
+        </div>
 
-                <ng-container *ngIf="loteEnVista.tipo === 'casa' || loteEnVista.tipo === 'departamento'">
+        <ng-container *ngIf="loteEnVista.tipo === 'casa' || loteEnVista.tipo === 'depto'">
           <h4>Detalles de Construcción</h4>
           <div class="row mb-4">
             <div class="col-md-6">
@@ -774,18 +780,43 @@
             <div class="col-md-6">
               <ul class="list-detalle">
                 <li><strong>Estacionamientos:</strong> <span>{{ loteEnVista.num_estacionamientos || 0 }}</span></li>
-                <li><strong>Topografía:</strong> <span>{{ loteEnVista.topografia || 'Plana' }}</span></li>
+                <li><strong>Topografía:</strong> <span>{{ loteEnVista.topografia || 'N/A' }}</span></li>
               </ul>
             </div>
           </div>
         </ng-container>
 
-                <h4>Servicios Disponibles</h4>
-                
-        <h4>Descripción</h4>
-                
-        <h4>Documentación PDF</h4>
-                
+          <h4>Servicios Disponibles</h4>
+        <div class="mb-4">
+            <div *ngIf="loteEnVista.serviciosArray && loteEnVista.serviciosArray.length > 0; else noServicios">
+                <ul class="list-unstyled d-flex flex-wrap gap-3">
+                    <li *ngFor="let servicio of loteEnVista.serviciosArray" class="badge text-bg-success-light">
+                        <i class="bi bi-check-circle-fill me-1"></i> {{ servicio }}
+                    </li>
+                </ul>
+            </div>
+            <ng-template #noServicios>
+                <p class="text-muted fst-italic">No hay servicios o amenidades listadas.</p>
+            </ng-template>
+        </div>
+        
+        <h4>Descripción</h4>
+        <p class="text-muted text-break mb-4">
+            {{ loteEnVista.descripcion || 'Sin descripción proporcionada.' }}
+        </p>
+                
+        <h4>Documentación PDF</h4>
+        <div class="mb-4">
+            <div *ngIf="loteEnVista.documentacion_pdf; else noDoc">
+                <a [href]="getDocumentacionUrl(loteEnVista.documentacion_pdf)" target="_blank" class="btn btn-outline-danger">
+                    <i class="bi bi-file-earmark-pdf-fill me-2"></i> Ver Documentación
+                </a>
+                <small class="form-text text-muted d-block mt-1">El documento se abrirá en una nueva pestaña.</small>
+            </div>
+            <ng-template #noDoc>
+                <p class="text-muted fst-italic">No hay un archivo de documentación adjunto.</p>
+            </ng-template>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-silver" data-bs-dismiss="modal">Cerrar</button>
@@ -793,7 +824,6 @@
     </div>
   </div>
 </div>
-
 
 <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 2000;">
     <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">

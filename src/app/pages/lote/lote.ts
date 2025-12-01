@@ -285,6 +285,13 @@ export class Lote implements OnInit {
     return `http://localhost:3000${imagen}`;
   }
 
+  // 💡 NUEVA FUNCIÓN AÑADIDA PARA DOCUMENTACIÓN
+  getDocumentacionUrl(documentacion_pdf: string): string {
+    if (!documentacion_pdf) return '';
+    // Asumiendo que la ruta del servidor de documentación es 'http://localhost:3000'
+    return `http://localhost:3000${documentacion_pdf}`;
+  }
+
   onColoniaChange(event: any) {
     // Asegurar que el ng-select asigna el valor correcto para que la validación funcione.
     if (typeof event === 'string' && event.trim().length > 0) {
@@ -414,26 +421,34 @@ export class Lote implements OnInit {
         );
         return;
       }
-      // VALIDACIÓN AÑADIDA PARA numLote
+      // VALIDACIÓN  PARA numLote
       const numLoteVal = Number(this.currentLote.numLote);
       if (!numLoteVal || numLoteVal < 1 || numLoteVal > 9999) {
-        this.showToast('El Número de Lote es obligatorio y debe ser un valor positivo que no exceda 9999.', 'danger');
+        this.showToast(
+          'El Número de Lote es obligatorio y debe ser un valor positivo que no exceda 9999.',
+          'danger'
+        );
         return;
       }
 
-      // 💡 VALIDACIÓN AÑADIDA PARA superficie_m2 (Max 999,999 m²)
+      // 💡 VALIDACIÓN  PARA superficie_m2 (Max 999,999 m²)
       if (this.currentLote.superficie_m2 < 1 || this.currentLote.superficie_m2 > 999999) {
-        this.showToast('La superficie debe estar entre 1 y 999,999 m².', 'danger'); 
+        this.showToast('La superficie debe estar entre 1 y 999,999 m².', 'danger');
+        return;
+      }
+      // 💡 VALIDACIÓN  PARA DESCRIPCIÓN (Máx 500 caracteres)
+      if (this.currentLote.descripcion && this.currentLote.descripcion.length > 500) {
+        this.showToast('La descripción no puede exceder los 500 caracteres.', 'danger');
         return;
       }
 
       // 💡 CONVERSIÓN DE ARRAY A STRING PARA SERVICIOS
-     if (this.currentLote.serviciosArray && Array.isArray(this.currentLote.serviciosArray)) {
+      if (this.currentLote.serviciosArray && Array.isArray(this.currentLote.serviciosArray)) {
         this.currentLote.servicios = this.currentLote.serviciosArray.join(', ');
       } else {
         this.currentLote.servicios = '';
       }
-      
+
       const camposEnteros = ['num_habitaciones', 'num_banos', 'num_estacionamientos'];
       for (const c of camposEnteros) {
         const v = Number(this.currentLote[c] ?? 0);
@@ -442,19 +457,19 @@ export class Lote implements OnInit {
           return;
         }
       }
-     if (!/^\d{5}$/.test(this.codigoPostal ?? '')) {
-        this.showToast('El código postal debe tener 5 dígitos.', 'danger'); 
+      if (!/^\d{5}$/.test(this.codigoPostal ?? '')) {
+        this.showToast('El código postal debe tener 5 dígitos.', 'danger');
         return;
       }
       // ************************************************************
 
       // Validación de seguridad/lógica (Mantenemos tu lógica de negocio)
       if (!this.selectedEstado) {
-        this.showToast('Debes seleccionar un estado.', 'danger'); 
+        this.showToast('Debes seleccionar un estado.', 'danger');
         return;
       }
       if (!this.selectedCiudad) {
-        this.showToast('Debes seleccionar una ciudad.', 'danger'); 
+        this.showToast('Debes seleccionar una ciudad.', 'danger');
         return;
       }
       const coloniaNombre = this.currentLote.nombre_colonia_nueva?.trim();
@@ -562,7 +577,7 @@ export class Lote implements OnInit {
           error: (err) => this.showToast(err.error?.error || 'Error al crear lote.', 'danger'),
         });
       }
-   } catch (error) {
+    } catch (error) {
       console.error('Error en saveLote:', error);
       this.showToast('Ocurrió un error inesperado al guardar.', 'danger');
     }
@@ -835,13 +850,13 @@ export class Lote implements OnInit {
   }
 
   // === Método para Ver Detalles del Lote ===
-  // === Método para Ver Detalles del Lote (Versión Corregida) ===
-  // === Método para Ver Detalles del Lote (Versión Final) ===
   viewLote(lote: any): void {
     // 1. CLONAR Y CONFIGURAR DATOS
     this.loteEnVista = { ...lote };
 
-    // Mapeo de Servicios (se mantiene igual)
+    // 💡 AÑADIDO: Asignación de Topografía (para asegurar un valor si no está definido)
+    this.loteEnVista.topografia = lote.topografia || 'No especificada'; // Mapeo de Servicios
+
     if (typeof this.loteEnVista.servicios === 'string' && this.loteEnVista.servicios) {
       this.loteEnVista.serviciosArray = this.loteEnVista.servicios
         .split(',')
@@ -851,25 +866,32 @@ export class Lote implements OnInit {
     } else {
       this.loteEnVista.serviciosArray = [];
     }
+    // 2. MAPEO DE ENTIDADES A PROPIEDADES PLANAS (¡CLAVE!) // Asignamos una propiedad plana para el nombre del Encargado
 
-    // 2. MAPEO DE ENTIDADES A PROPIEDADES PLANAS (¡CLAVE!)
-
-    // Asignamos una propiedad plana para el nombre del Encargado
-    const user = this.encargados.find((u) => u.id == this.loteEnVista.id_user);
+    // --- 💡 CORRECCIÓN ENCARGADO ---
+    // Forzamos la conversión a Number para asegurar la comparación.
+    const idUser = Number(this.loteEnVista.id_user);
+    const user = this.encargados.find((u) => u.id === idUser);
     this.loteEnVista.nombreEncargado = user ? user.nombre : 'N/A';
 
-    // Asignamos una propiedad plana para el nombre del Estado
-    const estado = this.estados.find((e) => e.id_estado == this.loteEnVista.id_estado);
+    // --- 💡 CORRECCIÓN ESTADO ---
+    // Forzamos la conversión a Number.
+    const idEstado = Number(this.loteEnVista.id_estado);
+    const estado = this.estados.find((e) => e.id_estado === idEstado);
     this.loteEnVista.nombreEstado = estado ? estado.nombre : 'N/A';
 
-    // La ciudad es asíncrona, la inicializamos y luego la actualizamos
+    // --- 💡 CORRECCIÓN CIUDAD (dentro de la suscripción) ---
     this.loteEnVista.nombreCiudad = 'Cargando...';
+    const idCiudad = Number(this.loteEnVista.id_ciudad);
 
-    if (this.loteEnVista.id_ciudad && this.loteEnVista.id_estado) {
+    if (idCiudad && idEstado) {
+      // Usamos los IDs ya convertidos
       // Carga ASÍNCRONA: Obtiene el nombre de la ciudad
-      this.ubicacionService.getCiudades(this.loteEnVista.id_estado).subscribe({
+      this.ubicacionService.getCiudades(idEstado).subscribe({
+        // Usamos idEstado convertido
         next: (ciudades) => {
-          const ciudad = ciudades.find((c) => c.id_ciudad == this.loteEnVista.id_ciudad);
+          // Forzamos la comparación a Number dentro de la función de búsqueda
+          const ciudad = ciudades.find((c) => c.id_ciudad === idCiudad);
           this.loteEnVista.nombreCiudad = ciudad ? ciudad.nombre : 'N/A';
         },
         error: () => (this.loteEnVista.nombreCiudad = 'N/A'),
@@ -878,7 +900,17 @@ export class Lote implements OnInit {
       this.loteEnVista.nombreCiudad = 'N/A';
     }
 
+    // --- 💡 CORRECCIÓN COLONIA ---
+    if (this.loteEnVista.nombre_colonia_nueva) {
+      this.loteEnVista.nombreColonia = this.loteEnVista.nombre_colonia_nueva;
+    } else {
+      // Forzamos la conversión a Number.
+      const idColonia = Number(this.loteEnVista.id_colonia);
+      const colonia = this.colonias.find((c) => c.id_colonia === idColonia);
+      this.loteEnVista.nombreColonia = colonia ? colonia.nombre_colonia : 'N/A';
+    }
     // 3. ABRIR EL MODAL
+
     const modal = new bootstrap.Modal(document.getElementById('detalleModal')!);
     modal.show();
   }
