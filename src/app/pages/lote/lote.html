@@ -1,6 +1,10 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<body>
 <app-header-admin></app-header-admin>
 
-<section id="lotes" class="py-5 content-margin-top" *ngIf="!isModalOpen">
+<section id="lotes" class="py-5 " *ngIf="!isModalOpen">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3>Inmuebles Disponibles</h3>
@@ -8,6 +12,17 @@
         </div>
         
         <div class="row g-4">
+
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="home" class="text-decoration-none text-muted">
+                        <i class="bi bi-house-fill me-1"></i> Inicio
+                    </a>
+                </li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Inmuebles Disponibles</li>
+            </ol>
+        </nav>
   <div class="col-md-4" *ngFor="let lote of lotes">
     <div class="card shadow-sm card-lote">
 
@@ -703,7 +718,7 @@
     </div>
   </div>
 </div>
-<app-footer-admin></app-footer-admin>
+
 
 <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 2000;">
     <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
@@ -734,3 +749,9 @@
     </div>
   </div>
 </div>
+<app-scroll-top></app-scroll-top>
+<app-footer-admin></app-footer-admin>
+
+
+</body>
+</html>
