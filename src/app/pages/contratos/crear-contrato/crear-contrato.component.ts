@@ -36,35 +36,37 @@ export class CrearContratoComponent {
     private contratoService: ContratoService,
   ) {
     this.contratoForm = this.fb.group({
-      id_lote: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]],
-      correo_cliente: ['', [Validators.required, Validators.email]],
+      id_lote: ['', [Validators.required, Validators.pattern(/^[0-9]+$/), Validators.maxLength(15)]],
+      correo_cliente: ['', [Validators.required, Validators.email, Validators.maxLength(30)]],
       nombre: [''],
       apellido_paterno: [''],
       apellido_materno: [''],
       telefono: [''],
-      precio_total: ['', [Validators.required, Validators.min(1), Validators.pattern(/^[0-9]+(\.[0-9]+)?$/)]],
-      enganche: ['', [Validators.required, Validators.min(0), Validators.pattern(/^[0-9]+(\.[0-9]+)?$/)]],
+      precio_total: ['', [Validators.required, Validators.min(1), Validators.pattern(/^[0-9]+(\.[0-9]+)?$/), Validators.maxLength(10)]],
+      enganche: ['', [Validators.required, Validators.min(0), Validators.pattern(/^[0-9]+(\.[0-9]+)?$/), Validators.maxLength(10)]],
       plazo_meses: ['', [Validators.required, Validators.min(1),  Validators.max(12), Validators.pattern(/^[0-9]+$/)]],
       estado_contrato: ['activo'],
       propietario_nombre: [''],
       id_cliente: [null],
-      nombre_predio: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]+$/)]],
-      tipo_documento: ['', [Validators.required, Validators.pattern(/^[A-Za-zÁÉÍÓÚÜÑ ]+$/)]],
-      folio_escritura: ['', [Validators.required, Validators.minLength(3)]],
+      nombre_predio: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]+$/), Validators.maxLength(20)]],
+      tipo_documento: ['', [Validators.required, Validators.pattern(/^[A-Za-zÁÉÍÓÚÜÑ ]+$/), Validators.maxLength(30)]],
+      folio_escritura: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(11)]],
       fecha_emision: ['', [Validators.required, this.validarFechaNoFutura]],
-      registro_publico: ['',  [Validators.required, Validators.minLength(5)]],
-      colindancia_norte: ['', [Validators.required, Validators.minLength(3)]],
-      colindancia_sur: ['', [Validators.required, Validators.minLength(3)]],
-      colindancia_este: ['', [Validators.required, Validators.minLength(3)]],
-      colindancia_oeste: ['', [Validators.required, Validators.minLength(3)]],
-      medida_norte: ['', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]],
-      medida_sur: ['', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]],
-      medida_este: ['', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]],
-      medida_oeste: ['', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]],
-
+      registro_publico: ['',  [Validators.required, Validators.minLength(5), Validators.maxLength(30)]],
+      colindancia_norte: ['', [Validators.required, Validators.minLength(3),Validators.maxLength(30)]],
+      colindancia_sur: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      colindancia_este: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      colindancia_oeste: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      medida_norte: ['', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/), Validators.maxLength(15)]],
+      medida_sur: ['', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/), Validators.maxLength(15)]],
+      medida_este: ['', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/), Validators.maxLength(15)]],
+      medida_oeste: ['', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/), Validators.maxLength(15)]],
+      ciudadFirma: ['',  [Validators.required, Validators.maxLength(30),Validators.pattern(/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/)]],
+      fecha_firma: ['', [Validators.required ]],
+      fecha_registro_publico: ['', [Validators.required,  this.validarFechaNoFutura]],
     },
     {
-    validators: this.validarEngancheMenorQuePrecio()
+    validators: this.validarEngancheMenorQuePrecio(), updateOn: 'change'
 });
 
 
@@ -134,6 +136,31 @@ validarEngancheMenorQuePrecio() {
   };
 }
 
+soloNumerosDecimales(event: KeyboardEvent) {
+  const regex = /^[0-9.]$/;
+  const input = event.key;
+
+  // Bloquear letras
+  if (!regex.test(input)) {
+    event.preventDefault();
+    return;
+  }
+
+  // Evitar más de un punto decimal
+  const currentValue = (event.target as HTMLInputElement).value;
+  if (input === '.' && currentValue.includes('.')) {
+    event.preventDefault();
+  }
+}
+
+limitarMax(event: any, max: number) {
+  if (event.target.value.length > max) {
+    event.target.value = event.target.value.slice(0, max);
+  }
+}
+
+
+
   onSubmit() {
     if (this.contratoForm.invalid) {
       Swal.fire('Campos incompletos', 'Por favor completa todos los campos requeridos.', 'warning');
@@ -161,8 +188,6 @@ validarEngancheMenorQuePrecio() {
     this.contratoService.crearContrato(payload).subscribe({
       next: (res) => {
         Swal.fire('Contrato creado', 'El contrato se registró exitosamente.', 'success');
-        this.contratoForm.reset({ estado_contrato: 'activo' });
-
         this.generarPDFContrato();
       },
       error: (err) => {
@@ -231,289 +256,6 @@ async convertBase64ToUint8(path: string): Promise<Uint8Array> {
 }
 
 
-async generarWordContrato() { 
-  if (!this.loteSeleccionado || !this.contratoForm.valid) {
-    Swal.fire('Error', 'Debes completar los datos del contrato primero.', 'warning');
-    return;
-  }
-
-  // Cargar imágenes Base64 → Uint8Array
-  const headerBytes = await this.convertBase64ToUint8('assets/header.png');
-  const footerBytes = await this.convertBase64ToUint8('assets/footer.png');
-
-  const nombreComprador = `${this.contratoForm.get('nombre')?.value} ${this.contratoForm.get('apellido_paterno')?.value} ${this.contratoForm.get('apellido_materno')?.value}`;
-
-  // Fecha actual
-  const fecha = new Date();
-  const meses = [
-    "enero", "febrero", "marzo", "abril", "mayo", "junio",
-    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
-  ];
-  const dia = fecha.getDate();
-  const mes = meses[fecha.getMonth()];
-  const anio = fecha.getFullYear();
-
-  // ----------------- CONTENIDO --------------------
-  const paragraphs: Paragraph[] = [
-    new Paragraph({
-        alignment: AlignmentType.CENTER,
-        spacing: { after: 300 },
-        children: [
-          new TextRun({
-            text: "CONTRATO PRIVADO DE COMPRAVENTA",
-            bold: true,
-            size: 32,
-          }),
-        ],
-      }),
-
-    new Paragraph("\n"),
-
-    new Paragraph({
-        alignment: AlignmentType.JUSTIFIED,
-        children: [
-          new TextRun(
-            `En la ciudad de San Luis de la Paz, GTO, a los ${dia} días del mes de ${mes} del año ${anio}, se lleva a cabo el presente Contrato Privado de Compra-Venta, que celebran por una parte y por su propio derecho el C. `
-          ),
-          new TextRun({ text: this.loteSeleccionado.propietario_nombre, bold: true }),
-          new TextRun(` quien en lo sucesivo se le denominara como la parte vendedora y de la otra parte también por su propio derecho a el/la C. `),
-          new TextRun({ text: nombreComprador, bold: true }),
-          new TextRun(`, a quien en lo sucesivo se le denominara como la parte compradora, quienes se sujetan al tenor de los siguientes antecedentes y clausulas`),
-        ],
-      }),
-
-    new Paragraph("\n________________________________________\n"),
-
-    new Paragraph({
-        text: "--- A N T E C E D E N T E S ---",
-        alignment: AlignmentType.CENTER,
-        spacing: { before: 400, after: 150 },
-      }),
-
-    new Paragraph({
-        alignment: AlignmentType.JUSTIFIED,
-        children: [
-          new TextRun({ text: "PRIMERO.-", bold: true }),
-          new TextRun(
-            ` Manifiesta el C. ${this.loteSeleccionado.propietario_nombre} ser dueño del predio siguiente: `
-          ),
-          new TextRun({ text: `Nombre del predio: _________________________________`, bold: true }),
-          new TextRun({ text: `, Ubicación: ${this.loteSeleccionado.direccion}, Municipio: ${this.loteSeleccionado.nombre_ciudad}, Estado: ${this.loteSeleccionado.nombre_estado}. ` }),
-          new TextRun(`Acreditando la propiedad con: Tipo de documento: _______________________________, Número / Folio: ________________________________, Fecha de emisión: ____________, Registro Público: ________________________.`),
-        ]
-      }),
-      
-      // SEGUNDO.
-      new Paragraph({
-        alignment: AlignmentType.JUSTIFIED,
-        children: [
-          new TextRun({ text: "SEGUNDO.-", bold: true }),
-          new TextRun(
-            ` El vendedor decide vender el predio a ${nombreComprador} bajo los términos del presente contrato.`
-          ),
-        ],
-        spacing: { before: 100 }
-      }),
-
-      // --- SECCIÓN CLÁUSULAS ---
-      new Paragraph({
-        text: "--- C L Á U S U L A S ---",
-        alignment: AlignmentType.CENTER,
-        spacing: { before: 400, after: 150 },
-      }),
-
-      // PRIMERA.
-      new Paragraph({
-        alignment: AlignmentType.JUSTIFIED,
-        children: [
-          new TextRun({ text: "PRIMERA.-", bold: true }),
-          new TextRun(` El vendedor vende y el comprador adquiere el predio.`),
-        ],
-      }),
-      // SEGUNDA.
-      new Paragraph({
-        alignment: AlignmentType.JUSTIFIED,
-        children: [
-          new TextRun({ text: "SEGUNDA.-", bold: true }),
-          new TextRun(` Precio total: $${this.contratoForm.get('precio_total')?.value} M.N.`),
-        ],
-        spacing: { before: 100 }
-      }),
-      // TERCERA.
-      new Paragraph({
-        alignment: AlignmentType.JUSTIFIED,
-        children: [
-          new TextRun({ text: "TERCERA.-", bold: true }),
-          new TextRun(` El vendedor entregará recibos correspondientes.`),
-        ],
-        spacing: { before: 100 }
-      }),
-      // CUARTA.
-      new Paragraph({
-        alignment: AlignmentType.JUSTIFIED,
-        children: [
-          new TextRun({ text: "CUARTA.-", bold: true }),
-          new TextRun(` El vendedor entrega físicamente el inmueble.`),
-        ],
-        spacing: { before: 100 }
-      }),
-      // QUINTA.
-      new Paragraph({
-        alignment: AlignmentType.JUSTIFIED,
-        children: [
-          new TextRun({ text: "QUINTA.-", bold: true }),
-          new TextRun(` El inmueble está libre de gravamen.`),
-        ],
-        spacing: { before: 100 }
-      }),
-      // SEXTA.
-      new Paragraph({
-        alignment: AlignmentType.JUSTIFIED,
-        children: [
-          new TextRun({ text: "SEXTA.-", bold: true }),
-          new TextRun(` El comprador gestionará escrituras, impuestos y servicios.`),
-        ],
-        spacing: { before: 100 }
-      }),
-      // SÉPTIMA.
-      new Paragraph({
-        alignment: AlignmentType.JUSTIFIED,
-        children: [
-          new TextRun({ text: "SÉPTIMA.-", bold: true }),
-          new TextRun(` No existe error, dolo o mala fe.`),
-        ],
-        spacing: { before: 100 }
-      }),
-      // OCTAVA.
-      new Paragraph({
-        alignment: AlignmentType.JUSTIFIED,
-        children: [
-          new TextRun({ text: "OCTAVA.-", bold: true }),
-          new TextRun(` Las partes se someten a las leyes del estado correspondiente.`),
-        ],
-        spacing: { before: 100 }
-      }),
-
-      // --- SECCIÓN FIRMA Y CIERRE ---
-      new Paragraph({
-        text: "--- FIRMA Y CIERRE ---",
-        alignment: AlignmentType.CENTER,
-        spacing: { before: 400, after: 150 },
-      }),
-
-      new Paragraph({
-        text: `Firmado en San Luis de la Paz, GTO, a los ${dia} días del mes de ${mes} del año ${anio}.`,
-        alignment: AlignmentType.CENTER,
-        spacing: { after: 400 }, // Espacio para separar la fecha de las firmas
-      }),
-
-      // Cabeceras de Firmas
-      new Paragraph({
-        children: [
-          new TextRun({ text: "LA PARTE VENDEDORA", bold: true, size: 28 }),
-          new TextRun({ text: "\t\t\t\t\t\t\t" }), // Ajusta el número de tabs según necesites el espaciado
-          new TextRun({ text: "LA PARTE COMPRADORA", bold: true, size: 28 }),
-        ],
-        alignment: AlignmentType.CENTER,
-      }),
-
-      // Nombres
-      new Paragraph({
-        children: [
-          new TextRun({ text: `Nombre: ${this.loteSeleccionado.propietario_nombre}` }),
-          new TextRun({ text: "\t\t\t\t\t\t" }),
-          new TextRun({ text: `Nombre: ${nombreComprador}` }),
-        ],
-        alignment: AlignmentType.CENTER,
-        spacing: { after: 100 }
-      }),
-
-      // Línea de Firma
-      new Paragraph({
-        children: [
-          new TextRun({ text: "Firma: ___________________________" }),
-          new TextRun({ text: "\t\t\t\t\t\t" }),
-          new TextRun({ text: "Firma: ___________________________" }),
-        ],
-        alignment: AlignmentType.CENTER,
-      }),
-
-    ];
-
-    // ----------- HEADER CORRECTO (Se mantiene la configuración) ----------
-    const header = new Header({
-      children: [
-        new Paragraph({
-          alignment: AlignmentType.CENTER,
-          children: [
-            new ImageRun({
-              data: headerBytes,
-              transformation: {
-                width: 600, // Ajustado para que quepa y no ocupe todo el ancho
-                height: 100
-              }
-            } as any)
-          ],
-        }),
-      ],
-    });
-
-    // ----------- FOOTER CORRECTO (Se mantiene la configuración) ----------
-    const footer = new Footer({
-      children: [
-        new Paragraph({
-          alignment: AlignmentType.CENTER,
-          children: [
-            new ImageRun({
-              data: footerBytes,
-              transformation: {
-                width: 600, // Ajustado igual que el header
-                height: 80
-              }
-            } as any),
-          ],
-        }),
-      ],
-    });
-
-    // -------------- DOCUMENTO (Añadido estilo de fuente por defecto) ----------------
-    const doc = new Document({
-      // Establece una fuente base para todo el documento
-      styles: {
-        default: {
-          document: {
-            run: {
-              // Fuente común y tamaño de 12pt (24 half points)
-              font: "Arial", 
-              size: 24, 
-            },
-          },
-        },
-      },
-      sections: [
-        {
-          properties: {
-            page: {
-              margin: {
-                top: 720,
-                bottom: 720,
-                left: 720, // 1.25 cm approx.
-                right: 720, // 1.25 cm approx.
-              },
-            },
-          },
-          headers: { default: header },
-          footers: { default: footer },
-          children: paragraphs,
-        },
-      ],
-    });
-
-    const blob = await Packer.toBlob(doc);
-    saveAs(blob, `Contrato_Lote_${this.loteSeleccionado.id_lote}.docx`);
-  }
-
-
 convertToBase64(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -536,19 +278,19 @@ convertToBase64(url: string): Promise<string> {
 }
 
 numeroALetras(num: number): string {
-  const unidades = ['','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve'];
-  const decenas = ['','diez','veinte','treinta','cuarenta','cincuenta','sesenta','setenta','ochenta','noventa'];
-  const especiales = ['once','doce','trece','catorce','quince','dieciséis','diecisiete','dieciocho','diecinueve'];
-  const centenas = ['','ciento','doscientos','trescientos','cuatrocientos','quinientos','seiscientos','setecientos','ochocientos','novecientos'];
+  const unidades = ['','UNO','DOS','TRES','CUATRO','CINCO','SEIS','SIETE','OCHO','NUEVE'];
+  const decenas = ['','DIEZ','VEINTE','TREINTA','CUARENTA','CINCUENTA','SESENTA','SETENTA','OCHENTA','NOVENTA'];
+  const especiales = ['ONCE','DOCE','TRECE','CATORCE','QUINCE','DIECISÉIS','DIECISIETE','DIECIOCHO','DIECINUEVE'];
+  const centenas = ['','CIENTO','DOSCIENTOS','TRESCIENTOS','CUATROCIENTOS','QUINIENTOS','SEISCIENTOS','SETECIENTOS','OCHOCIENTOS','NOVECIENTOS'];
 
-  if (num === 0) return 'cero';
-  if (num === 100) return 'cien';
+  if (num === 0) return 'CERO';
+  if (num === 100) return 'CIEN';
 
   let letras = '';
 
   if (num >= 1000) {
     const miles = Math.floor(num / 1000);
-    letras += (miles === 1 ? 'mil' : this.numeroALetras(miles) + ' mil') + ' ';
+    letras += (miles === 1 ? 'MIL' : this.numeroALetras(miles) + ' MIL') + ' ';
     num = num % 1000;
   }
 
@@ -560,11 +302,11 @@ numeroALetras(num: number): string {
 
   if (num >= 20) {
     const d = Math.floor(num / 10);
-    letras += decenas[d] + (num % 10 > 0 ? ' y ' + unidades[num % 10] : '');
+    letras += decenas[d] + (num % 10 > 0 ? ' Y ' + unidades[num % 10] : '');
   } else if (num > 10 && num < 20) {
     letras += especiales[num - 11];
   } else if (num === 10) {
-    letras += 'diez';
+    letras += 'DIEZ';
   } else if (num > 0 && num < 10) {
     letras += unidades[num];
   }
@@ -628,8 +370,85 @@ fechaALetras(fecha: string | Date): string {
   return `A LOS ${dia} ${diaLetras} DÍAS DEL MES DE ${meses[mes]} DEL AÑO ${anio} ${anioMiles}`;
 }
 
+numeroALetrasPrecio(num: number): string {
+
+  const unidades = ['CERO','UNO','DOS','TRES','CUATRO','CINCO','SEIS','SIETE','OCHO','NUEVE'];
+  const especiales = ['ONCE','DOCE','TRECE','CATORCE','QUINCE','DIECISÉIS','DIECISIETE','DIECIOCHO','DIECINUEVE'];
+  const decenas = ['DIEZ','VEINTE','TREINTA','CUARENTA','CINCUENTA','SESENTA','SETENTA','OCHENTA','NOVENTA'];
+  const centenas = ['CIEN','CIENTO','DOSCIENTOS','TRESCIENTOS','CUATROCIENTOS','QUINIENTOS','SEISCIENTOS','SETECIENTOS','OCHOCIENTOS','NOVECIENTOS'];
+
+  const convertir = (n: number): string => {
+    if (n === 0) return '';
+
+    if (n < 10) return unidades[n];
+    if (n === 10) return 'DIEZ';
+    if (n > 10 && n < 20) return especiales[n - 11];
+    if (n < 100) {
+      const d = Math.floor(n / 10);
+      const r = n % 10;
+      return decenas[d - 1] + (r > 0 ? ' Y ' + unidades[r] : '');
+    }
+    if (n < 1000) {
+      if (n === 100) return 'CIEN';
+      const c = Math.floor(n / 100);
+      return centenas[c] + ' ' + convertir(n % 100);
+    }
+    if (n < 1000000) {
+      const m = Math.floor(n / 1000);
+      return (m === 1 ? 'MIL' : convertir(m) + ' MIL') + ' ' + convertir(n % 1000);
+    }
+    if (n < 1000000000000) {
+      const mi = Math.floor(n / 1000000);
+      return (mi === 1 ? 'UN MILLÓN' : convertir(mi) + ' MILLONES') + ' ' + convertir(n % 1000000);
+    }
+
+    return '';
+  };
+
+  // Separar parte entera y centavos
+  const parteEntera = Math.floor(num);
+  const parteDecimal = Math.round((num - parteEntera) * 100);
+
+  let texto = convertir(parteEntera).trim();
+
+  if (texto === '') texto = 'CERO';
+
+  // Ajustar “UNO” → “UN”
+  texto = texto.replace(/ UNO(?= MIL| MILL|$)/g, ' UN');
+
+  if (parteDecimal > 0) {
+    texto += ` PESOS ${convertir(parteDecimal)} CENTAVOS`;
+  } else {
+    texto += ' PESOS 00/100 M.N.';
+  }
+
+  return texto.trim();
+}
+
+
 
 async generarPDFContrato() {
+
+  const toUpper = (value: string | number | null | undefined): string => {
+        if (typeof value === 'string') {
+            return value.toUpperCase();
+        }
+        if (typeof value === 'number') {
+            return String(value);
+        }
+        return ''; // Retorna cadena vacía si es null/undefined
+    };
+
+  console.log("FORM VALID?", this.contratoForm.valid);
+  console.log("FORM ERRORS:", this.contratoForm.errors);
+
+  Object.keys(this.contratoForm.controls).forEach(key => {
+    const control = this.contratoForm.get(key);
+    if (control?.invalid) {
+      console.warn("❌ Campo inválido:", key, control.errors);
+    }
+  });  
+
   if (!this.loteSeleccionado || !this.contratoForm.valid) {
     Swal.fire('Error', 'Debes completar los datos del contrato primero.', 'warning');
     return;
@@ -637,8 +456,8 @@ async generarPDFContrato() {
 
   const fechaHoy = new Date();
   const meses = [
-    "enero", "febrero", "marzo", "abril", "mayo", "junio",
-    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+     "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
+    "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
   ];
   const dia = fechaHoy.getDate();
   const mes = meses[fechaHoy.getMonth()];
@@ -646,38 +465,44 @@ async generarPDFContrato() {
 
   // NOTA: Asumiendo que 'convertToBase64' y la imagen 'hoja' funcionan para el fondo.
   const base64 = await this.convertToBase64('assets/hoja_membretada.png');
-  const nombreVendedor = this.loteSeleccionado.propietario_nombre;
-  const nombreComprador = `${this.contratoForm.get('nombre')?.value} ${this.contratoForm.get('apellido_paterno')?.value} ${this.contratoForm.get('apellido_materno')?.value}`;
-  const nombrePredio = this.contratoForm.value.nombre_predio;
+  const nombreVendedor = toUpper(this.loteSeleccionado.propietario_nombre);
+  const nombreComprador = toUpper(`${this.contratoForm.get('nombre')?.value} ${this.contratoForm.get('apellido_paterno')?.value} ${this.contratoForm.get('apellido_materno')?.value}`);
+  const nombrePredio = toUpper(this.contratoForm.value.nombre_predio);
   const ubicacionCompleta = `${this.loteSeleccionado.direccion}, ${this.loteSeleccionado.nombre_ciudad}, ${this.loteSeleccionado.nombre_estado}`;
-  const colonia = `${this.loteSeleccionado.nombre_colonia}`
-  const ciudad = `${this.loteSeleccionado.nombre_ciudad}`
-  const tipoDocumento = this.contratoForm.value.tipo_documento;
+  const colonia = toUpper(`${this.loteSeleccionado.nombre_colonia}`);
+  const ciudad = toUpper(`${this.loteSeleccionado.nombre_ciudad}`);
+  const numLote = `${this.loteSeleccionado.numlote}`
+  const manzana = `${this.loteSeleccionado.manzana}`
+  const tipoDocumento = toUpper(this.contratoForm.value.tipo_documento);
   const folioEscritura = this.contratoForm.value.folio_escritura;
   const fechaEmision = this.contratoForm.value.fecha_emision;
-  const registroPublico = this.contratoForm.value.registro_publico;
+  const registroPublico = toUpper(this.contratoForm.value.registro_publico);
 
-  const colNorte = this.contratoForm.value.colindancia_norte;
-  const colSur = this.contratoForm.value.colindancia_sur;
-  const colEste = this.contratoForm.value.colindancia_este;
-  const colOeste = this.contratoForm.value.colindancia_oeste;
-  const medNorte = this.contratoForm.value.medida_norte;
-  const medSur = this.contratoForm.value.medida_sur;
-  const medEste = this.contratoForm.value.medida_este;
-  const medOeste = this.contratoForm.value.medida_oeste;
+  const colNorte = toUpper(this.contratoForm.value.colindancia_norte);
+  const colSur = toUpper(this.contratoForm.value.colindancia_sur);
+  const colEste = toUpper(this.contratoForm.value.colindancia_este);
+  const colOeste = toUpper(this.contratoForm.value.colindancia_oeste);
+  const medNorte = toUpper(this.contratoForm.value.medida_norte);
+  const medSur = toUpper(this.contratoForm.value.medida_sur);
+  const medEste = toUpper(this.contratoForm.value.medida_este);
+  const medOeste = toUpper(this.contratoForm.value.medida_oeste);
   const precioTotal = this.contratoForm.get('precio_total')?.value;
-  const condicionesPago = this.contratoForm.value.condiciones_pago;
-  const estadoJurisdiccion = this.contratoForm.value.estado_jurisdiccion;
-  const ciudadFirma = this.contratoForm.value.ciudad_firma;
+  const ciudadFirma = toUpper(this.contratoForm.value.ciudadFirma);
+  const fechaFirma = this.contratoForm.value.fecha_firma;
+  const fechaRegistro = this.contratoForm.value.fecha_registro_publico;
 
-  const folioEscrituraLetras = this.numeroALetras(folioEscritura);
+
+  const folioEscrituraLetras = this.numeroALetrasMayus(folioEscritura);
   const fechaEmisionLetras = this.fechaALetras(fechaEmision);
+  const precioLetras = this.numeroALetrasPrecio(precioTotal);
+  const fechaFirmaLetras = this.fechaALetras(fechaFirma);
+  const fechaRegistroLetras = this.fechaALetras(fechaRegistro);
 
 
 
   const documentDefinition: any = {
     // Márgenes ajustados para el fondo del membrete
-    pageMargins: [40, 120, 40, 60], 
+    pageMargins: [40, 120, 40, 65], 
 
     defaultStyle: {
       fontSize: 10,
@@ -708,14 +533,15 @@ async generarPDFContrato() {
 
       // Introducción con formato de negritas como en la imagen
       {
+        "lineHeight": 1.3,
         text: [
-          `En la ciudad de San Luis de la Paz, GTO, a los ${dia} días del mes de ${mes} del año ${anio}, se lleva a cabo el presente Contrato Privado de Compra-Venta, que celebran por una parte y por su propio derecho el C. `,
+          `EN LA CIUDAD DE SAN LUIS DE LA PAZ, GTO, A LOS ${dia} DÍAS DEL MES DE ${mes} DEL AÑO ${anio}, SE LLEVA A CABO EL PRESENTE CONTRATO PRIVADO DE COMPRA-VENTA, QUE CELEBRAN POR UNA PARTE Y POR SU PROPIO DERECHO EL C. `,
           { text: `${nombreVendedor}, `, bold: true, color: '#000000' },
-          `a quien en lo sucesivo se le denominará como la parte vendedora y de la otra parte también por su propio derecho a el/la`,
+          `A QUIEN EN LO SUCESIVO SE LE DENOMINARÁ COMO LA PARTE VENDEDORA Y DE LA OTRA PARTE TAMBIÉN POR SU PROPIO DERECHO A `,
           { text: `${nombreComprador}, `, bold: true, color: '#000000' },
-          `a quien en lo sucesivo se le denominará como la parte compradora, quienes se sujetan al tenor de los siguientes antecedentes y cláusulas.`,
+          `A QUIEN EN LO SUCESIVO SE LE DENOMINARÁ COMO LA PARTE COMPRADORA, QUIENES SE SUJETAN AL TENOR DE LOS SIGUIENTES ANTECEDENTES Y CLÁUSULAS.`,
         ],
-        margin: [0, 0, 0, 20]
+        margin: [0, 0, 0, 25]
       },
 
       // Sección ANTECEDENTES (Con líneas de separación)
@@ -726,44 +552,80 @@ async generarPDFContrato() {
       { text: 'A N T E C E D E N T E S', style: 'sectionTitle' },
       {
         canvas: [{ type: 'line', x1: 0, y1: 0, x2: 520, y2: 0, lineWidth: 0.5 }],
-        margin: [0, 5, 0, 15]
+        margin: [0, 5, 0, 25]
       },
 
       // ANTECEDENTE PRIMERO (Formato justificado y combinado)
       {
+        "leadingIndent": 36,
+        "lineHeight": 1.3,
         text: [
-          { text: 'PRIMERO.- ', bold: true, color: '#000000' },
-          `Manifiesta el C. `,
-          { text: `${nombreVendedor} `, bold: true, color: '#000000' },
-          `ser dueño y poseedor de un predio rústico o urbano denominado como`,
-          { text: `${nombrePredio}, `, bold: true, color: '#000000' },
-          `ubicado en la localidad ${colonia} perteneciente al municipio de ${ciudad}, GTO, quien acredita la propiedad con la ${tipoDocumento} con partida numero ${folioEscritura} (${folioEscrituraLetras}),  QUE SE EXPIDE EN LA CIUDAD DE SAN LUIS DE LA PAZ, ESTADO DE GUANAJUATO A LOS ${fechaEmisionLetras}, Y QUE SE ENCUENTRA INSCRITA EN EL REGISTRO PUBLICO DE LA PROPIEDAD CON FOLIOS ELECTRÓNICOS ${registroPublico}. EL CUAL VENDE LA SIGUIENTE FRACCIÓN`
+          { text: ' PRIMERO.-', bold: true, color: '#000000'},
+          `MANIFIESTA EL C. `,
+          { text: `${nombreVendedor} `, bold: true },
+          `SER DUEÑO Y POSEEDOR DE UN PREDIO RÚSTICO O URBANO DENOMINADO COMO `,
+          { text: `${nombrePredio}, `, bold: true },
+          `UBICADO EN LA LOCALIDAD ${colonia} PERTENECIENTE AL MUNICIPIO DE ${ciudad}, GTO, QUIEN ACREDITA LA PROPIEDAD CON LA ${tipoDocumento} CON PARTIDA NÚMERO ${folioEscritura} (${folioEscrituraLetras}), QUE SE EXPIDE EN LA CIUDAD DE SAN LUIS DE LA PAZ, ESTADO DE GUANAJUATO A LOS ${fechaEmisionLetras}, Y QUE SE ENCUENTRA INSCRITA EN EL REGISTRO PÚBLICO DE LA PROPIEDAD CON FOLIOS ELECTRÓNICOS ${registroPublico}. CON FECHA ${fechaRegistroLetras} EL CUAL VENDE LA SIGUIENTE FRACCIÓN`
         ],
-        margin: [0, 0, 0, 10]
+        margin: [0, 0, 0, 25]
       },
-
       // Medidas y colindancias (Usando UL para la sangría, pero con estilo más sobrio)
-      { text: 'El inmueble cuenta con las siguientes medidas y colindancias:', margin: [0, 0, 0, 5] },
-      {
-        ul: [
-          { text: `AL NORTE: ${medNorte} M. y linda con ${colNorte}` },
-          { text: `AL SUR: ${medSur} M. y linda con ${colSur}` },
-          { text: `AL ORIENTE: ${medEste} M. y linda con ${colEste}` },
-          { text: `AL PONIENTE: ${medOeste} M. y linda con ${colOeste}` },
-        ],
-        style: 'colindanciasList',
-        margin: [10, 0, 0, 15] // Sangría del listado
-      },
+      // Colindancias con formato de la segunda imagen
+{
+    // Lotes y Manzana (Se mantiene sin cambios, pero es el párrafo que va antes)
+    text: `LOTES NO. ${numLote} MANZANA ${manzana}`,
+    bold: true,
+    color: '#000000',
+    margin: [0, 0, 0, 12]
+},
+
+// Bloque de Colindancias sin usar UL
+{
+    // Aplicamos una sangría izquierda general (e.g., 50 puntos) al todo el bloque.
+    // [izquierda, arriba, derecha, abajo]
+    margin: [0, 0, 0, 25],
+    "lineHeight": 2.0,
+    stack: [
+        {
+            text: [
+                { text: 'AL NORTE:', bold: true },
+                ` ${medNorte} M. Y LINDA CON ${colNorte}`
+            ]
+        },
+        {
+            text: [
+                { text: 'AL SUR:', bold: true },
+                ` ${medSur} M. Y LINDA CON ${colSur}`
+            ]
+        },
+        {
+            text: [
+                { text: 'AL ORIENTE:', bold: true },
+                ` ${medEste} M. Y LINDA CON ${colEste}`
+            ]
+        },
+        {
+            text: [
+                { text: 'AL PONIENTE:', bold: true },
+                ` ${medOeste} M. Y LINDA CON ${colOeste}`
+            ]
+        },
+    ]
+},
 
       // ANTECEDENTE SEGUNDO
       {
+        "leadingIndent": 36,
+        "lineHeight": 1.3,
         text: [
           { text: 'SEGUNDO.- ', bold: true, color: '#000000' },
-          `Por último, manifiesta el vendedor que por convenir a sus intereses ha decidido vender la totalidad del predio descrito en el antecedente primero a `,
+          `POR ÚLTIMO, MANIFIESTA EL C.`,
+          { text: `${nombreVendedor}, `, bold: true, color: '#000000' },
+           `QUE POR CONVENIR A SUS INTERESES HA DECIDIDO VENDER LA TOTALIDAD DEL PREDIO DESCRITO EN EL ANTECEDENTE PRIMERO A C.`,
           { text: `${nombreComprador} `, bold: true, color: '#000000' },
-          `bajo los términos y condiciones del presente contrato.`
+          `COMPRAVENTA QUE SE REALIZA SEGÚN EL PRECIO, TERMINO Y DEMÁS CONDICIONES QUE SE ESTIPULAN EN LAS CLAUSULAS DEL PRESENTE CONTRATO.`
         ],
-        margin: [0, 0, 0, 20]
+        margin: [0, 0, 0, 95]
       },
 
       // Sección CLÁUSULAS (Con líneas de separación)
@@ -774,71 +636,179 @@ async generarPDFContrato() {
       { text: 'C L Á U S U L A S', style: 'sectionTitle' },
       {
         canvas: [{ type: 'line', x1: 0, y1: 0, x2: 520, y2: 0, lineWidth: 0.5 }],
-        margin: [0, 5, 0, 15]
+        margin: [0, 5, 0, 20]
       },
 
       // CLÁUSULAS (Estructura de texto combinado)
       {
+        "leadingIndent": 36,
+        "lineHeight": 1.3,
         text: [
           { text: 'PRIMERA.- ', bold: true, color: '#000000' },
-          `El vendedor vende el predio descrito en el antecedente primero, y el comprador lo adquiere en el estado físico y jurídico en el que se encuentra.`,
+          `EL C.`,
+          { text: `${nombreVendedor}, `, bold: true, color: '#000000' },
+          `POR SU PROPIO DERECHO VENDE EL PREDIO DESCRITO EN EL ANTECEDENTE PRIMERO DE ESTE CONTRATO DE COMPRAVENTA CON LA SUPERFICE, MEDIDAS Y COLINDANCIAS QUE SE DAN AQUÍ POR REPRODUCIDAS, Y LA C. `,
+          { text: `${nombreComprador} `, bold: true, color: '#000000' },
+           `, ADQUIERE DICHA FRACOÓN DEL INMUEBLE MATERIA DEL PRESENTE CONTRATO.`
         ],
         margin: [0, 0, 0, 5]
       },
       {
+        "canvas": [{ "type": 'line', "x1": 0, "y1": 0, "x2": 520, "y2": 0, "lineWidth": 0.5, "dash": { "length": 5, "space": 2 } }],
+        "margin": [0, 5, 0, 15] // Espacio entre la línea y la siguiente cláusula
+      },
+      {
+        "leadingIndent": 36,
+        "lineHeight": 1.3,
         text: [
           { text: 'SEGUNDA.- ', bold: true, color: '#000000' },
-          `El precio total de la operación es de: $${precioTotal} M.N. El comprador se obliga a pagar bajo las siguientes condiciones: ${condicionesPago}.`,
+          ` CONVIENEN LAS PARTES QUE EL PRECIO TOTAL DE LA PRESENTE OPERACIÓN DE COMPRAVENTA, ES LA CANTIDAD DE $ ${precioTotal} (${precioLetras}) CANTIDAD QUE EL COMPRADOR LA CADRIANA PRADO MORENO, SE OBLIGA A PAGAR AL VENDEDOR EL C. `,
+          { text: `${nombreVendedor}, `, bold: true, color: '#000000' },
+          `A PARTIR DE LA FIRMA DE ESTE CONTRATO DE COMPRAVENTA.`,
+          { text: `${nombreComprador} `, bold: true, color: '#000000' },
+
+
         ],
         margin: [0, 0, 0, 5]
       },
       {
+        "canvas": [{ "type": 'line', "x1": 0, "y1": 0, "x2": 520, "y2": 0, "lineWidth": 0.5, "dash": { "length": 5, "space": 2 } }],
+        "margin": [0, 5, 0, 15] // Espacio entre la línea y la siguiente cláusula
+      },
+      {
+        "leadingIndent": 36,
+        "lineHeight": 1.3,
         text: [
           { text: 'TERCERA.- ', bold: true, color: '#000000' },
-          `El vendedor entregará al comprador el recibo correspondiente por los pagos realizados.`,
+          `CONVENEN LAS PARTES QUE DESDE ESTE MOMENTO QUE EL VENDEDOR EL C. `,
+          { text: `${nombreVendedor}, `, bold: true, color: '#000000' },
+          `ENTREGARA A EL COMPRADOR C.`,
+          { text: `${nombreComprador} `, bold: true, color: '#000000' },
+          `RECIBO DE DINERO QUE SERA CORRESPONDIENTE AL PAGO QUE HA QUEDADO OBLIGADO A EL COMPRADOR C. `,
+          { text: `${nombreComprador} `, bold: true, color: '#000000' },
+          `Y QUE HAN SIDO DESCRITOS EN LA CLAUSULA SEGUNDA EL PRESENTE CONTRATO DE COMPRAVENTA.`
+
+
+
         ],
         margin: [0, 0, 0, 5]
       },
       {
+        "canvas": [{ "type": 'line', "x1": 0, "y1": 0, "x2": 520, "y2": 0, "lineWidth": 0.5, "dash": { "length": 5, "space": 2 } }],
+        "margin": [0, 5, 0, 15] // Espacio entre la línea y la siguiente cláusula
+      },
+      {
+        "leadingIndent": 36,
+        "lineHeight": 1.3,
         text: [
           { text: 'CUARTA.- ', bold: true, color: '#000000' },
-          `Al firmarse este contrato, el vendedor hace entrega material y jurídica del inmueble al comprador.`,
+          `CONVIENEN LAS PARTES QUE AL MOMENTO DE FRMARSE EL PRESENTE CONTRATO DE COMPRAVENTA, EL VENDEDOR C. `,
+          { text: `${nombreVendedor}, `, bold: true, color: '#000000' },
+          `HACE ENTREGA DE LA POSESION JURÍDICA, FISICA Y MATERIAL DEL PREDIO RUSTICO YA IDENTIFICADO EN EL ANTECEDENTE PRIMERO DE ESTE CONTRATO DE COMPRAVENTA, POSESIÓN QUE RECIBE EL COMPRADOR C. `,
+          { text: `${nombreComprador} `, bold: true, color: '#000000' },
+          `, A SU ENTERA SATISFACCIÓN .CON TODAS SUS ENTRADAS Y SALIDAS, USOS, COSTUMBRES Y SERVIDUMBRES ACTIVAS Y PASIVAS Y TODO POR CUANTO POR DERECHO Y DE HECHO LE CORRESPONDA A DICHO PRECIO`,
         ],
         margin: [0, 0, 0, 5]
       },
       {
+        "canvas": [{ "type": 'line', "x1": 0, "y1": 0, "x2": 520, "y2": 0, "lineWidth": 0.5, "dash": { "length": 5, "space": 2 } }],
+        "margin": [0, 5, 0, 15] // Espacio entre la línea y la siguiente cláusula
+      },
+      {
+        "leadingIndent": 36,
+        "lineHeight": 1.3,
         text: [
           { text: 'QUINTA.- ', bold: true, color: '#000000' },
-          `El vendedor declara que el inmueble está libre de gravamen.`,
+          `MANIFIESTA EL VENDEDOR C. `,
+          { text: `${nombreVendedor}, `, bold: true, color: '#000000' },
+          `, QUE EL LOTE MULTICITADO SE ENCUENTRA LIBRE DE GRAVAMEN O RESPONSABILIDAD CIVIL ALGUNA`
         ],
         margin: [0, 0, 0, 5]
       },
       {
+        "canvas": [{ "type": 'line', "x1": 0, "y1": 0, "x2": 520, "y2": 0, "lineWidth": 0.5, "dash": { "length": 5, "space": 2 } }],
+        "margin": [0, 5, 0, 15] // Espacio entre la línea y la siguiente cláusula
+      },
+      {
+        "leadingIndent": 36,
+        "lineHeight": 1.3,
         text: [
           { text: 'SEXTA.- ', bold: true, color: '#000000' },
-          `El comprador gestionará escrituras, impuestos y servicios, cubriendo los gastos correspondientes.`,
+          `CONVIENEN LAS PARTES QUE AL HACER ENTREGA DEL PREDIO FÍSICO YA ESPECIFICADO EN EL ANTECEDENTE PRIMERO DE ESTE CONTRATO DESDE ESE MOMENTO EL COMPRADOR C. `,
+          { text: `${nombreComprador} `, bold: true, color: '#000000' },
+          `, Y ESTE ULTIMO QUEDA EN TOTAL LIBERTAD DE GESTIONAR Y TRAMITAR SU ESCRITURA, IMPUESTOS, ASÍ COMO LA INSTALACIÓN DE LOS SERVIDOS DE AGUA, LUZ Y DRENAJE ANTE LAS INSTANCIAS CORRESPONDIENTES, SIENDO A CARGO DEL COMPRADOR`,
+          { text: `${nombreComprador} `, bold: true, color: '#000000' },
+          `, LA EROGACIÓN EN UN PORCENTAJE DEL 100% DE TODOS LOS GASTOS QUE POR ELLO SE CAUSEN.`
+
         ],
         margin: [0, 0, 0, 5]
       },
       {
+        "canvas": [{ "type": 'line', "x1": 0, "y1": 0, "x2": 520, "y2": 0, "lineWidth": 0.5, "dash": { "length": 5, "space": 2 } }],
+        "margin": [0, 5, 0, 15] // Espacio entre la línea y la siguiente cláusula
+      },
+      {
+        "leadingIndent": 36,
+        "lineHeight": 1.3,
         text: [
           { text: 'SÉPTIMA.- ', bold: true, color: '#000000' },
-          `Ambas partes manifiestan que no existe error, dolo o mala fe que pudiera invalidar este contrato.`,
+          `AMBAS PARTES MANFIESTAN QUE, EN LA PRESENTE OPERACIÓN, NO EXISTE ERROR, DOLO, MALA FE O ALGÚN OTRO VICIO QUE PUDIERA INVALIDAR POR LO QUE, RENUNCIA A EJERCITAR LA ACCIÓN DE NULIDAD EN LOS TERMINOS PARA EJERCITARLA`,
         ],
         margin: [0, 0, 0, 5]
       },
       {
+        "canvas": [{ "type": 'line', "x1": 0, "y1": 0, "x2": 520, "y2": 0, "lineWidth": 0.5, "dash": { "length": 5, "space": 2 } }],
+        "margin": [0, 5, 0, 15] // Espacio entre la línea y la siguiente cláusula
+      },
+      {
+        "leadingIndent": 36,
+        "lineHeight": 1.3,
         text: [
           { text: 'OCTAVA.- ', bold: true, color: '#000000' },
-          `Las partes se someten a las leyes del estado de ${estadoJurisdiccion}.`,
+          `PARA LA INTERPRETACIÓN DE ESTE INSTRUMENTO JURÍDICO, LAS PARTES ACUERDAN SOMETERSE A LAS LEYES DEL ESTADO DE GUANAJUATO Y LOS TRIBUNALES DEL FUERO COMÚN DEL PARTIDO JUDICIAL DE LA UBICACIÓN DEL BIEN INMUEBLE OBJETO DEL PRESENTE CONTRATO HACIENDO EXPRESA RENUNCIA A LOS FUEROS QUE POR RAZÓN DE SUS DOMICILIOS PRESENTE Y FUTUROS PUDIERAN CORRESPONDERLE.`,
         ],
         margin: [0, 0, 0, 20]
+      },
+      {
+        "canvas": [{ "type": 'line', "x1": 0, "y1": 0, "x2": 520, "y2": 0, "lineWidth": 0.5, "dash": { "length": 5, "space": 2 } }],
+        "margin": [0, 5, 0, 15] // Espacio entre la línea y la siguiente cláusula
       },
 
       // Cierre
       {
-        text: `Leído el presente contrato y estando conformes, lo firman en la ciudad de ${ciudadFirma}, a los ${dia} días del mes de ${mes} del año ${anio}.`,
-        margin: [0, 0, 0, 40]
+        text: [
+            {
+                "text": `LEÍDO QUE EL PRESENTE CONTRATO A LAS PARTES Y ESTANDO DE ACUERDO LAS MISMAS CON SU CONTENIDO Y CON LA FUERZA Y ALCANCE LEGAL DE SU CLAUSULADO, LO FIRMAN EN LA CIUDAD DE ${ciudadFirma}, ${fechaFirmaLetras}`,
+                "bold": true
+            }
+        ],
+        margin: [0, 0, 0, 20]
+    },
+
+      {
+        "lineHeight": 1.3,
+        text: `PARA LOS EFECTOS DE IDENTIFICACIÓN DE LAS PARTES EN EL PRESENTE CONTRATO DE COMPRA VENTA, LAS MISMAS SE IDENTIFICAN:  `,
+        margin: [0, 0, 0, 20]
+      },
+
+      {
+        "lineHeight": 1.3,
+        text: [
+          `VENDEDOR`,
+          { text: `${nombreVendedor}, `, bold: true, color: '#000000' },
+          `CON CREDENCIAL PARA VOTAR FOTOGRAFÍA EXPEDIDA POR EL INSTITUTO NACIONAL ELECTORAL`,
+        ],
+        margin: [0, 0, 0, 20]
+      },
+
+      {
+        "lineHeight": 1.3,
+        text: [
+          `COMPRADOR`,
+          { text: `${nombreComprador} `, bold: true, color: '#000000' },
+          ` CON CREDENCIAL PARA VOTAR FOTOGRAFÍA EXPEDIDA POR EL INSTITUTO NACIONAL ELECTORAL`,
+        ],
+        margin: [0, 0, 0, 20]
       },
 
       // Sección de Firmas (Usando tabla para alinear)
@@ -888,7 +858,19 @@ async generarPDFContrato() {
     }
   };
 
-  pdfMake.createPdf(documentDefinition).download(`Contrato_Lote_${this.loteSeleccionado.id_lote}.pdf`);
+  pdfMake.createPdf(documentDefinition).download(`Contrato_Lote_${this.loteSeleccionado.numlote}.pdf`);
+  //  const pdf = pdfMake.createPdf(documentDefinition);
+
+  //  pdf.open();
+
+  this.contratoForm.reset();
+  this.loteSeleccionado = null;
+  this.enviando = false;
+
+  this.contratoForm.get('nombre')?.enable();
+  this.contratoForm.get('apellido_paterno')?.enable();
+  this.contratoForm.get('apellido_materno')?.enable();
+  this.contratoForm.get('telefono')?.enable();
 }
 
 

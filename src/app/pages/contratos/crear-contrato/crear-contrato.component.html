@@ -15,7 +15,7 @@
         <!-- ID Lote -->
         <div class="col-md-4">
           <label class="form-label">ID del Lote <span class="text-danger">*</span></label>
-          <input type="number" formControlName="id_lote" class="form-control" (keydown)="evitarNotacion($event)">
+          <input type="number" formControlName="id_lote" class="form-control" (keydown)="evitarNotacion($event)" maxlength="15" (input)="limitarMax($event, 15)">
 
           <div class="text-danger mt-1" *ngIf="contratoForm.get('id_lote')?.hasError('pattern')">
             Solo se permiten números.
@@ -27,6 +27,9 @@
 
           <div *ngIf="contratoForm.get('id_lote')?.errors?.['loteNoExiste']" class="text-danger mt-1">
             No existe un lote con este ID.
+          </div>
+          <div *ngIf="contratoForm.get('id_lote')?.errors?.['maxlength']">
+            Máximo 15 caracteres.
           </div>
         </div>
 
@@ -82,12 +85,15 @@
 
         <div class="col-md-4">
           <label class="form-label">Correo del Cliente <span class="text-danger">*</span></label>
-          <input type="email" formControlName="correo_cliente" class="form-control">
+          <input type="email" formControlName="correo_cliente" class="form-control" maxlength="30" (input)="limitarMax($event, 30)">
           <div class="text-danger mt-1" *ngIf="contratoForm.get('correo_cliente')?.hasError('email')">
             Ingresa un correo válido.
           </div>
           <div class="text-danger mt-1" *ngIf="contratoForm.get('correo_cliente')?.errors?.['correoNoExiste']">
             No existe un cliente registrado con este correo.
+          </div>
+          <div *ngIf="contratoForm.get('correo_cliente')?.errors?.['maxlength']">
+            Máximo 30 caracteres.
           </div>
         </div>
 
@@ -119,7 +125,7 @@
 
         <div class="col-md-4">
           <label class="form-label">Enganche <span class="text-danger">*</span></label>
-          <input type="number" formControlName="enganche" class="form-control" (keydown)="evitarNotacion($event)">
+          <input type="number" formControlName="enganche" class="form-control" (keydown)="evitarNotacion($event)" maxlength="10" (input)="limitarMax($event, 10)">
           <div class="text-danger mt-1" *ngIf="contratoForm.get('enganche')?.hasError('pattern')">
             Solo se permiten números positivos.
           </div>
@@ -127,11 +133,14 @@
           <div class="text-danger mt-1" *ngIf="contratoForm.get('enganche')?.hasError('engancheMayor')">
             El enganche debe ser menor o igual al precio total.
           </div>
+          <div *ngIf="contratoForm.get('enganche')?.errors?.['maxlength']">
+            Máximo 10 caracteres.
+          </div>
         </div>
 
         <div class="col-md-4">
           <label class="form-label">Plazo (meses) <span class="text-danger">*</span></label>
-          <input type="number" formControlName="plazo_meses" class="form-control" (keydown)="evitarNotacion($event)">
+          <input type="number" formControlName="plazo_meses" class="form-control" (keydown)="evitarNotacion($event)" maxlength="2" (input)="limitarMax($event, 2)">
           <div class="text-danger mt-1" *ngIf="contratoForm.get('plazo_meses')?.hasError('min')">
             Debe ser mínimo 1 mes.
           </div>
@@ -151,8 +160,8 @@
 <div class="row g-3 bg-light p-3 rounded">
 
   <div class="col-md-6">
-    <label class="form-label">Nombre del Predio</label>
-    <input type="text" formControlName="nombre_predio" class="form-control">
+    <label class="form-label">Nombre del Predio<span class="text-danger">*</span></label>
+    <input type="text" formControlName="nombre_predio" class="form-control" maxlength="20" (input)="limitarMax($event, 20)">
 
     <div *ngIf="contratoForm.get('nombre_predio')?.touched && contratoForm.get('nombre_predio')?.invalid" class="text-danger small">
     <div *ngIf="contratoForm.get('nombre_predio')?.errors?.['required']">
@@ -164,28 +173,34 @@
     <div *ngIf="contratoForm.get('nombre_predio')?.errors?.['pattern']">
       Solo se permiten letras y espacios.
     </div>
+    <div *ngIf="contratoForm.get('nombre_predio')?.errors?.['maxlength']">
+      Máximo 20 caracteres.
+    </div>
   </div>
   </div>
 
     <h6 class="mt-3">Acreditando la propiedad con:</h6>
 
   <div class="col-md-6">
-    <label class="form-label">Tipo de Documento</label>
-    <input type="text" formControlName="tipo_documento" class="form-control">
+    <label class="form-label">Tipo de Documento<span class="text-danger">*</span></label>
+    <input type="text" formControlName="tipo_documento" class="form-control" maxlength="30" (input)="limitarMax($event, 30)">
 
     <div *ngIf="contratoForm.get('tipo_documento')?.touched && contratoForm.get('tipo_documento')?.invalid" class="text-danger small">
     <div *ngIf="contratoForm.get('tipo_documento')?.errors?.['required']">
       El tipo de documento es obligatorio.
     </div>
-    <div *ngIf="contratoForm.get('nombre_predio')?.errors?.['pattern']">
+    <div *ngIf="contratoForm.get('tipo_documento')?.errors?.['pattern']">
       Solo se permiten letras y espacios.
+    </div>
+    <div *ngIf="contratoForm.get('tipo_documento')?.errors?.['maxlength']">
+      Máximo 30 caracteres.
     </div>
   </div>
   </div>
 
   <div class="col-md-4">
-    <label class="form-label">Número / Folio de Escritura</label>
-    <input type="text" formControlName="folio_escritura" class="form-control">
+    <label class="form-label">Número / Folio de Escritura<span class="text-danger">*</span></label>
+    <input type="text" formControlName="folio_escritura" class="form-control" (keypress)="soloNumerosDecimales($event)" maxlength="11" (input)="limitarMax($event, 11)">
     <div *ngIf="contratoForm.get('folio_escritura')?.touched && contratoForm.get('folio_escritura')?.invalid" class="text-danger small">
     <div *ngIf="contratoForm.get('folio_escritura')?.errors?.['required']">
       El número o folio de escritura es obligatorio.
@@ -193,12 +208,15 @@
     <div *ngIf="contratoForm.get('folio_escritura')?.errors?.['minlength']">
       Debe tener al menos 3 caracteres.
     </div>
+    <div *ngIf="contratoForm.get('folio_escritura')?.errors?.['maxlength']">
+      Máximo 11 caracteres.
+    </div>
   </div>
 
   </div>
 
   <div class="col-md-4">
-    <label class="form-label">Fecha de Emisión</label>
+    <label class="form-label">Fecha de Emisión<span class="text-danger">*</span></label>
     <input type="date" formControlName="fecha_emision" class="form-control">
     <div *ngIf="contratoForm.get('fecha_emision')?.touched && contratoForm.get('fecha_emision')?.invalid" class="text-danger small">
     <div *ngIf="contratoForm.get('fecha_emision')?.errors?.['required']">
@@ -212,57 +230,89 @@
   </div>
 
   <div class="col-md-4">
-    <label class="form-label">Registro Público (folios)</label>
-    <input type="text" formControlName="registro_publico" class="form-control">
+    <label class="form-label">Registro Público (folios)<span class="text-danger">*</span></label>
+    <input type="text" formControlName="registro_publico" class="form-control" maxlength="30" (input)="limitarMax($event, 30)">
     <div *ngIf="contratoForm.get('registro_publico')?.touched && contratoForm.get('registro_publico')?.invalid" class="text-danger small">
     <div *ngIf="contratoForm.get('registro_publico')?.errors?.['pattern']">
       Solo se permiten letras, números y guiones.
     </div>
+    <div *ngIf="contratoForm.get('registro_publico')?.errors?.['maxlength']">
+      Máximo 30 caracteres.
+    </div>
 </div>
 
   </div>
+
+  <div class="col-md-4">
+  <label class="form-label">Fecha del Registro Público <span class="text-danger">*</span></label>
+  <input type="date" formControlName="fecha_registro_publico" class="form-control">
+
+  <div class="text-danger small"
+       *ngIf="contratoForm.get('fecha_registro_publico')?.touched && contratoForm.get('fecha_registro_publico')?.invalid">
+
+    <div *ngIf="contratoForm.get('fecha_registro_publico')?.errors?.['required']">
+      Esta fecha es obligatoria.
+    </div>
+    <div *ngIf="contratoForm.get('fecha_registro_publico')?.errors?.['fechaFutura']">
+      La fecha no puede ser mayor a la fecha actual.
+    </div>
+  </div>
+</div>
+
 
   <h6 class="mt-3">Colindancias del Terreno</h6>
 
   <div class="col-md-3">
-    <label class="form-label">Norte</label>
-    <input type="text" formControlName="colindancia_norte" class="form-control">
+    <label class="form-label">Norte<span class="text-danger">*</span></label>
+    <input type="text" formControlName="colindancia_norte" class="form-control" maxlength="30" (input)="limitarMax($event, 30)">
     <div *ngIf="contratoForm.get('colindancia_norte')?.touched && contratoForm.get('colindancia_norte')?.invalid" class="text-danger small">
     <div *ngIf="contratoForm.get('colindancia_norte')?.errors?.['minlength']">
       La colindancia debe tener al menos 3 caracteres.
     </div>
+    <div *ngIf="contratoForm.get('colindancia_norte')?.errors?.['maxlength']">
+      Máximo 30 caracteres.
+    </div>
 </div>
 
   </div>
 
   <div class="col-md-3">
-    <label class="form-label">Sur</label>
-    <input type="text" formControlName="colindancia_sur" class="form-control">
+    <label class="form-label">Sur<span class="text-danger">*</span></label>
+    <input type="text" formControlName="colindancia_sur" class="form-control" maxlength="30" (input)="limitarMax($event, 30)">
     <div *ngIf="contratoForm.get('colindancia_sur')?.touched && contratoForm.get('colindancia_sur')?.invalid" class="text-danger small">
     <div *ngIf="contratoForm.get('colindancia_sur')?.errors?.['minlength']">
       La colindancia debe tener al menos 3 caracteres.
     </div>
-</div>
-
-  </div>
-
-  <div class="col-md-3">
-    <label class="form-label">Este</label>
-    <input type="text" formControlName="colindancia_este" class="form-control">
-    <div *ngIf="contratoForm.get('colindancia_este')?.touched && contratoForm.get('colindancia_este')?.invalid" class="text-danger small">
-    <div *ngIf="contratoForm.get('colindancia_este')?.errors?.['minlength']">
-      La colindancia debe tener al menos 3 caracteres.
+    <div *ngIf="contratoForm.get('colindancia_sur')?.errors?.['maxlength']">
+      Máximo 30 caracteres.
     </div>
 </div>
 
   </div>
 
   <div class="col-md-3">
-    <label class="form-label">Oeste</label>
-    <input type="text" formControlName="colindancia_oeste" class="form-control">
+    <label class="form-label">Oriente<span class="text-danger">*</span></label>
+    <input type="text" formControlName="colindancia_este" class="form-control" maxlength="30" (input)="limitarMax($event, 30)">
+    <div *ngIf="contratoForm.get('colindancia_este')?.touched && contratoForm.get('colindancia_este')?.invalid" class="text-danger small">
+    <div *ngIf="contratoForm.get('colindancia_este')?.errors?.['minlength']">
+      La colindancia debe tener al menos 3 caracteres.
+    </div>
+    <div *ngIf="contratoForm.get('colindancia_este')?.errors?.['maxlength']">
+      Máximo 30 caracteres.
+    </div>
+</div>
+
+  </div>
+
+  <div class="col-md-3">
+    <label class="form-label">Poniente<span class="text-danger">*</span></label>
+    <input type="text" formControlName="colindancia_oeste" class="form-control" maxlength="30" (input)="limitarMax($event, 30)">
     <div *ngIf="contratoForm.get('colindancia_oeste')?.touched && contratoForm.get('colindancia_oeste')?.invalid" class="text-danger small">
     <div *ngIf="contratoForm.get('colindancia_oeste')?.errors?.['minlength']">
       La colindancia debe tener al menos 3 caracteres.
+    </div>
+    <div *ngIf="contratoForm.get('colindancia_oeste')?.errors?.['maxlength']">
+      Máximo 30 caracteres.
     </div>
   </div>
 
@@ -271,8 +321,8 @@
   <h6 class="mt-4">Medidas del Terreno (en metros)</h6>
 
 <div class="col-md-3">
-  <label class="form-label">Medida Norte (m)</label>
-  <input type="text" formControlName="medida_norte" class="form-control">
+  <label class="form-label">Medida Norte (m)<span class="text-danger">*</span></label>
+  <input type="text" formControlName="medida_norte" class="form-control" (keypress)="soloNumerosDecimales($event)" maxlength="15" (input)="limitarMax($event, 15)">
 
   <div *ngIf="contratoForm.get('medida_norte')?.touched && contratoForm.get('medida_norte')?.invalid"
        class="text-danger small">
@@ -282,12 +332,15 @@
     <div *ngIf="contratoForm.get('medida_norte')?.errors?.['pattern']">
       Solo se permiten números (ej. 10 o 10.5).
     </div>
+    <div *ngIf="contratoForm.get('medida_norte')?.errors?.['maxlength']">
+      Máximo 15 caracteres.
+    </div>
   </div>
 </div>
 
 <div class="col-md-3">
-  <label class="form-label">Medida Sur (m)</label>
-  <input type="text" formControlName="medida_sur" class="form-control">
+  <label class="form-label">Medida Sur (m)<span class="text-danger">*</span></label>
+  <input type="text" formControlName="medida_sur" class="form-control" (keypress)="soloNumerosDecimales($event)" maxlength="15" (input)="limitarMax($event, 15)">
 
   <div *ngIf="contratoForm.get('medida_sur')?.touched && contratoForm.get('medida_sur')?.invalid"
        class="text-danger small">
@@ -297,12 +350,15 @@
     <div *ngIf="contratoForm.get('medida_sur')?.errors?.['pattern']">
       Solo se permiten números (ej. 12 o 12.3).
     </div>
+    <div *ngIf="contratoForm.get('medida_sur')?.errors?.['maxlength']">
+      Máximo 15 caracteres.
+    </div>
   </div>
 </div>
 
 <div class="col-md-3">
-  <label class="form-label">Medida Este (m)</label>
-  <input type="text" formControlName="medida_este" class="form-control">
+  <label class="form-label">Medida Oriente (m)<span class="text-danger">*</span></label>
+  <input type="text" formControlName="medida_este" class="form-control" (keypress)="soloNumerosDecimales($event)" maxlength="15" (input)="limitarMax($event, 15)">
 
   <div *ngIf="contratoForm.get('medida_este')?.touched && contratoForm.get('medida_este')?.invalid"
        class="text-danger small">
@@ -312,12 +368,15 @@
     <div *ngIf="contratoForm.get('medida_este')?.errors?.['pattern']">
       Solo se permiten números (ej. 15 o 15.8).
     </div>
+    <div *ngIf="contratoForm.get('medida_este')?.errors?.['maxlength']">
+      Máximo 15 caracteres.
+    </div>
   </div>
 </div>
 
 <div class="col-md-3">
-  <label class="form-label">Medida Oeste (m)</label>
-  <input type="text" formControlName="medida_oeste" class="form-control">
+  <label class="form-label">Medida Poniente (m)<span class="text-danger">*</span></label>
+  <input type="text" formControlName="medida_oeste" class="form-control" (keypress)="soloNumerosDecimales($event)" maxlength="15" (input)="limitarMax($event, 15)">
 
   <div *ngIf="contratoForm.get('medida_oeste')?.touched && contratoForm.get('medida_oeste')?.invalid"
        class="text-danger small">
@@ -327,8 +386,47 @@
     <div *ngIf="contratoForm.get('medida_oeste')?.errors?.['pattern']">
       Solo se permiten números (ej. 14 o 14.2).
     </div>
+    <div *ngIf="contratoForm.get('medida_oeste')?.errors?.['maxlength']">
+      Máximo 15 caracteres.
+    </div>
   </div>
 </div>
+
+<div class="col-md-4">
+  <label class="form-label">Ciudad donde se firma <span class="text-danger">*</span></label>
+  <input type="text" formControlName="ciudadFirma" class="form-control" maxlength="30" (input)="limitarMax($event, 30)">
+
+  <div class="text-danger small" 
+       *ngIf="contratoForm.get('ciudadFirma')?.touched && contratoForm.get('ciudadFirma')?.invalid">
+
+    <div *ngIf="contratoForm.get('ciudadFirma')?.errors?.['required']">
+      La ciudad es obligatoria.
+    </div>
+
+    <div *ngIf="contratoForm.get('ciudadFirma')?.errors?.['pattern']">
+      Solo se permiten letras y espacios.
+    </div>
+
+    <div *ngIf="contratoForm.get('ciudadFirma')?.errors?.['maxlength']">
+      Máximo 30 caracteres.
+    </div>
+  </div>
+</div>
+
+<div class="col-md-4">
+  <label class="form-label">Fecha de Firma <span class="text-danger">*</span></label>
+  <input type="date" formControlName="fecha_firma" class="form-control">
+
+  <div class="text-danger small"
+       *ngIf="contratoForm.get('fecha_firma')?.touched && contratoForm.get('fecha_firma')?.invalid">
+
+    <div *ngIf="contratoForm.get('fecha_firma')?.errors?.['required']">
+      La fecha de firma es obligatoria.
+    </div>
+  </div>
+</div>
+
+
 
 
 </div>
@@ -347,7 +445,6 @@
         </button>
 
         <div class="text-center mt-3">
-        <button type="button" class="btn btn-primary me-2" (click)="generarWordContrato()">Descargar Word</button>
         <button type="button" class="btn btn-secondary" (click)="generarPDFContrato()">Descargar PDF</button>
         </div>
 
