@@ -29,6 +29,8 @@ export class CrearContratoComponent {
   contratoForm: FormGroup;
   enviando = false;
   loteSeleccionado: any = null;
+  currentStep: number = 1;
+  totalSteps: number = 6;
 
 
   constructor(
@@ -44,7 +46,7 @@ export class CrearContratoComponent {
       telefono: [''],
       precio_total: ['', [Validators.required, Validators.min(1), Validators.pattern(/^[0-9]+(\.[0-9]+)?$/), Validators.maxLength(10)]],
       enganche: ['', [Validators.required, Validators.min(0), Validators.pattern(/^[0-9]+(\.[0-9]+)?$/), Validators.maxLength(10)]],
-      plazo_meses: ['', [Validators.required, Validators.min(1),  Validators.max(12), Validators.pattern(/^[0-9]+$/)]],
+      plazo_meses: ['', [Validators.required, Validators.min(1),  Validators.max(12), Validators.pattern(/^[0-9]+$/)]],
       estado_contrato: ['activo'],
       propietario_nombre: [''],
       id_cliente: [null],
@@ -52,7 +54,7 @@ export class CrearContratoComponent {
       tipo_documento: ['', [Validators.required, Validators.pattern(/^[A-Za-zÁÉÍÓÚÜÑ ]+$/), Validators.maxLength(30)]],
       folio_escritura: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(11)]],
       fecha_emision: ['', [Validators.required, this.validarFechaNoFutura]],
-      registro_publico: ['',  [Validators.required, Validators.minLength(5), Validators.maxLength(30)]],
+      registro_publico: ['',  [Validators.required, Validators.minLength(5), Validators.maxLength(30)]],
       colindancia_norte: ['', [Validators.required, Validators.minLength(3),Validators.maxLength(30)]],
       colindancia_sur: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
       colindancia_este: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
@@ -61,9 +63,9 @@ export class CrearContratoComponent {
       medida_sur: ['', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/), Validators.maxLength(15)]],
       medida_este: ['', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/), Validators.maxLength(15)]],
       medida_oeste: ['', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/), Validators.maxLength(15)]],
-      ciudadFirma: ['',  [Validators.required, Validators.maxLength(30),Validators.pattern(/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/)]],
+      ciudadFirma: ['',  [Validators.required, Validators.maxLength(30),Validators.pattern(/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/)]],
       fecha_firma: ['', [Validators.required ]],
-      fecha_registro_publico: ['', [Validators.required,  this.validarFechaNoFutura]],
+      fecha_registro_publico: ['', [Validators.required,  this.validarFechaNoFutura]],
     },
     {
     validators: this.validarEngancheMenorQuePrecio(), updateOn: 'change'
@@ -83,9 +85,9 @@ export class CrearContratoComponent {
           });
 
           this.loteSeleccionado = {
-          ...this.loteSeleccionado,
-          id_cliente: cliente.id_cliente
-        };
+            ...this.loteSeleccionado,
+            id_cliente: cliente.id_cliente
+          };
 
           // Los ponemos solo lectura
           this.contratoForm.get('nombre')?.disable();
@@ -116,6 +118,104 @@ export class CrearContratoComponent {
   });
 
 }
+
+/**
+ * Cambia el paso actual de la navegación.
+ * Verifica que el paso anterior esté completo o validado antes de avanzar.
+ * @param step El número del paso al que se quiere ir.
+ */
+// ... (Dentro de la clase CrearContratoComponent)
+
+  // Método para ir a un paso específico (siempre se permite ir hacia atrás)
+  goToStep(step: number): void {
+    if (step >= 1 && step <= this.totalSteps) {
+      // Si el usuario está intentando ir al siguiente paso (step > this.currentStep),
+      // verificamos si el paso actual es válido.
+      if (step > this.currentStep) {
+        if (this.isCurrentStepValid(this.currentStep)) {
+          this.currentStep = step;
+        } else {
+          // Marca los campos del paso actual como 'touched' para mostrar errores
+          this.markFormGroupTouched(this.getFormGroupForStep(this.currentStep));
+          Swal.fire('Error de Validación', 'Por favor, complete todos los campos obligatorios del paso actual antes de avanzar.', 'warning');
+        }
+      } else {
+        // Permitir ir hacia atrás sin validación
+        this.currentStep = step;
+      }
+    }
+  }
+
+  // Método auxiliar para obtener el subconjunto de controles para cada paso
+  getFormGroupForStep(step: number): AbstractControl {
+    switch (step) {
+      case 1:
+        return this.fb.group({
+          id_lote: this.contratoForm.get('id_lote'),
+        });
+      case 2:
+        return this.fb.group({
+          correo_cliente: this.contratoForm.get('correo_cliente'),
+        });
+      case 3:
+        return this.fb.group({
+          enganche: this.contratoForm.get('enganche'),
+          plazo_meses: this.contratoForm.get('plazo_meses'),
+        });
+      case 4:
+        return this.fb.group({
+          nombre_predio: this.contratoForm.get('nombre_predio'),
+          tipo_documento: this.contratoForm.get('tipo_documento'),
+          folio_escritura: this.contratoForm.get('folio_escritura'),
+          fecha_emision: this.contratoForm.get('fecha_emision'),
+          registro_publico: this.contratoForm.get('registro_publico'),
+          fecha_registro_publico: this.contratoForm.get('fecha_registro_publico'),
+        });
+      case 5: // ✨ NUEVO PASO 5: Colindancias y Medidas
+        return this.fb.group({
+          colindancia_norte: this.contratoForm.get('colindancia_norte'),
+          colindancia_sur: this.contratoForm.get('colindancia_sur'),
+          colindancia_este: this.contratoForm.get('colindancia_este'),
+          colindancia_oeste: this.contratoForm.get('colindancia_oeste'),
+          medida_norte: this.contratoForm.get('medida_norte'),
+          medida_sur: this.contratoForm.get('medida_sur'),
+          medida_este: this.contratoForm.get('medida_este'),
+          medida_oeste: this.contratoForm.get('medida_oeste'),
+        });
+      case 6: // ✨ NUEVO PASO 6: Firma
+        return this.fb.group({
+          ciudadFirma: this.contratoForm.get('ciudadFirma'),
+          fecha_firma: this.contratoForm.get('fecha_firma'),
+        });
+      default:
+        return this.contratoForm; // Por defecto o si hay error
+    }
+  }
+
+  // Método para validar el paso actual
+  isCurrentStepValid(step: number): boolean {
+    const stepGroup = this.getFormGroupForStep(step);
+    // Para el paso 1, también verifica si se ha seleccionado un lote.
+    if (step === 1) {
+        return stepGroup.valid && this.loteSeleccionado !== null;
+    }
+    // Para el paso 2, también verifica si se han cargado los datos del cliente.
+    if (step === 2) {
+        return stepGroup.valid && this.contratoForm.get('nombre')?.value && this.contratoForm.get('id_cliente')?.value !== null;
+    }
+    return stepGroup.valid;
+  }
+  
+  // Método recursivo para marcar todos los campos de un grupo de formulario como 'touched'
+  markFormGroupTouched(control: AbstractControl) {
+    if (control instanceof FormGroup) {
+      Object.values(control.controls).forEach(c => {
+        this.markFormGroupTouched(c);
+      });
+    } else {
+      control.markAsTouched();
+    }
+  }
 
 validarEngancheMenorQuePrecio() {
   return (form: FormGroup) => {
@@ -162,8 +262,30 @@ limitarMax(event: any, max: number) {
 
 
   onSubmit() {
+    // Solo permitir enviar si estamos en el último paso y el formulario es válido
+    if (this.currentStep !== this.totalSteps) {
+      Swal.fire('Flujo incompleto', 'Debes completar el paso final del contrato antes de enviarlo.', 'warning');
+      return;
+    }
+    
+    // Aquí el check de validez debe ser global, ya que incluye todos los campos necesarios para el PDF.
+    // Además, aseguramos que los campos deshabilitados (del cliente) son ignorados si no están en el payload.
+    // Para la validación global, habilitamos temporalmente los campos de cliente para que se validen los vacíos si es necesario.
+    
+    // Habilitar temporalmente los campos de cliente para la validación de envío si son requeridos
+    // Nota: En tu formulario, nombre, apellido, y teléfono no tienen `Validators.required`
+    const nombreControl = this.contratoForm.get('nombre');
+    if (nombreControl?.disabled) {
+      nombreControl.enable();
+    }
+    
     if (this.contratoForm.invalid) {
-      Swal.fire('Campos incompletos', 'Por favor completa todos los campos requeridos.', 'warning');
+      Swal.fire('Campos incompletos', 'Por favor completa todos los campos requeridos en el Paso 4.', 'warning');
+      
+      // Volver a deshabilitar si estaban deshabilitados
+      if (this.contratoForm.get('id_cliente')?.value !== null) {
+        nombreControl?.disable();
+      }
       return;
     }
 
@@ -174,26 +296,36 @@ limitarMax(event: any, max: number) {
 
     this.enviando = true;
 
+    // Se recomienda construir el payload solo con los campos que la API espera.
     const payload = {
-    id_lote: this.contratoForm.get('id_lote')?.value,
-    precio_total: this.contratoForm.get('precio_total')?.value,
-    enganche: this.contratoForm.get('enganche')?.value,
-    plazo_meses: this.contratoForm.get('plazo_meses')?.value,
-    estado_contrato: this.contratoForm.get('estado_contrato')?.value,
-    propietario_nombre: this.contratoForm.get('propietario_nombre')?.value,
-    id_cliente: this.contratoForm.get('id_cliente')?.value
-  };
+      id_lote: this.contratoForm.get('id_lote')?.value,
+      precio_total: this.contratoForm.get('precio_total')?.value,
+      enganche: this.contratoForm.get('enganche')?.value,
+      plazo_meses: this.contratoForm.get('plazo_meses')?.value,
+      estado_contrato: this.contratoForm.get('estado_contrato')?.value,
+      propietario_nombre: this.contratoForm.get('propietario_nombre')?.value,
+      id_cliente: this.contratoForm.get('id_cliente')?.value
+    };
 
 
     this.contratoService.crearContrato(payload).subscribe({
       next: (res) => {
-        Swal.fire('Contrato creado', 'El contrato se registró exitosamente.', 'success');
+        Swal.fire('Contrato creado', 'El contrato se registró exitosamente y se generará el PDF.', 'success');
         this.generarPDFContrato();
       },
       error: (err) => {
         Swal.fire('Error', err.error?.message || 'No se pudo crear el contrato', 'error');
       },
-      complete: () => this.enviando = false
+      complete: () => {
+        this.enviando = false;
+        // Volver a deshabilitar los campos de cliente después del envío
+        if (this.contratoForm.get('id_cliente')?.value !== null) {
+          this.contratoForm.get('nombre')?.disable();
+          this.contratoForm.get('apellido_paterno')?.disable();
+          this.contratoForm.get('apellido_materno')?.disable();
+          this.contratoForm.get('telefono')?.disable();
+        }
+      }
     });
   }
   
@@ -207,7 +339,8 @@ limitarMax(event: any, max: number) {
   const fecha = new Date(control.value);
   const hoy = new Date();
 
-  if (fecha > hoy) {
+  // Comprobar solo la fecha, ignorando la hora
+  if (fecha.setHours(0, 0, 0, 0) > hoy.setHours(0, 0, 0, 0)) {
     return { fechaFutura: true };
   }
   return null;
@@ -431,13 +564,13 @@ async generarPDFContrato() {
 
   const toUpper = (value: string | number | null | undefined): string => {
         if (typeof value === 'string') {
-            return value.toUpperCase();
+          return value.toUpperCase();
         }
         if (typeof value === 'number') {
-            return String(value);
+          return String(value);
         }
         return ''; // Retorna cadena vacía si es null/undefined
-    };
+      };
 
   console.log("FORM VALID?", this.contratoForm.valid);
   console.log("FORM ERRORS:", this.contratoForm.errors);
@@ -447,17 +580,42 @@ async generarPDFContrato() {
     if (control?.invalid) {
       console.warn("❌ Campo inválido:", key, control.errors);
     }
-  });  
+  });  
 
-  if (!this.loteSeleccionado || !this.contratoForm.valid) {
-    Swal.fire('Error', 'Debes completar los datos del contrato primero.', 'warning');
+  // Asegurar que los campos deshabilitados (cliente) se validen si son requeridos para el PDF
+  const nombreControl = this.contratoForm.get('nombre');
+  const apellidoPaternoControl = this.contratoForm.get('apellido_paterno');
+  const apellidoMaternoControl = this.contratoForm.get('apellido_materno');
+
+  if (nombreControl?.disabled) nombreControl.enable();
+  if (apellidoPaternoControl?.disabled) apellidoPaternoControl.enable();
+  if (apellidoMaternoControl?.disabled) apellidoMaternoControl.enable();
+
+
+  if (!this.loteSeleccionado || this.contratoForm.invalid) {
+    Swal.fire('Error', 'Debes completar todos los datos requeridos del contrato antes de generar el PDF.', 'warning');
+    
+    // Volver a deshabilitar si corresponde
+    if (this.contratoForm.get('id_cliente')?.value !== null) {
+      nombreControl?.disable();
+      apellidoPaternoControl?.disable();
+      apellidoMaternoControl?.disable();
+    }
     return;
   }
+  
+  // Volver a deshabilitar si corresponde antes de continuar la generación
+  if (this.contratoForm.get('id_cliente')?.value !== null) {
+    nombreControl?.disable();
+    apellidoPaternoControl?.disable();
+    apellidoMaternoControl?.disable();
+  }
+
 
   const fechaHoy = new Date();
   const meses = [
-     "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
-    "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
+      "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
+      "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
   ];
   const dia = fechaHoy.getDate();
   const mes = meses[fechaHoy.getMonth()];
@@ -621,7 +779,7 @@ async generarPDFContrato() {
           { text: 'SEGUNDO.- ', bold: true, color: '#000000' },
           `POR ÚLTIMO, MANIFIESTA EL C.`,
           { text: `${nombreVendedor}, `, bold: true, color: '#000000' },
-           `QUE POR CONVENIR A SUS INTERESES HA DECIDIDO VENDER LA TOTALIDAD DEL PREDIO DESCRITO EN EL ANTECEDENTE PRIMERO A C.`,
+            `QUE POR CONVENIR A SUS INTERESES HA DECIDIDO VENDER LA TOTALIDAD DEL PREDIO DESCRITO EN EL ANTECEDENTE PRIMERO A C.`,
           { text: `${nombreComprador} `, bold: true, color: '#000000' },
           `COMPRAVENTA QUE SE REALIZA SEGÚN EL PRECIO, TERMINO Y DEMÁS CONDICIONES QUE SE ESTIPULAN EN LAS CLAUSULAS DEL PRESENTE CONTRATO.`
         ],
@@ -649,7 +807,7 @@ async generarPDFContrato() {
           { text: `${nombreVendedor}, `, bold: true, color: '#000000' },
           `POR SU PROPIO DERECHO VENDE EL PREDIO DESCRITO EN EL ANTECEDENTE PRIMERO DE ESTE CONTRATO DE COMPRAVENTA CON LA SUPERFICE, MEDIDAS Y COLINDANCIAS QUE SE DAN AQUÍ POR REPRODUCIDAS, Y LA C. `,
           { text: `${nombreComprador} `, bold: true, color: '#000000' },
-           `, ADQUIERE DICHA FRACOÓN DEL INMUEBLE MATERIA DEL PRESENTE CONTRATO.`
+            `, ADQUIERE DICHA FRACOÓN DEL INMUEBLE MATERIA DEL PRESENTE CONTRATO.`
         ],
         margin: [0, 0, 0, 5]
       },
@@ -662,10 +820,11 @@ async generarPDFContrato() {
         "lineHeight": 1.3,
         text: [
           { text: 'SEGUNDA.- ', bold: true, color: '#000000' },
-          ` CONVIENEN LAS PARTES QUE EL PRECIO TOTAL DE LA PRESENTE OPERACIÓN DE COMPRAVENTA, ES LA CANTIDAD DE $ ${precioTotal} (${precioLetras}) CANTIDAD QUE EL COMPRADOR LA CADRIANA PRADO MORENO, SE OBLIGA A PAGAR AL VENDEDOR EL C. `,
+          ` CONVIENEN LAS PARTES QUE EL PRECIO TOTAL DE LA PRESENTE OPERACIÓN DE COMPRAVENTA, ES LA CANTIDAD DE $ ${precioTotal} (${precioLetras}) CANTIDAD QUE EL COMPRADOR `,
+          { text: `${nombreComprador}, `, bold: true, color: '#000000' },
+          `SE OBLIGA A PAGAR AL VENDEDOR EL C. `,
           { text: `${nombreVendedor}, `, bold: true, color: '#000000' },
           `A PARTIR DE LA FIRMA DE ESTE CONTRATO DE COMPRAVENTA.`,
-          { text: `${nombreComprador} `, bold: true, color: '#000000' },
 
 
         ],
@@ -736,7 +895,7 @@ async generarPDFContrato() {
           { text: 'SEXTA.- ', bold: true, color: '#000000' },
           `CONVIENEN LAS PARTES QUE AL HACER ENTREGA DEL PREDIO FÍSICO YA ESPECIFICADO EN EL ANTECEDENTE PRIMERO DE ESTE CONTRATO DESDE ESE MOMENTO EL COMPRADOR C. `,
           { text: `${nombreComprador} `, bold: true, color: '#000000' },
-          `, Y ESTE ULTIMO QUEDA EN TOTAL LIBERTAD DE GESTIONAR Y TRAMITAR SU ESCRITURA, IMPUESTOS, ASÍ COMO LA INSTALACIÓN DE LOS SERVIDOS DE AGUA, LUZ Y DRENAJE ANTE LAS INSTANCIAS CORRESPONDIENTES, SIENDO A CARGO DEL COMPRADOR`,
+          `, Y ESTE ULTIMO QUEDA EN TOTAL LIBERTAD DE GESTIONAR Y TRAMITAR SU ESCRITURA, IMPUESTOS, ASÍ COMO LA INSTALACIÓN DE LOS SERVIDOS DE AGUA, LUZ Y DRENAJE ANTE LAS INSTANCIAS CORRESPONDIENTES, SIENDO A CARGO DEL COMPRADOR C.`,
           { text: `${nombreComprador} `, bold: true, color: '#000000' },
           `, LA EROGACIÓN EN UN PORCENTAJE DEL 100% DE TODOS LOS GASTOS QUE POR ELLO SE CAUSEN.`
 
@@ -787,14 +946,14 @@ async generarPDFContrato() {
 
       {
         "lineHeight": 1.3,
-        text: `PARA LOS EFECTOS DE IDENTIFICACIÓN DE LAS PARTES EN EL PRESENTE CONTRATO DE COMPRA VENTA, LAS MISMAS SE IDENTIFICAN:  `,
+        text: `PARA LOS EFECTOS DE IDENTIFICACIÓN DE LAS PARTES EN EL PRESENTE CONTRATO DE COMPRA VENTA, LAS MISMAS SE IDENTIFICAN:  `,
         margin: [0, 0, 0, 20]
       },
 
       {
         "lineHeight": 1.3,
         text: [
-          `VENDEDOR`,
+          `VENDEDOR C.`,
           { text: `${nombreVendedor}, `, bold: true, color: '#000000' },
           `CON CREDENCIAL PARA VOTAR FOTOGRAFÍA EXPEDIDA POR EL INSTITUTO NACIONAL ELECTORAL`,
         ],
@@ -804,7 +963,7 @@ async generarPDFContrato() {
       {
         "lineHeight": 1.3,
         text: [
-          `COMPRADOR`,
+          `COMPRADOR C.`,
           { text: `${nombreComprador} `, bold: true, color: '#000000' },
           ` CON CREDENCIAL PARA VOTAR FOTOGRAFÍA EXPEDIDA POR EL INSTITUTO NACIONAL ELECTORAL`,
         ],
@@ -822,57 +981,50 @@ async generarPDFContrato() {
               { text: '___________________________', alignment: 'center', border: [false, false, false, false] },
               { text: '___________________________', alignment: 'center', border: [false, false, false, false] }
             ],
-            // Nombres de las partes
+            // Roles/Nombres
             [
-              { text: 'LA PARTE VENDEDORA', bold: true, alignment: 'center', margin: [0, 5, 0, 0], border: [false, false, false, false] },
-              { text: 'LA PARTE COMPRADORA', bold: true, alignment: 'center', margin: [0, 5, 0, 0], border: [false, false, false, false] }
+              { text: `C. ${nombreVendedor}\nVENDEDOR`, alignment: 'center', border: [false, false, false, false], margin: [0, 5, 0, 0], bold: true },
+              { text: `C. ${nombreComprador}\nCOMPRADOR`, alignment: 'center', border: [false, false, false, false], margin: [0, 5, 0, 0], bold: true }
             ],
-            // Nombres completos
-            [
-              { text: `C. ${nombreVendedor}`, alignment: 'center', border: [false, false, false, false] },
-              { text: `C. ${nombreComprador}`, alignment: 'center', border: [false, false, false, false] }
-            ]
           ]
         },
-        layout: 'noBorders', // Oculta los bordes de la tabla
-        margin: [0, 10, 0, 0]
+        layout: 'noBorders', // Asegurar que la tabla no tenga bordes visibles
+        margin: [0, 50, 0, 20]
       }
     ],
 
     styles: {
       titulo: {
-        fontSize: 14, // Ligeramente más pequeño que el original
-        bold: true
+        fontSize: 14,
+        bold: true,
+        decoration: 'underline',
+        color: '#000000'
       },
       sectionTitle: {
-        fontSize: 12, // Títulos de sección más pequeños
+        fontSize: 12,
         bold: true,
-        alignment: 'center'
+        alignment: 'center',
+        color: '#000000'
       },
-      colindanciasList: {
-        // Estilo para la lista de colindancias
-        fontSize: 10,
-        alignment: 'justify',
-        lineHeight: 1.2
-      }
     }
   };
 
-  pdfMake.createPdf(documentDefinition).download(`Contrato_Lote_${this.loteSeleccionado.numlote}.pdf`);
-  //  const pdf = pdfMake.createPdf(documentDefinition);
+  // Generar y descargar el PDF
+  pdfMake.createPdf(documentDefinition).download('Contrato_Compraventa.pdf');
 
-  //  pdf.open();
+    this.contratoForm.reset();
+    this.currentStep = 1;
+    this.loteSeleccionado = null;
 
-  this.contratoForm.reset();
-  this.loteSeleccionado = null;
-  this.enviando = false;
+    // Reestablecer valor por defecto del estado del contrato
+    this.contratoForm.patchValue({
+    estado_contrato: 'activo'
+    });
 
-  this.contratoForm.get('nombre')?.enable();
-  this.contratoForm.get('apellido_paterno')?.enable();
-  this.contratoForm.get('apellido_materno')?.enable();
-  this.contratoForm.get('telefono')?.enable();
+    // Volver a habilitar campos que pudieron quedar deshabilitados
+    this.contratoForm.get('nombre')?.enable();
+    this.contratoForm.get('apellido_paterno')?.enable();
+    this.contratoForm.get('apellido_materno')?.enable();
+    this.contratoForm.get('telefono')?.enable();
 }
-
-
-
 }

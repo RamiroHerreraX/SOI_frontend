@@ -74,3 +74,44 @@ h3.card-title {
   transform: translateY(-2px);
 }
 
+.progress-container-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px;
+  background: #000000; /* Fondo negro sólido */
+  border-radius: 12px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  overflow-x: auto;
+  gap: 10px;
+}
+
+/* Botones/steps totalmente negros */
+.progress-item-clickable {
+  flex: 1;
+  min-width: 130px;
+  text-align: center;
+  padding: 12px 10px;
+  font-weight: bold;
+  color: #ffffff;
+  background: #1a1a1a; /* Negro suave */
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: 2px solid transparent;
+}
+
+.progress-item-clickable:hover {
+  background: #333333; /* Gris oscuro al pasar mouse */
+  transform: scale(1.04);
+}
+
+/* Step activo */
+.progress-item-clickable.active {
+  background: #ffffff;  /* Step activo blanco */
+  color: #000000;       /* Texto negro */
+  border-color: #ffffff;
+  box-shadow: 0 0 10px rgba(255,255,255,0.7);
+}
+
