@@ -288,3 +288,96 @@ body {
 .dropdown-menu .dropdown-item i {
     width: 20px;
 }
+
+
+
+/* home-lote.css */
+
+/* === ESTILOS DE PIEDRAS PRECIOSAS (Filtros) === */
+
+/* ÓPALO NEGRO (Todos) */
+.btn-opal-black {
+    --bs-btn-color: #1a1a1a;
+    --bs-btn-border-color: #1a1a1a;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #1a1a1a;
+    --bs-btn-hover-border-color: #1a1a1a;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #1a1a1a;
+    --bs-btn-active-border-color: #1a1a1a;
+}
+
+/* ESMERALDA (Terreno) */
+.btn-emerald {
+    --bs-btn-color: #1E8449;
+    --bs-btn-border-color: #1E8449;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #1E8449;
+    --bs-btn-hover-border-color: #1E8449;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #1E8449;
+    --bs-btn-active-border-color: #1E8449;
+}
+
+/* ZAFIRO (Departamento) */
+.btn-sapphire {
+    --bs-btn-color: #0D47A1;
+    --bs-btn-border-color: #0D47A1;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #0D47A1;
+    --bs-btn-hover-border-color: #0D47A1;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #0D47A1;
+    --bs-btn-active-border-color: #0D47A1;
+}
+
+/* RUBÍ (Local) */
+.btn-ruby {
+    --bs-btn-color: #900000;
+    --bs-btn-border-color: #900000;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #900000;
+    --bs-btn-hover-border-color: #900000;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #900000;
+    --bs-btn-active-border-color: #900000;
+}
+
+/* AMATISTA (Casa) */
+.btn-amethyst {
+    --bs-btn-color: #512DA8;
+    --bs-btn-border-color: #512DA8;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #512DA8;
+    --bs-btn-hover-border-color: #512DA8;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #512DA8;
+    --bs-btn-active-border-color: #512DA8;
+}
+
+
+
+
+/* === ESTILOS DE PIEDRAS PRECIOSAS (Badges/Etiquetas) === */
+.badge-emerald {
+    background-color: #21915f !important; /* Esmeralda */
+}
+
+.badge-sapphire {
+    background-color: #026dca !important; /* Zafiro */
+}
+
+.badge-ruby {
+    background-color: #b80101 !important; /* Rubí */
+}
+
+.badge-amethyst {
+    background-color: #8f27c4 !important; /* Amatista */
+}
+
+.inmueble-badge {
+  font-weight: 600;
+  border-radius: 0 0 6px 0;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.2); 
+  z-index: 10; /* Añadir z-index para asegurar que esté sobre la imagen */
+}

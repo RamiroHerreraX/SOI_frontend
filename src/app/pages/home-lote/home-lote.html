@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lotes Exclusivos | Inmobiliaria INDES</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Inmuebles Exclusivos | Inmobiliaria INDES</title> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="home-lote.css">
@@ -13,7 +12,6 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-lg">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href=" ">
@@ -26,9 +24,8 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item"><a class="nav-link active" href="">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" href="#lotes">Lotes</a></li>
-                <li class="nav-item"><a class="nav-link" href="#nuevos">Nuevos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="#inmuebles">Inmuebles</a></li> <li class="nav-item"><a class="nav-link" href="#nuevos">Nuevos</a></li>
                 <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
                 
                <li class="nav-item dropdown" *ngIf="usuario" #dropdownMenu>
@@ -75,159 +72,186 @@
                 </ul>
         </div>
     </div>
-</nav>
+    </nav>
 
-    <!-- Breadcrumb -->
     <section class="breadcrumb-section py-3">
         <div class="container">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 text-dark">
                     <li class="breadcrumb-item"><a href="#">Inicio</a></li>
-                    <li class="breadcrumb-item active text-dark" aria-current="page">Lotes Disponibles</li>
-                </ol>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">Inmuebles Disponibles</li> </ol>
             </nav>
         </div>
     </section>
 
-    <!-- Bienvenida -->
     <section id="inicio" class="welcome-section">
         <div class="overlay"></div>
         <div class="container position-relative text-center text-white">
             <div class="row justify-content-center">
                 <div class="col-lg-10">
-                    <h1 class="display-3 fw-bolder mb-3 text-gold-shine">Lotes Exclusivos</h1>
-                    <p class="lead text-shadow">Descubre terrenos privilegiados para tu proyecto. Inversión segura con ubicaciones premium y servicios completos.</p>
-                    <a href="#lotes" class="btn btn-gold btn-lg mt-4 shadow-sm">
-                        <i class="fas fa-search me-2"></i>Ver Lotes
+                    <h1 class="display-3 fw-bolder mb-3 text-gold-shine">Inmuebles Exclusivos</h1> <p class="lead text-shadow">Descubre terrenos privilegiados para tu proyecto. Inversión segura con ubicaciones premium y servicios completos.</p>
+                    <a href="#inmuebles" class="btn btn-gold btn-lg mt-4 shadow-sm"> <i class="fas fa-search me-2"></i>Ver Inmuebles
                     </a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Filtros -->
-    <section class="filters-section py-4 bg-light-gray border-bottom">
+    <section id="inmuebles" class="filters-section py-4 bg-light-gray border-bottom">
         <div class="container">
-            <h3 class="text-center mb-3 text-dark">Filtrar por Tipo de Lote</h3>
-            <div class="row justify-content-center">
+            <h3 class="text-center mb-3 text-dark">Filtrar por Tipo de Inmueble</h3> <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <div class="btn-group w-100 filter-buttons" role="group">
+                        
                         <input type="radio" class="btn-check" name="lote-type" id="all-lotes" autocomplete="off" checked>
-                        <label class="btn btn-outline-dark fw-bold" for="all-lotes" (click)="filterType('')">Todos</label>
+                        <label 
+                            class="btn fw-bold btn-opal-black" 
+                            for="all-lotes" 
+                            (click)="filterType('')"
+                            [class.active]="activeFilter === ''">
+                            Todos
+                        </label>
 
-                        <input type="radio" class="btn-check" name="lote-type" id="plano-lotes" autocomplete="off">
-                        <label class="btn btn-outline-dark fw-bold" for="plano-lotes" (click)="filterType('terreno')" [class.active]="activeFilter === 'terreno'">Terreno</label>
+                        <input type="radio" class="btn-check" name="lote-type" id="terreno-lotes" autocomplete="off">
+                        <label 
+                            class="btn fw-bold btn-emerald" 
+                            for="terreno-lotes" 
+                            (click)="filterType('terreno')" 
+                            [class.active]="activeFilter === 'terreno'">
+                            Terreno
+                        </label>
 
-                        <input type="radio" class="btn-check" name="lote-type" id="premium-lotes" autocomplete="off">
-                        <label class="btn btn-outline-dark fw-bold" for="premium-lotes" (click)="filterType('depto')" [class.active]="activeFilter === 'depto'">Departamento</label>
+                        <input type="radio" class="btn-check" name="lote-type" id="depto-lotes" autocomplete="off">
+                        <label 
+                            class="btn fw-bold btn-sapphire" 
+                            for="depto-lotes" 
+                            (click)="filterType('depto')" 
+                            [class.active]="activeFilter === 'depto'">
+                            Departamento
+                        </label>
 
-                        <input type="radio" class="btn-check" name="lote-type" id="irregular-lotes" autocomplete="off">
-                        <label class="btn btn-outline-dark fw-bold" for="irregular-lotes" (click)="filterType('local')"[class.active]="activeFilter === 'local'">Local</label>
+                        <input type="radio" class="btn-check" name="lote-type" id="local-lotes" autocomplete="off">
+                        <label 
+                            class="btn fw-bold btn-ruby" 
+                            for="local-lotes" 
+                            (click)="filterType('local')"
+                            [class.active]="activeFilter === 'local'">
+                            Local
+                        </label>
 
-                        <input type="radio" class="btn-check" name="lote-type" id="irregular-lotes" autocomplete="off">
-                        <label class="btn btn-outline-dark fw-bold" for="irregular-lotes" (click)="filterType('casa')"[class.active]="activeFilter === 'casa'">Casa</label>
+                        <input type="radio" class="btn-check" name="lote-type" id="casa-lotes" autocomplete="off">
+                        <label 
+                            class="btn fw-bold btn-amethyst" 
+                            for="casa-lotes" 
+                            (click)="filterType('casa')"
+                            [class.active]="activeFilter === 'casa'">
+                            Casa
+                        </label>
                     </div>
-                    
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Lotes Disponibles -->
-    <section id="lotes" class="lotes-section py-5 bg-white"> 
-  <div class="container">
-    <h2 class="text-center mb-5 section-title text-dark">Lotes Disponibles</h2>
+    <section  class="inmuebles-section py-5 bg-white"> <div class="container">
+        <h2 class="text-center mb-5 section-title text-dark">Inmuebles Disponibles</h2> <div class="row g-4">
+            <div class="col-sm-6 col-md-6 col-lg-4" *ngFor="let inmueble of inmueblesFiltered"> <div class="card inmueble-card h-100 shadow-hover border-0 rounded-3 overflow-hidden"> <div id="carousel-{{ inmueble.id_propiedad }}" class="carousel slide" data-bs-ride="carousel"> <span 
+                            class="inmueble-badge badge text-white position-absolute top-0 start-0 m-2 px-3 py-2"  [ngClass]="{
+                                'badge-emerald': inmueble.tipo === 'terreno',
+                                'badge-sapphire': inmueble.tipo === 'depto',
+                                'badge-ruby': inmueble.tipo === 'local',
+                                'badge-amethyst': inmueble.tipo === 'casa',
+                                'bg-secondary': !inmueble.tipo 
+                            }">
+                            {{ inmueble.tipo | titlecase }}
+                        </span>
 
-    <div class="row g-4">
-      <div class="col-sm-6 col-md-6 col-lg-4" *ngFor="let lote of lotesFiltered">
-        <div class="card lotes-card h-100 shadow-hover border-0 rounded-3 overflow-hidden">
-          
-          <!-- Imagen -->
-          <div class="image-container position-relative">
-            <img 
-              *ngIf="lote.imagen" 
-              [src]="'http://localhost:3000' + lote.imagen" 
-              alt="Imagen del lote" 
-              class="card-img-top">
-            <span 
-              class="lote-badge badge text-dark position-absolute top-0 start-0 m-2 px-3 py-2" 
-              [ngClass]="{'bg-warning': lote.tipo === 'terreno', 'bg-info': lote.tipo !== 'terreno'}">
-              {{ lote.tipo | titlecase }}
-            </span>
-          </div>
+                        <div class="carousel-inner">
+                            <div 
+                                *ngFor="let img of inmueble.imagenes; let i = index" class="carousel-item" 
+                                [class.active]="i === 0"
+                            >
+                                <img 
+                                    [src]="'http://localhost:3000' + img" 
+                                    class="d-block w-100" 
+                                    alt="Imagen {{ i + 1 }}" 
+                                    style="height: 200px; object-fit: cover;"
+                                >
+                            </div>
+                        </div>
 
-          <!-- Contenido -->
-          <div class="card-body d-flex flex-column p-4">
-            <h5 class="card-title fw-bold text-dark mb-2">
-              Lote {{ lote.numlote }} - Manzana {{ lote.manzana }}
-            </h5>
+                        <button class="carousel-control-prev" 
+                                type="button" 
+                                [attr.data-bs-target]="'#carousel-' + inmueble.id_propiedad" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" 
+                                type="button" 
+                                [attr.data-bs-target]="'#carousel-' + inmueble.id_propiedad" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
 
-            <p class="card-text text-secondary small mb-2">
-                <i class="fas fa-map-marker-alt me-1"></i>
-                {{ lote.direccion }}, {{ lote.colonia_nombre }}, {{ lote.ciudad_nombre }}
-            </p>
+                    <div class="card-body d-flex flex-column p-4">
+                        <h5 class="card-title fw-bold text-dark mb-2">
+                            Inmueble {{ inmueble.numlote }} - Manzana {{ inmueble.manzana }} </h5>
 
-            <p class="card-text text-secondary small flex-grow-1">
-              {{ truncateText(lote.descripcion, 80) }}
-            </p>
+                        <p class="card-text text-secondary small mb-2">
+                            <i class="fas fa-map-marker-alt me-1"></i>
+                            {{ inmueble.direccion }}, {{ inmueble.colonia_nombre }}, {{ inmueble.ciudad_nombre }}
+                        </p>
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <span class="precio-card text-gold fw-bolder">
-                ${{ lote.precio | number:'1.0-0' }}
-              </span>
-              <span class="text-secondary">
-                <i class="fas fa-ruler-combined me-1"></i> {{ lote.superficie_m2 }} m²
-              </span>
+                        <p class="card-text text-secondary small flex-grow-1">
+                            {{ truncateText(inmueble.descripcion, 80) }}
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="precio-card text-gold fw-bolder">
+                                ${{ inmueble.precio | number:'1.0-0' }}
+                            </span>
+                            <span class="text-secondary">
+                                <i class="fas fa-ruler-combined me-1"></i> {{ inmueble.superficie_m2 }} m²
+                            </span>
+                        </div>
+
+                        <div class="mt-auto d-grid gap-2 d-md-block">
+                            <button 
+                                class="btn btn-gold btn-sm w-100 w-md-auto me-md-2 mb-2 mb-md-0"
+                                (click)="verDetalles(inmueble)"> <i class="fas fa-eye me-2"></i>Ver Detalles
+                            </button>
+
+                            <button 
+                                class="btn btn-silver btn-sm w-100 w-md-auto"
+                                (click)="contactarWhatsApp(inmueble)"> <i class="fab fa-whatsapp me-2"></i>Contactar
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="mt-auto d-grid gap-2 d-md-block">
-              <button 
-                class="btn btn-gold btn-sm w-100 w-md-auto me-md-2 mb-2 mb-md-0"
-                (click)="verDetalles(lote)">
-                <i class="fas fa-eye me-2"></i>Ver Detalles
-              </button>
-
-              <button 
-                class="btn btn-silver btn-sm w-100 w-md-auto"
-                (click)="contactarWhatsApp(lote)">
-                <i class="fab fa-whatsapp me-2"></i>Contactar
-              </button>
-            </div>
-          </div>
         </div>
-      </div>
-    </div>
 
-  </div>
+    </div>
 </section>
 
 
-    <!-- Lotes Nuevos -->
     <section id="nuevos" class="nuevos-section py-5 bg-light-gray">
         <div class="container">
             <h2 class="text-center mb-5 section-title text-dark">Lanzamientos Exclusivos</h2>
             <div id="carouselLotes" class="carousel slide carousel-fade shadow-lg rounded-3 overflow-hidden" data-bs-ride="carousel">
                 <div class="carousel-inner">
-                    <div class="carousel-item" *ngFor="let lote of lotesNuevos; let i = index" [class.active]="i === 0">
-                        <div class="row align-items-center bg-white p-4 p-md-5">
+                    <div class="carousel-item" *ngFor="let inmueble of inmueblesNuevos; let i = index" [class.active]="i === 0"> <div class="row align-items-center bg-white p-4 p-md-5">
                             <div class="col-md-7">
-                                <img *ngIf="lote.imagen" [src]="'http://localhost:3000' + lote.imagen" class="d-block w-100 rounded-3 carousel-img" [alt]="lote.nombre">
-                            </div>
+                                <img *ngIf="inmueble.imagenes" [src]="'http://localhost:3000' + inmueble.imagenes" class="d-block w-100 rounded-3 carousel-img" [alt]="inmueble.nombre"> </div>
                             <div class="col-md-5 mt-4 mt-md-0">
                                 <div class="carousel-content text-dark">
-                                    <h3 class="text-gold fw-bolder mb-2">{{lote.numlote}}</h3>
-                                    <p class="mb-3">{{lote.descripcion}}</p>
-                                    <ul class="list-unstyled mb-4 small">
-                                        <li><i class="fas fa-map-marker-alt text-silver me-2"></i> {{ lote.direccion }}, {{ lote.colonia_nombre }}, {{ lote.ciudad_nombre }}</li>
-                                        <li><i class="fas fa-ruler-combined text-silver me-2"></i> {{lote.superficie_m2}}</li>
-                                    </ul>
-                                    <h4 class="fw-bold mb-3">Precio: <span class="text-gold">{{lote.precio}}</span></h4>
-                                    <div class="d-grid gap-2 d-sm-flex justify-content-start">
-                                        <button class="btn btn-gold btn-sm" (click)="verDetalles(lote)">
-                                            <i class="fas fa-eye me-2"></i>Ver Detalles
+                                    <h3 class="text-gold fw-bolder mb-2">{{inmueble.numlote}}</h3> <p class="mb-3">{{inmueble.descripcion}}</p> <ul class="list-unstyled mb-4 small">
+                                        <li><i class="fas fa-map-marker-alt text-silver me-2"></i> {{ inmueble.direccion }}, {{ inmueble.colonia_nombre }}, {{ inmueble.ciudad_nombre }}</li> <li><i class="fas fa-ruler-combined text-silver me-2"></i> {{inmueble.superficie_m2}}</li> </ul>
+                                    <h4 class="fw-bold mb-3">Precio: <span class="text-gold">{{inmueble.precio}}</span></h4> <div class="d-grid gap-2 d-sm-flex justify-content-start">
+                                        <button class="btn btn-gold btn-sm" (click)="verDetalles(inmueble)"> <i class="fas fa-eye me-2"></i>Ver Detalles
                                         </button>
-                                        <button   type="button" class="btn btn-silver btn-sm" (click)="contactarWhatsApp(lote)">
-                                            <i class="fab fa-whatsapp me-2"></i>Contactar
+                                        <button   type="button" class="btn btn-silver btn-sm" (click)="contactarWhatsApp(inmueble)"> <i class="fab fa-whatsapp me-2"></i>Contactar
                                         </button>
                                     </div>
                                 </div>
@@ -247,153 +271,142 @@
         </div>
     </section>
 
-   <!-- Modal Detalles -->
- <div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
-  <div class="modal-content modal-lg" (click)="preventClose($event)">
+   <div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
+    <div class="modal-content modal-lg" (click)="preventClose($event)">
 
-    <!-- HEADER -->
-    <div class="modal-header">
-      <h3 class="modal-title text-gold">
-        {{ loteSeleccionado?.tipo | titlecase }} - Lote #{{ loteSeleccionado?.numlote }}
-      </h3>
-      <button class="modal-close" (click)="cerrarModal()">
-        <i class="fas fa-times"></i>
-      </button>
+        <div class="modal-header">
+            <h3 class="modal-title text-gold">
+                {{ inmuebleSeleccionado?.tipo | titlecase }} - Inmueble #{{ inmuebleSeleccionado?.numlote }} </h3>
+            <button class="modal-close" (click)="cerrarModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <img
+                [src]="inmuebleSeleccionado?.imagen ? 'http://localhost:3000' + inmuebleSeleccionado.imagen : 'assets/img/no-image.jpg'"
+                [alt]="inmuebleSeleccionado?.tipo"
+                class="inmueble-imagen rounded mb-3 w-100"
+                style="max-height: 300px; object-fit: cover;"
+            />
+
+            <p class="text-light-silver">
+                {{ inmuebleSeleccionado?.descripcion || 'Sin descripción disponible.' }}
+            </p>
+
+            <div class="detalles-grid">
+                <div class="detalle-item">
+                    <div class="detalle-titulo text-silver">Dirección</div>
+                    <div class="detalle-valor fw-bold">
+                        {{ inmuebleSeleccionado?.direccion }},
+                        {{ inmuebleSeleccionado?.colonia_nombre }},
+                        {{ inmuebleSeleccionado?.ciudad_nombre }},
+                        {{ inmuebleSeleccionado?.estado_nombre }}
+                    </div>
+                </div>
+
+                <div class="detalle-item">
+                    <div class="detalle-titulo text-silver">Superficie</div>
+                    <div class="detalle-valor fw-bold">
+                        {{ inmuebleSeleccionado?.superficie_m2 }} m²
+                    </div>
+                </div>
+
+                <div class="detalle-item" *ngIf="inmuebleSeleccionado?.num_habitaciones">
+                    <div class="detalle-titulo text-silver">Habitaciones</div>
+                    <div class="detalle-valor fw-bold">
+                        {{ inmuebleSeleccionado?.num_habitaciones }}
+                    </div>
+                </div>
+
+                <div class="detalle-item" *ngIf="inmuebleSeleccionado?.num_banos">
+                    <div class="detalle-titulo text-silver">Baños</div>
+                    <div class="detalle-valor fw-bold">
+                        {{ inmuebleSeleccionado?.num_banos }}
+                    </div>
+                </div>
+
+                <div class="detalle-item" *ngIf="inmuebleSeleccionado?.num_estacionamientos">
+                    <div class="detalle-titulo text-silver">Estacionamientos</div>
+                    <div class="detalle-valor fw-bold">
+                        {{ inmuebleSeleccionado?.num_estacionamientos }}
+                    </div>
+                </div>
+
+                <div class="detalle-item" *ngIf="inmuebleSeleccionado?.topografia">
+                    <div class="detalle-titulo text-silver">Topografía</div>
+                    <div class="detalle-valor fw-bold">
+                        {{ inmuebleSeleccionado?.topografia }}
+                    </div>
+                </div>
+
+                <div class="detalle-item">
+                    <div class="detalle-titulo text-silver">Estado</div>
+                    <div class="detalle-valor fw-bold text-capitalize">
+                        {{ inmuebleSeleccionado?.estado_propiedad }}
+                    </div>
+                </div>
+
+                <div class="detalle-item" *ngIf="inmuebleSeleccionado?.fecha_disponibilidad">
+                    <div class="detalle-titulo text-silver">Disponible desde</div>
+                    <div class="detalle-valor fw-bold">
+                        {{ inmuebleSeleccionado?.fecha_disponibilidad | date:'longDate' }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="caracteristicas-section mt-3" *ngIf="inmuebleSeleccionado?.servicios">
+                <h4 class="text-gold mb-2">Servicios</h4>
+                <p class="text-light-silver">{{ inmuebleSeleccionado?.servicios }}</p>
+            </div>
+
+            <div class="caracteristicas-section mt-3" *ngIf="inmuebleSeleccionado?.documentacion">
+                <h4 class="text-gold mb-2">Documentación</h4>
+                <p class="text-light-silver">{{ inmuebleSeleccionado?.documentacion }}</p>
+            </div>
+
+            <div class="mt-4">
+                <h4 class="text-gold mb-2">Ubicación en el mapa</h4>
+
+                <iframe
+                    *ngIf="mapaURL"
+                    class="rounded shadow"
+                    width="100%"
+                    height="300"
+                    frameborder="0"
+                    style="border:0"
+                    [src]="mapaURL"
+                    allowfullscreen
+                ></iframe>
+
+                <div class="text-center mt-2">
+                    <a
+                        (click)="abrirEnGoogleMaps(inmuebleSeleccionado)"
+                        target="_blank"
+                        rel="noopener"
+                        class="text-gold fw-bold"
+                    >
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        Ver en Google Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <h3 class="precio-destacado text-gold mb-0">
+                {{ inmuebleSeleccionado?.precio | currency:'MXN':'symbol':'1.0-0' }}
+            </h3>
+            <div class="d-flex gap-2">
+                <button class="btn btn-silver btn-sm" (click)="contactarWhatsApp(inmuebleSeleccionado)">
+                    <i class="fab fa-whatsapp me-2"></i> Contactar
+                </button>
+                <button class="btn btn-outline-light btn-sm" (click)="cerrarModal()">
+                    <i class="fas fa-times me-2"></i> Cerrar
+                </button>
+            </div>
+        </div>
     </div>
-
-    <!-- BODY -->
-    <div class="modal-body">
-      <!-- Imagen -->
-      <img
-        [src]="loteSeleccionado?.imagen ? 'http://localhost:3000' + loteSeleccionado.imagen : 'assets/img/no-image.jpg'"
-        [alt]="loteSeleccionado?.tipo"
-        class="lote-imagen rounded mb-3 w-100"
-        style="max-height: 300px; object-fit: cover;"
-      />
-
-      <!-- Descripción -->
-      <p class="text-light-silver">
-        {{ loteSeleccionado?.descripcion || 'Sin descripción disponible.' }}
-      </p>
-
-      <!-- Información general -->
-      <div class="detalles-grid">
-        <div class="detalle-item">
-          <div class="detalle-titulo text-silver">Dirección</div>
-          <div class="detalle-valor fw-bold">
-            {{ loteSeleccionado?.direccion }},
-            {{ loteSeleccionado?.colonia_nombre }},
-            {{ loteSeleccionado?.ciudad_nombre }},
-            {{ loteSeleccionado?.estado_nombre }}
-          </div>
-        </div>
-
-        <div class="detalle-item">
-          <div class="detalle-titulo text-silver">Superficie</div>
-          <div class="detalle-valor fw-bold">
-            {{ loteSeleccionado?.superficie_m2 }} m²
-          </div>
-        </div>
-
-        <div class="detalle-item" *ngIf="loteSeleccionado?.num_habitaciones">
-          <div class="detalle-titulo text-silver">Habitaciones</div>
-          <div class="detalle-valor fw-bold">
-            {{ loteSeleccionado?.num_habitaciones }}
-          </div>
-        </div>
-
-        <div class="detalle-item" *ngIf="loteSeleccionado?.num_banos">
-          <div class="detalle-titulo text-silver">Baños</div>
-          <div class="detalle-valor fw-bold">
-            {{ loteSeleccionado?.num_banos }}
-          </div>
-        </div>
-
-        <div class="detalle-item" *ngIf="loteSeleccionado?.num_estacionamientos">
-          <div class="detalle-titulo text-silver">Estacionamientos</div>
-          <div class="detalle-valor fw-bold">
-            {{ loteSeleccionado?.num_estacionamientos }}
-          </div>
-        </div>
-
-        <div class="detalle-item" *ngIf="loteSeleccionado?.topografia">
-          <div class="detalle-titulo text-silver">Topografía</div>
-          <div class="detalle-valor fw-bold">
-            {{ loteSeleccionado?.topografia }}
-          </div>
-        </div>
-
-        <div class="detalle-item">
-          <div class="detalle-titulo text-silver">Estado</div>
-          <div class="detalle-valor fw-bold text-capitalize">
-            {{ loteSeleccionado?.estado_propiedad }}
-          </div>
-        </div>
-
-        <div class="detalle-item" *ngIf="loteSeleccionado?.fecha_disponibilidad">
-          <div class="detalle-titulo text-silver">Disponible desde</div>
-          <div class="detalle-valor fw-bold">
-            {{ loteSeleccionado?.fecha_disponibilidad | date:'longDate' }}
-          </div>
-        </div>
-      </div>
-
-      <!-- Servicios -->
-      <div class="caracteristicas-section mt-3" *ngIf="loteSeleccionado?.servicios">
-        <h4 class="text-gold mb-2">Servicios</h4>
-        <p class="text-light-silver">{{ loteSeleccionado?.servicios }}</p>
-      </div>
-
-      <!-- Documentación -->
-      <div class="caracteristicas-section mt-3" *ngIf="loteSeleccionado?.documentacion">
-        <h4 class="text-gold mb-2">Documentación</h4>
-        <p class="text-light-silver">{{ loteSeleccionado?.documentacion }}</p>
-      </div>
-
-      <!-- MAPA GOOGLE -->
-      <div class="mt-4">
-        <h4 class="text-gold mb-2">Ubicación en el mapa</h4>
-
-        <iframe
-          *ngIf="mapaURL"
-          class="rounded shadow"
-          width="100%"
-          height="300"
-          frameborder="0"
-          style="border:0"
-          [src]="mapaURL"
-          allowfullscreen
-        ></iframe>
-
-        <div class="text-center mt-2">
-          <a
-            (click)="abrirEnGoogleMaps(loteSeleccionado)"
-            target="_blank"
-            rel="noopener"
-            class="text-gold fw-bold"
-          >
-            <i class="fas fa-map-marker-alt me-2"></i>
-            Ver en Google Maps
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- FOOTER -->
-    <div class="modal-footer">
-      <h3 class="precio-destacado text-gold mb-0">
-        {{ loteSeleccionado?.precio | currency:'MXN':'symbol':'1.0-0' }}
-      </h3>
-      <div class="d-flex gap-2">
-        <button class="btn btn-silver btn-sm" (click)="contactarWhatsApp(loteSeleccionado)">
-          <i class="fab fa-whatsapp me-2"></i> Contactar
-        </button>
-        <button class="btn btn-outline-light btn-sm" (click)="cerrarModal()">
-          <i class="fas fa-times me-2"></i> Cerrar
-        </button>
-      </div>
-    </div>
-  </div>
 </div>
 
 
@@ -404,4 +417,3 @@
 
 </body>
 </html>
-
