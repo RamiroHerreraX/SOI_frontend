@@ -204,3 +204,180 @@ body {
   padding: 1.5rem;
   position: relative;
 }
+
+
+/* === BOTÓN "INICIAR SESIÓN" (USUARIO NO LOGEADO) === */
+.btn-auth-silver {
+  background-color: #A9A9A9; 
+  color: white !important;
+  border: 1px solid #808080; 
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-auth-silver:hover {
+  background-color: #B8860B; 
+  border-color: #DAA520;
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(184, 134, 11, 0.5);
+}
+
+/* === ESTILOS DEL DROPDOWN DEL USUARIO (AJUSTADOS) === */
+
+.dropdown-menu {
+  min-width: 220px; 
+  right: 0;
+  left: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(184, 134, 11, 0.5); /* Borde sutil dorado */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25); 
+  padding: 0; /* Quitamos el padding global para controlar el espaciado interno en los <li> */
+  overflow: hidden; /* Asegura que los bordes redondeados se apliquen bien */
+}
+
+/* Contenedor del nombre, email y rol */
+.dropdown-menu .dropdown-item-text {
+    padding: 0.75rem 1rem;
+    white-space: normal;
+}
+
+/* Nombre del usuario - Destacado */
+.dropdown-menu .text-primary {
+    color: #B8860B !important; /* Dorado de la marca */
+    font-size: 1.1rem;
+    font-weight: 700 !important; /* Más peso para el nombre */
+}
+
+/* Correo y Rol */
+.dropdown-menu .text-muted,
+.dropdown-menu .text-success {
+    padding: 0 1rem 0.5rem 1rem; /* Ajustar padding para centrar */
+    display: block; /* Asegurar que ocupan su propia línea */
+}
+
+/* Rol */
+.dropdown-menu .text-success {
+    color: #CD7F32 !important; /* 🌟 CAMBIO CLAVE: Usamos el dorado para el rol */
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Divisor mejorado */
+.dropdown-menu .dropdown-divider {
+    margin: 0.5rem 0;
+    border-color: #f0f0f0; /* Color muy suave */
+    border-width: 2px;
+}
+
+/* Botón de Cerrar Sesión */
+.dropdown-menu .dropdown-item.text-danger {
+    /* Usamos 'dropdown-item' que ya tiene hover de Bootstrap, solo ajustamos color y padding */
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+}
+
+.dropdown-menu .dropdown-item.text-danger:hover {
+    background-color: #fce4e4; 
+    color: #D32F2F !important;
+}
+
+/* Opcional: Centrar y dar espacio a los iconos */
+.dropdown-menu .dropdown-item i {
+    width: 20px;
+}
+
+
+
+/* home-lote.css */
+
+/* === ESTILOS DE PIEDRAS PRECIOSAS (Filtros) === */
+
+/* ÓPALO NEGRO (Todos) */
+.btn-opal-black {
+    --bs-btn-color: #1a1a1a;
+    --bs-btn-border-color: #1a1a1a;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #1a1a1a;
+    --bs-btn-hover-border-color: #1a1a1a;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #1a1a1a;
+    --bs-btn-active-border-color: #1a1a1a;
+}
+
+/* ESMERALDA (Terreno) */
+.btn-emerald {
+    --bs-btn-color: #1E8449;
+    --bs-btn-border-color: #1E8449;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #1E8449;
+    --bs-btn-hover-border-color: #1E8449;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #1E8449;
+    --bs-btn-active-border-color: #1E8449;
+}
+
+/* ZAFIRO (Departamento) */
+.btn-sapphire {
+    --bs-btn-color: #0D47A1;
+    --bs-btn-border-color: #0D47A1;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #0D47A1;
+    --bs-btn-hover-border-color: #0D47A1;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #0D47A1;
+    --bs-btn-active-border-color: #0D47A1;
+}
+
+/* RUBÍ (Local) */
+.btn-ruby {
+    --bs-btn-color: #900000;
+    --bs-btn-border-color: #900000;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #900000;
+    --bs-btn-hover-border-color: #900000;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #900000;
+    --bs-btn-active-border-color: #900000;
+}
+
+/* AMATISTA (Casa) */
+.btn-amethyst {
+    --bs-btn-color: #512DA8;
+    --bs-btn-border-color: #512DA8;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #512DA8;
+    --bs-btn-hover-border-color: #512DA8;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #512DA8;
+    --bs-btn-active-border-color: #512DA8;
+}
+
+
+
+
+/* === ESTILOS DE PIEDRAS PRECIOSAS (Badges/Etiquetas) === */
+.badge-emerald {
+    background-color: #21915f !important; /* Esmeralda */
+}
+
+.badge-sapphire {
+    background-color: #026dca !important; /* Zafiro */
+}
+
+.badge-ruby {
+    background-color: #b80101 !important; /* Rubí */
+}
+
+.badge-amethyst {
+    background-color: #8f27c4 !important; /* Amatista */
+}
+
+.inmueble-badge {
+  font-weight: 600;
+  border-radius: 0 0 6px 0;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.2); 
+  z-index: 10; /* Añadir z-index para asegurar que esté sobre la imagen */
+}

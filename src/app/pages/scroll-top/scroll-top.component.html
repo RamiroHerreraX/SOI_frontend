@@ -4,5 +4,8 @@
   [title]="isAtBottom ? 'Ir al inicio' : 'Ir al final'"
   (click)="scrollToggle()"
 >
-  <i class="fas" [ngClass]="isAtBottom ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+    <i 
+        class="bi" 
+        [ngClass]="isAtBottom ? ' bi-chevron-up' : ' bi-chevron-down'"
+    ></i>
 </button>

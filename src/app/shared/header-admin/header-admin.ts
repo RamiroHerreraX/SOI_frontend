@@ -51,11 +51,11 @@ export class HeaderAdmin implements OnInit, OnDestroy {
     if (this.userSubscription) this.userSubscription.unsubscribe();
   }
 
- 
+ 
 /**
-   * Escucha clics en todo el documento para cerrar el dropdown de usuario
-   * si el clic no ocurrió dentro del elemento del dropdown.
-   */
+   * Escucha clics en todo el documento para cerrar el dropdown de usuario
+   * si el clic no ocurrió dentro del elemento del dropdown.
+   */
   @HostListener('document:click', ['$event'])
   hostClick(event: MouseEvent): void {
     // 🛑 COMPROBACIÓN DE SEGURIDAD CLAVE: Si el dropdown no está abierto O la referencia no existe, salimos.

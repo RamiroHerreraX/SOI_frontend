@@ -1,15 +1,27 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, 
+  ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoteService } from '../../services/lote';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FooterComponent } from "../footer/footer.component";
 import { ScrollTopComponent } from "../scroll-top/scroll-top.component";
+import { Subscription } from 'rxjs';
+import { Auth } from '../../services/auth';
+import { RouterModule } from '@angular/router';
+
+// Define la interfaz de usuario para usarla en el componente
+interface UserData {
+  nombre: string;
+  nombreCompleto: string;
+  rol: string;
+  correo: string;
+}
 
 @Component({
   selector: 'app-home-lote',
   templateUrl: './home-lote.html',
   styleUrls: ['./home-lote.css'],
-  imports: [CommonModule, FooterComponent, ScrollTopComponent],
+  imports: [CommonModule, FooterComponent, ScrollTopComponent,  RouterModule],
   standalone: true
 })
 export class HomeLoteComponent implements OnInit {
@@ -19,19 +31,34 @@ export class HomeLoteComponent implements OnInit {
   showBtnDown: boolean = true;
   
   lotes: any[] = [];
-  lotesFiltered: any[] = [];
-  lotesNuevos: any[] = [];
-  loteSeleccionado: any = null;
+  inmueblesFiltered: any[] = [];
+  inmueblesNuevos: any[] = [];
+  inmuebleSeleccionado: any = null;
   mostrarModal = false;
   activeFilter = '';
   mapaURL: SafeResourceUrl | null = null;
 
+  usuario: UserData | null = null; 
+  private userSubscription!: Subscription;
 
-  constructor(private loteService: LoteService, private sanitizer: DomSanitizer) {}
+  menuOpen = false;       // Controla collapse del menú en mobile
+  dropdownOpen = false;   // Controla dropdown de usuario
+
+  // Obtiene la referencia al elemento <li> del dropdown mediante la variable de plantilla #dropdownMenu
+  // Usamos static: false para asegurar que Angular lo busque después de que *ngIf lo muestre.
+  @ViewChild('dropdownMenu', { static: false }) dropdownMenuRef!: ElementRef;
+
+
+  constructor(private loteService: LoteService, private sanitizer: DomSanitizer, private authService: Auth) {}
 
   ngOnInit(): void {
     this.cargarLotes();
     this.cargarLotesNuevo();
+     this.userSubscription = this.authService.currentUser$.subscribe(user => {
+      this.usuario = user;
+      // Si el usuario no está logeado, cerramos el dropdown
+      if (!user) this.dropdownOpen = false;
+    });
 
   }
 
@@ -39,8 +66,8 @@ export class HomeLoteComponent implements OnInit {
     this.loteService.getAll().subscribe({
       next: (data) => {
         this.lotes = data;
-        this.lotesFiltered = [...data];
-        this.lotesNuevos = data.slice(0, 2);
+        this.inmueblesFiltered = [...data];
+        this.inmueblesNuevos = data.slice(0, 2);
       },
       error: (err) => {
         console.error('Error al cargar lotes:', err);
@@ -50,11 +77,11 @@ export class HomeLoteComponent implements OnInit {
 
   filterType(tipo: string) {
     this.activeFilter = tipo;
-    this.lotesFiltered = tipo ? this.lotes.filter(l => l.tipo === tipo) : [...this.lotes];
+    this.inmueblesFiltered = tipo ? this.lotes.filter(l => l.tipo === tipo) : [...this.lotes];
   }
 
   verDetalles(lote: any) {
-  this.loteSeleccionado = lote;
+  this.inmuebleSeleccionado = lote;
   this.mostrarModal = true;
   document.body.style.overflow = 'hidden'; // evita que se desplace el fondo
   this.generarMapaURL(lote);
@@ -62,7 +89,7 @@ export class HomeLoteComponent implements OnInit {
 
   cerrarModal() {
     this.mostrarModal = false;
-    this.loteSeleccionado = null;
+    this.inmuebleSeleccionado = null;
     document.body.style.overflow = 'auto';
   }
 
@@ -77,17 +104,31 @@ export class HomeLoteComponent implements OnInit {
   }
 
   
-  generarMapaURL(lote: any): void {
-    if (!lote) return;
-    const ubicacion = `${lote.direccion}, ${lote.colonia_nombre}, ${lote.ciudad_nombre}, ${lote.estado_nombre}`;
-    const query = encodeURIComponent(ubicacion);
-    const url = `https://www.google.com/maps?q=${query}&output=embed`;
-    this.mapaURL = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-  }
+ // home-lote.ts
 
-  abrirEnGoogleMaps(lote: any) {
+// ...
+
+generarMapaURL(lote: any): void {
+  if (!lote) return;
   const ubicacion = `${lote.direccion}, ${lote.colonia_nombre}, ${lote.ciudad_nombre}, ${lote.estado_nombre}`;
+  const query = encodeURIComponent(ubicacion);
+  
+  // 🟢 CORRECCIÓN: Usar la URL de embebido estándar de Google Maps. 
+  // Nota: Si esto falla en producción, podría ser que necesites una clave API 
+  // y usar el formato https://www.google.com/maps/embed/v1/place?key=TU_API_KEY&q=...
+  const url = `https://maps.google.com/maps?q=${query}&t=&z=14&ie=UTF8&iwloc=&output=embed`; 
+  
+  this.mapaURL = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+}
+
+// ...
+
+ abrirEnGoogleMaps(lote: any) {
+  const ubicacion = `${lote.direccion}, ${lote.colonia_nombre}, ${lote.ciudad_nombre}, ${lote.estado_nombre}`;
+  
+  // 🟢 CORRECCIÓN: Usar la URL de búsqueda estándar de Google Maps.
   const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ubicacion)}`;
+  
   window.open(url, '_blank');
 }
 
@@ -102,10 +143,10 @@ cargarLotesNuevo() {
       });
 
       // Guarda también la lista filtrada general
-      this.lotesFiltered = [...this.lotes];
+      this.inmueblesFiltered = [...this.lotes];
 
       // Toma los 3 más nuevos, por ejemplo
-      this.lotesNuevos = this.lotes.slice(0, 3);
+      this.inmueblesNuevos = this.lotes.slice(0, 3);
     },
     error: (err) => {
       console.error('Error al cargar lotes:', err);
@@ -129,6 +170,9 @@ onWindowScroll() {
   this.showBtnTop = scrollPos > 200;
   // Mostrar botón bajar si scroll < altura total - 100
   this.showBtnDown = scrollPos < docHeight - 100;
+
+  // 🟢 ¡ACTIVACIÓN CLAVE! Llamar a la función para actualizar el enlace activo.
+  this.actualizarNavbarActivo();
 }
 
 // Función unificada para el botón
@@ -142,7 +186,7 @@ scrollToggle(): void {
   }
 }
   actualizarNavbarActivo() {
-    const sections = ['inicio', 'lotes', 'nuevos', 'contacto'];
+    const sections = ['inicio', 'inmuebles', 'nuevos', 'contacto'];
     const navLinks = document.querySelectorAll('.nav-link');
 
     let currentSection = '';
@@ -162,5 +206,30 @@ scrollToggle(): void {
         link.classList.add('active');
       }
     });
+  }
+
+  cerrarSesion(): void {
+    this.authService.cerrarSesion();
+  }
+
+  ngOnDestroy(): void {
+    if (this.userSubscription) this.userSubscription.unsubscribe();
+  }
+  /**
+   * Escucha clics en todo el documento para cerrar el dropdown de usuario
+   * si el clic no ocurrió dentro del elemento del dropdown.
+   */
+  @HostListener('document:click', ['$event'])
+  hostClick(event: MouseEvent): void {
+    // 🛑 COMPROBACIÓN DE SEGURIDAD CLAVE: Si el dropdown no está abierto O la referencia no existe, salimos.
+    if (!this.dropdownOpen || !this.dropdownMenuRef) return;
+
+    // 1. Verificar si el clic ocurrió DENTRO del elemento del dropdown (el <li>)
+    const clickedInsideDropdown = this.dropdownMenuRef.nativeElement.contains(event.target as Node);
+
+    // 2. Si el clic NO fue dentro, cerramos el dropdown.
+    if (!clickedInsideDropdown) {
+      this.dropdownOpen = false;
+    }
   }
 }
