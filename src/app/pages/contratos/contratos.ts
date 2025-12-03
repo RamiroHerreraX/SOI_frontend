@@ -5,10 +5,11 @@ import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import { ContratoService } from '../../services/contrato.service';
 import { RouterModule } from '@angular/router';
+import { ScrollTopComponent } from "../scroll-top/scroll-top.component";
 
 @Component({
   selector: 'app-contratos',
-  imports: [HeaderAdmin, FooterAdmin, CommonModule, RouterModule],
+  imports: [HeaderAdmin, FooterAdmin, CommonModule, RouterModule, ScrollTopComponent],
   templateUrl: './contratos.html',
   styleUrl: './contratos.css'
 })

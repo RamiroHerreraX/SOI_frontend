@@ -84,18 +84,23 @@
         </div>
     </section>
 
-    <section id="inicio" class="welcome-section">
-        <div class="overlay"></div>
-        <div class="container position-relative text-center text-white">
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <h1 class="display-3 fw-bolder mb-3 text-gold-shine">Inmuebles Exclusivos</h1> <p class="lead text-shadow">Descubre terrenos privilegiados para tu proyecto. Inversión segura con ubicaciones premium y servicios completos.</p>
-                    <a href="#inmuebles" class="btn btn-gold btn-lg mt-4 shadow-sm"> <i class="fas fa-search me-2"></i>Ver Inmuebles
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
+    <section
+  id="inicio"
+  class="welcome-section"
+  [ngStyle]="{
+    'background-image': 'url(' + bg + ')'
+  }"
+>
+  <div class="overlay"></div>
+
+  <div class="content text-white">
+    <h1 class="fw-bold">{{ title }}</h1>
+    <p>{{ subtitle }}</p>
+    <a href="#inmuebles" class="btn btn-gold btn-lg mt-4 shadow-sm"> <i class="fas fa-search me-2"></i>Ver Inmuebles </a>
+  </div>
+</section>
+
+
 
     <section id="inmuebles" class="filters-section py-4 bg-light-gray border-bottom">
         <div class="container">

@@ -10,6 +10,7 @@ import { saveAs } from 'file-saver';
 import pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { RouterLink } from "@angular/router";
+import { ScrollTopComponent } from "../../scroll-top/scroll-top.component";
 (pdfMake as any).vfs = (pdfFonts as any).vfs;
 
 
@@ -22,7 +23,8 @@ import { RouterLink } from "@angular/router";
     CommonModule,
     FooterAdmin,
     HeaderAdmin,
-    RouterLink
+    RouterLink,
+    ScrollTopComponent
 ],
   templateUrl: './crear-contrato.component.html',
   styleUrl: './crear-contrato.component.css'

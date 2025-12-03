@@ -43,6 +43,10 @@ export class HomeLoteComponent implements OnInit {
 
   menuOpen = false;       // Controla collapse del menú en mobile
   dropdownOpen = false;   // Controla dropdown de usuario
+  bg!: string;
+  title!: string;
+  subtitle!: string;
+
 
   // Obtiene la referencia al elemento <li> del dropdown mediante la variable de plantilla #dropdownMenu
   // Usamos static: false para asegurar que Angular lo busque después de que *ngIf lo muestre.
@@ -59,6 +63,11 @@ export class HomeLoteComponent implements OnInit {
       // Si el usuario no está logeado, cerramos el dropdown
       if (!user) this.dropdownOpen = false;
     });
+
+    this.bg = localStorage.getItem('welcome-bg') || 'assets/default-bg.jpg';
+    this.title = localStorage.getItem('welcome-title') || 'Inmuebles Exclusivos';
+    this.subtitle = localStorage.getItem('welcome-subtitle') ||
+      'Descubre terrenos privilegiados para tu proyecto.';
 
   }
 

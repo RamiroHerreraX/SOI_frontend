@@ -30,11 +30,11 @@ export class ScrollTopComponent implements AfterViewInit {
       document.body.scrollHeight
     );
 
-    // Mostrar botón si hay suficiente scroll
-    this.showButton = docHeight > windowHeight + 200;
+    setTimeout(() => {
+      this.showButton = docHeight > windowHeight + 200;
+      this.isAtBottom = scrollTop + windowHeight >= docHeight - 200;
+    });
 
-    // Detectar si estamos casi al fondo
-    this.isAtBottom = scrollTop + windowHeight >= docHeight - 200;
   }
 
   scrollToggle() {
@@ -52,4 +52,5 @@ export class ScrollTopComponent implements AfterViewInit {
       window.scrollTo({ top: target, behavior: 'smooth' });
     }
   }
+  
 }
