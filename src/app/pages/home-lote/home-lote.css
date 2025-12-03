@@ -43,35 +43,60 @@
 }
 
 /* Fondo con imagen */
+/* Fondo principal */
 .welcome-section {
   position: relative;
-  min-height: 100vh;
-  background-image: url('/assets/lote1.jpg'); /* cambia la ruta a tu imagen */
+  height: 700px;
   background-size: cover;
   background-position: center;
-  background-attachment: fixed; /* efecto parallax */
+  background-repeat: no-repeat;
   display: flex;
-  align-items: center;
   justify-content: center;
-  overflow: hidden;
+  align-items: center;
+  text-align: center;
+  padding: 40px 20px;
 }
 
-/* Capa de oscurecimiento encima del fondo */
+/* Oscurecer la imagen */
 .welcome-section .overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.55); /* oscurece la imagen */
+  background: rgba(0, 0, 0, 0.45); /* igual a tu estilo */
   z-index: 1;
 }
 
-/* Contenedor principal */
-.welcome-section .container {
+/* Contenido centrado */
+.welcome-section .content {
   position: relative;
   z-index: 2;
+  max-width: 850px;
+  padding: 20px;
 }
+
+/* Título */
+.welcome-section h1 {
+  font-family: 'Montserrat', sans-serif;
+  color: #d4af37; /* Gold */
+  text-shadow: 0 0 10px rgba(212,175,55,0.6);
+  font-weight: 800;
+  font-size: 48px;
+}
+
+/* Subtítulo */
+.welcome-section p {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #ffffff;
+  margin-top: 10px;
+  max-width: 750px;
+  text-shadow: 0px 2px 6px rgba(0,0,0,0.5);
+}
+
+
 
 /* Efecto dorado en el texto */
 .text-gold-shine {
@@ -287,4 +312,97 @@ body {
 /* Opcional: Centrar y dar espacio a los iconos */
 .dropdown-menu .dropdown-item i {
     width: 20px;
+}
+
+
+
+/* home-lote.css */
+
+/* === ESTILOS DE PIEDRAS PRECIOSAS (Filtros) === */
+
+/* ÓPALO NEGRO (Todos) */
+.btn-opal-black {
+    --bs-btn-color: #1a1a1a;
+    --bs-btn-border-color: #1a1a1a;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #1a1a1a;
+    --bs-btn-hover-border-color: #1a1a1a;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #1a1a1a;
+    --bs-btn-active-border-color: #1a1a1a;
+}
+
+/* ESMERALDA (Terreno) */
+.btn-emerald {
+    --bs-btn-color: #1E8449;
+    --bs-btn-border-color: #1E8449;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #1E8449;
+    --bs-btn-hover-border-color: #1E8449;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #1E8449;
+    --bs-btn-active-border-color: #1E8449;
+}
+
+/* ZAFIRO (Departamento) */
+.btn-sapphire {
+    --bs-btn-color: #0D47A1;
+    --bs-btn-border-color: #0D47A1;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #0D47A1;
+    --bs-btn-hover-border-color: #0D47A1;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #0D47A1;
+    --bs-btn-active-border-color: #0D47A1;
+}
+
+/* RUBÍ (Local) */
+.btn-ruby {
+    --bs-btn-color: #900000;
+    --bs-btn-border-color: #900000;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #900000;
+    --bs-btn-hover-border-color: #900000;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #900000;
+    --bs-btn-active-border-color: #900000;
+}
+
+/* AMATISTA (Casa) */
+.btn-amethyst {
+    --bs-btn-color: #512DA8;
+    --bs-btn-border-color: #512DA8;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: #512DA8;
+    --bs-btn-hover-border-color: #512DA8;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: #512DA8;
+    --bs-btn-active-border-color: #512DA8;
+}
+
+
+
+
+/* === ESTILOS DE PIEDRAS PRECIOSAS (Badges/Etiquetas) === */
+.badge-emerald {
+    background-color: #21915f !important; /* Esmeralda */
+}
+
+.badge-sapphire {
+    background-color: #026dca !important; /* Zafiro */
+}
+
+.badge-ruby {
+    background-color: #b80101 !important; /* Rubí */
+}
+
+.badge-amethyst {
+    background-color: #8f27c4 !important; /* Amatista */
+}
+
+.inmueble-badge {
+  font-weight: 600;
+  border-radius: 0 0 6px 0;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.2); 
+  z-index: 10; /* Añadir z-index para asegurar que esté sobre la imagen */
 }

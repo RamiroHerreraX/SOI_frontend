@@ -5,10 +5,10 @@
 <nav aria-label="breadcrumb" class="px-4">
   <ol class="breadcrumb custom-breadcrumb p-2 rounded">
     <li class="breadcrumb-item">
-      <a [routerLink]="['/home']" class="breadcrumb-home">Inicio</a>
+      <a [routerLink]="['/home']" class="text-decoration-none text-muted"> <i class="bi bi-house-fill me-1"></i> Inicio</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-      Crear Contrato
+        Contratos
     </li>
   </ol>
 </nav>
@@ -43,7 +43,7 @@
                 <div class="row g-3 bg-light p-3 rounded">
 
                     <div class="col-md-4">
-                        <label class="form-label">ID del Lote <span class="text-danger">*</span></label>
+                        <label class="form-label">Folio del Lote <span class="text-danger">*</span></label>
                         <input type="number" formControlName="id_lote" class="form-control" (keydown)="evitarNotacion($event)" maxlength="15" (input)="limitarMax($event, 15)">
 
                         <div class="text-danger mt-1" *ngIf="contratoForm.get('id_lote')?.hasError('pattern')">
@@ -482,5 +482,6 @@
 
     </div>
 </div>
+<app-scroll-top></app-scroll-top>
 
 <app-footer-admin></app-footer-admin>

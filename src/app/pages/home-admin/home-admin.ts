@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { HeaderAdmin } from "../../shared/header-admin/header-admin";
 import { FooterAdmin } from "../../shared/footer-admin/footer-admin";
+import { WelcomeEditorComponent } from "../welcome-editor/welcome-editor.component";
 
 @Component({
   selector: 'app-home-admin',
@@ -17,5 +18,8 @@ export class HomeAdmin {
   navegarA(ruta: string) {
     this.router.navigate([`/${ruta}`]);
   }
+
+  
+
 
 }
