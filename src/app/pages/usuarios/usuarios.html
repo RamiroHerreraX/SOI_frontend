@@ -3,6 +3,18 @@
 <div class="usuarios-container container-fluid mt-5 pt-4">
   <h2 class="text-center mb-4 text-gold">Gestión de Usuarios</h2>
 
+      <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="home" class="text-decoration-none text-muted">
+                        <i class="bi bi-house-fill me-1"></i> Inicio
+                    </a>
+                </li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Gestión de Usuarios</li>
+            </ol>
+        </nav>
+
   <!-- 🔍 FILTROS -->
   <div class="card p-3 mb-4 shadow-sm bg-light">
     <h5 class="text-dark mb-3">Filtros de búsqueda</h5>
@@ -29,7 +41,7 @@
   <!-- 🔹 BOTÓN PARA MOSTRAR FORMULARIO -->
   <div class="text-center mb-4">
     <button class="btn btn-gold px-4" (click)="mostrarFormulario = !mostrarFormulario">
-      {{ mostrarFormulario ? 'Cerrar formulario' : '➕ Agregar nuevo usuario' }}
+      {{ mostrarFormulario ? 'Cerrar formulario' : 'Agregar nuevo usuario' }}
     </button>
   </div>
 
@@ -42,22 +54,45 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label>Usuario</label>
-              <input class="form-control" placeholder="Ingrese el nombre de usuario"
-                     [(ngModel)]="nuevoUsuario.usuario" name="usuario" required pattern="^[a-zA-Z0-9_]+$" #usuario="ngModel" />
-              <div class="text-danger mt-1" *ngIf="usuario.invalid && (usuario.touched || userForm.submitted)">
-                <small *ngIf="usuario.errors?.['required']">El nombre de usuario es obligatorio.</small>
-                <small *ngIf="usuario.errors?.['pattern']">Solo se permiten letras, números y guiones bajos.</small>
-              </div>
+<input class="form-control"
+       placeholder="Ingrese el nombre de usuario"
+       [(ngModel)]="nuevoUsuario.usuario"
+       name="usuario"
+       required
+       minlength="4"
+       maxlength="20"
+       pattern="^[a-zA-Z0-9_]+$"
+       #usuario="ngModel" />
+
+<div class="text-danger mt-1" *ngIf="usuario.invalid && (usuario.touched || userForm.submitted)">
+  <small *ngIf="usuario.errors?.['required']">El nombre de usuario es obligatorio.</small>
+  <small *ngIf="usuario.errors?.['minlength']">Debe tener al menos 4 caracteres.</small>
+  <small *ngIf="usuario.errors?.['maxlength']">No puede superar los 20 caracteres.</small>
+  <small *ngIf="usuario.errors?.['pattern']">Solo letras, números y guiones bajos.</small>
+</div>
             </div>
 
             <div class="col-md-6 mb-3">
               <label>Contraseña</label>
-              <input type="password" class="form-control" placeholder="Ingrese la contraseña"
-                     [(ngModel)]="nuevoUsuario.password" name="password" required minlength="6" #password="ngModel" />
-              <div class="text-danger mt-1" *ngIf="password.invalid && (password.touched || userForm.submitted)">
-                <small *ngIf="password.errors?.['required']">La contraseña es obligatoria.</small>
-                <small *ngIf="password.errors?.['minlength']">Debe tener al menos 6 caracteres.</small>
-              </div>
+<input type="password"
+       class="form-control"
+       placeholder="Ingrese la contraseña"
+       [(ngModel)]="nuevoUsuario.password"
+       name="password"
+       required
+       minlength="8"
+       maxlength="32"
+       pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*._-]).{8,32}$"
+       #password="ngModel" />
+
+<div class="text-danger mt-1" *ngIf="password.invalid && (password.touched || userForm.submitted)">
+  <small *ngIf="password.errors?.['required']">La contraseña es obligatoria.</small>
+  <small *ngIf="password.errors?.['minlength']">Debe tener mínimo 8 caracteres.</small>
+  <small *ngIf="password.errors?.['maxlength']">No puede tener más de 32 caracteres.</small>
+  <small *ngIf="password.errors?.['pattern']">
+    Debe incluir mayúscula, minúscula, número y un carácter especial.
+  </small>
+</div>
             </div>
           </div>
 
@@ -115,11 +150,22 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label>Usuario</label>
-              <input class="form-control" placeholder="Editar nombre de usuario"
-                     [(ngModel)]="usuarioSeleccionado!.usuario" name="usuario" required #usuarioE="ngModel" />
-              <div class="text-danger mt-1" *ngIf="usuarioE.invalid && (usuarioE.touched || editForm.submitted)">
-                <small>El nombre de usuario es obligatorio.</small>
-              </div>
+              <input class="form-control"
+       placeholder="Editar nombre de usuario"
+       [(ngModel)]="usuarioSeleccionado!.usuario"
+       name="usuario"
+       required
+       minlength="4"
+       maxlength="20"
+       pattern="^[a-zA-Z0-9_]+$"
+       #usuarioE="ngModel" />
+
+<div class="text-danger mt-1" *ngIf="usuarioE.invalid && (usuarioE.touched || editForm.submitted)">
+  <small *ngIf="usuarioE.errors?.['required']">El nombre de usuario es obligatorio.</small>
+  <small *ngIf="usuarioE.errors?.['minlength']">Debe tener al menos 4 caracteres.</small>
+  <small *ngIf="usuarioE.errors?.['maxlength']">No puede superar los 20 caracteres.</small>
+  <small *ngIf="usuarioE.errors?.['pattern']">Solo letras, números y guiones bajos.</small>
+</div>
             </div>
 
             <div class="col-md-6 mb-3">

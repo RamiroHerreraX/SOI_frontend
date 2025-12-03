@@ -64,6 +64,22 @@ button {
   border: none;
   padding: 10px 16px;
 }
+/* === BOTÓN DORADO === */
+.btn-gold {
+  background-color: #B8860B !important;  /* Dorado */
+  color: #ffffff !important;
+  font-weight: 600;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: 0.3s ease;
+}
+
+.btn-gold:hover {
+  background-color: #FFD700 !important; /* Dorado brillante */
+  color: #1A1A1A !important;
+}
+
 
 button[type="submit"] {
   background-color: #B8860B;
@@ -206,6 +222,56 @@ tbody tr:hover {
 .form-item__error:focus {
   outline: none;
   box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+/* Solo botones SIN clases personalizadas */
+button:not(.btn-gold):not(.btn-silver):not(.btn-delete) {
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  border: none;
+  padding: 10px 16px;
+  background-color: #B8860B;
+  color: #fff;
+}
+/* === ESTILOS PERSONALIZADOS PARA BOTONES === */
+
+/* Botón dorado (primario) */
+.btn-gold {
+  background-color: #B8860B !important;
+  color: #ffffff !important;
+  border: none;
+  transition: 0.3s ease;
+}
+
+.btn-gold:hover {
+  background-color: #FFD700 !important;
+  color: #1A1A1A !important;
+}
+
+/* Botón plateado (secundario) */
+.btn-silver {
+  background-color: #C0C0C0 !important;
+  color: #1A1A1A !important;
+  border: none;
+  transition: 0.3s ease;
+}
+
+.btn-silver:hover {
+  background-color: #E0E0E0 !important;
+  color: #000 !important;
+}
+
+/* Botón negro para eliminar */
+.btn-delete {
+  background-color: #1A1A1A !important;
+  color: #FFE08A !important;
+}
+
+.btn-delete:hover {
+  background-color: #333 !important;
+  color: #FFD700 !important;
 }
 
 }

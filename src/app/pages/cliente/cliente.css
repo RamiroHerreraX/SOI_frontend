@@ -159,3 +159,218 @@ body {
 .container.mt-5.pt-5 {
   margin-top: 2rem !important; /* ajustable si no hay navbar */
 }
+/* === ESTRUCTURA DE LA PÁGINA: Footer al final === */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #FFFFFF;
+  color: #1A1A1A;
+}
+
+main.home-admin-container {
+  flex: 1 0 auto; /* ocupa espacio disponible */
+  padding-bottom: 40px; /* espacio para footer */
+}
+
+/* El footer (componente) se colocará al final por flexbox */
+app-footer-admin {
+  flex-shrink: 0;
+  width: 100%;
+}
+
+/* === BOTONES (tu paleta) === */
+.btn-gold {
+  background-color: #B8860B;
+  color: #FFFFFF;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  padding: 10px 20px;
+}
+
+.btn-gold:hover {
+  background-color: #FFD700;
+  color: #1A1A1A;
+  box-shadow: 0 4px 12px rgba(255,215,0,0.35);
+}
+
+.btn-silver {
+  background-color: #C0C0C0;
+  color: #1A1A1A;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+}
+
+.btn-silver:hover {
+  background-color: #E0E0E0;
+  color: #1A1A1A;
+  box-shadow: 0 4px 12px rgba(192,192,192,0.35);
+}
+
+/* === CARDS === */
+.card {
+  border-radius: 12px;
+  overflow: visible;
+  background-color: #F9F9F9;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(184,134,11,0.18);
+}
+
+.card-title { color: #B8860B; font-weight: 600; }
+.card-text { color: #444; }
+
+/* === MODAL === */
+.modal-content.modal-sm {
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(184,134,11,0.3);
+}
+
+.modal-close { color: #B8860B; }
+
+/* === ng-select visual === */
+::ng-deep ng-select.ng-select-bootstrap { height: 38px; font-size: 1rem; padding: 0.375rem 0.75rem; border-radius: 0.375rem; border: 1px solid #ced4da; background-color: #ffffff; color: #495057; }
+::ng-deep ng-select.ng-select-bootstrap .ng-dropdown-panel { border-radius: 0.375rem; border: 1px solid #ced4da; box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,.1); background-color: #ffffff; }
+::ng-deep ng-select.ng-select-bootstrap .ng-option { padding: 0.375rem 0.75rem; font-size: 1rem; background-color: #ffffff; color: #212529; }
+::ng-deep ng-select.ng-select-bootstrap .ng-option:hover { background-color: #f8f9fa; color: #212529; }
+
+/* === HOME ADMIN (tarjetas) === */
+.home-admin-container { padding-bottom: 60px; min-height: calc(100vh - 120px); }
+.admin-card { min-height: 220px; display:flex; align-items:center; justify-content:center; border:2px solid transparent; border-radius:14px; background-color:#FFFFFF; transition:all 0.3s ease; cursor:pointer; }
+.admin-card:hover { transform: translateY(-6px); box-shadow: 0 6px 16px rgba(184,134,11,0.3); border-color: #B8860B; }
+.admin-card i { font-size:3rem; color:#B8860B; transition: color 0.3s ease; }
+
+/* Breadcrumbs */
+.breadcrumb {
+  background: transparent;
+  padding-left: 0;
+}
+.breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: rgba(26,26,26,0.45); }
+
+/* FORM: estilos de validación */
+.is-invalid {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.1rem rgba(220,53,69,0.08);
+}
+
+.invalid-feedback.d-block {
+  color: #dc3545;
+}
+
+/* Mensajes de éxito/archivo */
+.text-success { color: #198754 !important; }
+
+/* Ajuste para que inputs uppercase se vean bien */
+.text-uppercase { text-transform: uppercase; }
+
+/* Ajuste tabla */
+.table-row-hover { cursor: pointer; }
+.table-row-hover:hover { background-color: rgba(184,134,11,0.04); }
+
+/* Small responsive tweaks */
+@media (max-width: 576px) {
+  .admin-card i { font-size: 2.2rem; }
+  .container.mt-5.pt-5 { margin-top: 1.2rem !important; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* === MODAL GLOBAL ESTILO DORADO === */
+.modal-content {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+  border-radius: 12px;
+  border: 2px solid #B8860B !important;
+  box-shadow: 0 0 15px rgba(184,134,11,0.4);
+}
+
+/* HEADER */
+.modal-header {
+  background-color: #fffdfd !important;
+  border-bottom: 1px solid #B8860B !important;
+  color: #B8860B !important;
+}
+
+/* TITULO */
+.modal-title {
+  color: #B8860B!important;
+  font-weight: 600;
+}
+
+/* BOTON DE CERRAR (X) */
+.modal-header .btn-close {
+  filter: invert(85%) sepia(41%) saturate(1000%) hue-rotate(5deg) brightness(105%);
+  opacity: 1;
+}
+.modal-header .btn-close:hover {
+  filter: invert(65%) sepia(64%) saturate(2000%) hue-rotate(5deg);
+}
+
+/* FOOTER */
+.modal-footer {
+  border-top: 1px solid #B8860B !important;
+}
+
+/* BOTÓN CERRAR DEL FOOTER */
+.modal-footer .btn-secondary {
+  background-color: #B8860B !important;
+  color: #1A1A1A !important;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+}
+
+.modal-footer .btn-secondary:hover {
+  background-color: #95800a !important;
+  color: #000 !important;
+  box-shadow: 0 4px 12px rgba(255,215,0,0.35);
+}
+.modal-dialog-centered {
+  display: flex;
+  align-items: center;
+  min-height: calc(100% - 1rem);
+}
+
+/* === BOTÓN DORADO === */
+.btn-gold {
+  background-color: #B8860B !important;
+  color: #1A1A1A !important;
+  font-weight: 600;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: 0.3s ease;
+}
+
+.btn-gold:hover {
+  background-color: #B8860B !important;
+  color: #000 !important;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.35);
+}

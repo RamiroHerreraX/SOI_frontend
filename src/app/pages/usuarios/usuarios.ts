@@ -64,6 +64,21 @@ export class Usuarios implements OnInit {
   // 🔹 Crear nuevo usuario
   // ================================
   crearUsuario(form: NgForm): void {
+
+      if (form.invalid) {
+    this.showToast('Por favor completa correctamente todos los campos requeridos.', 'warning');
+    return;
+  }
+
+  const pass = this.nuevoUsuario.password;
+
+  const regexPass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*._-]).{8,32}$/;
+
+  if (!regexPass.test(pass)) {
+    this.showToast('La contraseña debe tener mayúscula, minúscula, número y carácter especial.', 'warning');
+    return;
+  }
+  
     if (form.invalid) {
       this.showToast('Por favor completa todos los campos requeridos.', 'warning');
       return;

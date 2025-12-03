@@ -1,270 +1,307 @@
-<app-header-admin></app-header-admin>
+<!-- ENVOLTORIO GENERAL: asegura footer al final -->
+<div class="page-wrapper">
+  <app-header-admin></app-header-admin>
 
-<div class="clientes-container container-fluid mt-5 pt-4">
-  <h2 class="text-center mb-4 text-gold">Gestión de Clientes</h2>
+  <main class="home-admin-container container-fluid mt-5 pt-4">
+    <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="home" class="text-decoration-none text-muted">
+                        <i class="bi bi-house-fill me-1"></i> Inicio
+                    </a>
+                </li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Gestión de Clientes</li>
+            </ol>
+        </nav>
 
-  <!-- Filtros -->
-  <div class="card p-3 mb-4 shadow-sm bg-light">
-    <h5 class="text-dark mb-3">Filtros de búsqueda</h5>
-    <div class="row g-3">
-      <div class="col-md-3">
-        <input type="text" class="form-control" placeholder="Buscar por nombre" [(ngModel)]="filtroNombre">
-      </div>
-      <div class="col-md-3">
-        <input type="text" class="form-control" placeholder="Buscar por correo" [(ngModel)]="filtroCorreo">
-      </div>
-      <div class="col-md-3">
-        <input type="text" class="form-control" placeholder="Buscar por CURP" [(ngModel)]="filtroCurp">
-      </div>
-      <div class="col-md-3">
-        <input type="text" class="form-control" placeholder="Buscar por Clave INE" [(ngModel)]="filtroClave">
+
+    <h2 class="text-center mb-4 text-gold">Gestión de Clientes</h2>
+
+    <!-- FILTROS -->
+    <div class="card p-3 mb-4 shadow-sm bg-light">
+      <h5 class="text-dark mb-3">Filtros de búsqueda</h5>
+      <div class="row g-3">
+        <div class="col-md-3">
+          <input type="text" class="form-control" placeholder="Buscar por nombre" [(ngModel)]="filtroNombre">
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control" placeholder="Buscar por correo" [(ngModel)]="filtroCorreo">
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control" placeholder="Buscar por CURP" [(ngModel)]="filtroCurp">
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control" placeholder="Buscar por Clave INE" [(ngModel)]="filtroClave">
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Botón mostrar formulario -->
-  <div class="text-center mb-4">
-    <button class="btn btn-gold px-4" (click)="mostrarFormulario = !mostrarFormulario">
-      {{ mostrarFormulario ? 'Cerrar formulario' : '➕ Agregar nuevo cliente' }}
-    </button>
-  </div>
+    <!-- BOTÓN PARA MOSTRAR FORM -->
+    <div class="text-center mb-4">
+      <button class="btn btn-gold px-4" (click)="mostrarFormulario = !mostrarFormulario">
+        {{ mostrarFormulario ? 'Cerrar formulario' : '➕ Agregar nuevo cliente' }}
+      </button>
+    </div>
 
-  <!-- FORMULARIO DE CLIENTES -->
-  <div *ngIf="mostrarFormulario">
-
-    <!-- Formulario Crear Cliente -->
-    <ng-container *ngIf="!modoEdicion; else editarForm">
+    <!-- FORMULARIO (ALTA / EDICIÓN) -->
+    <div *ngIf="mostrarFormulario" class="mb-4">
       <div class="form-container card p-4 shadow-sm mb-5">
-        <h3 class="mb-3 text-gold">Registrar nuevo cliente</h3>
-        <form #clienteForm="ngForm" (ngSubmit)="crearCliente(clienteForm)" novalidate>
+        <h3 class="mb-3 text-gold">{{ modoEdicion ? 'Editar cliente' : 'Registrar nuevo cliente' }}</h3>
 
-          <!-- Datos personales -->
+        <!-- ngForm -->
+        <form #clienteForm="ngForm" (ngSubmit)="onSubmit(clienteForm)" novalidate>
+
+          <!-- FILA: Nombres y apellidos -->
           <div class="row">
             <div class="col-md-4 mb-3">
-              <label>Nombre *</label>
-              <input class="form-control" name="nombre" required [(ngModel)]="nuevoCliente.nombre" />
+              <label for="nombre">Nombre *</label>
+              <input id="nombre"
+                     name="nombre"
+                     class="form-control"
+                     required
+                     maxlength="50"
+                     pattern="^[A-Za-zÁÉÍÓÚÑáéíóúñ\\s'\\-]+$"
+                     [(ngModel)]="nuevoCliente.nombre"
+                     #nombre="ngModel"
+                     [ngClass]="{'is-invalid': nombre.invalid && (nombre.touched || clienteForm.submitted)}">
+              <div class="invalid-feedback d-block" *ngIf="nombre.errors && (nombre.touched || clienteForm.submitted)">
+                <div *ngIf="nombre.errors?.['required']">El nombre es obligatorio.</div>
+                <div *ngIf="nombre.errors?.['pattern']">Solo se permiten letras, espacios, comillas o guiones.</div>
+                <div *ngIf="nombre.errors?.['maxlength']">Máximo 50 caracteres.</div>
+              </div>
             </div>
+
             <div class="col-md-4 mb-3">
-              <label>Apellido Paterno *</label>
-              <input class="form-control" name="apellido_paterno" required [(ngModel)]="nuevoCliente.apellido_paterno" />
+              <label for="apellido_paterno">Apellido Paterno *</label>
+              <input id="apellido_paterno"
+                     name="apellido_paterno"
+                     class="form-control"
+                     required
+                     maxlength="50"
+                     pattern="^[A-Za-zÁÉÍÓÚÑáéíóúñ\\s'\\-]+$"
+                     [(ngModel)]="nuevoCliente.apellido_paterno"
+                     #apPat="ngModel"
+                     [ngClass]="{'is-invalid': apPat.invalid && (apPat.touched || clienteForm.submitted)}">
+              <div class="invalid-feedback d-block" *ngIf="apPat.errors && (apPat.touched || clienteForm.submitted)">
+                <div *ngIf="apPat.errors?.['required']">El apellido paterno es obligatorio.</div>
+                <div *ngIf="apPat.errors?.['pattern']">Solo se permiten letras, espacios, comillas o guiones.</div>
+                <div *ngIf="apPat.errors?.['maxlength']">Máximo 50 caracteres.</div>
+              </div>
             </div>
+
             <div class="col-md-4 mb-3">
-              <label>Apellido Materno *</label>
-              <input class="form-control" name="apellido_materno" required [(ngModel)]="nuevoCliente.apellido_materno" />
+              <label for="apellido_materno">Apellido Materno *</label>
+              <input id="apellido_materno"
+                     name="apellido_materno"
+                     class="form-control"
+                     required
+                     maxlength="50"
+                     pattern="^[A-Za-zÁÉÍÓÚÑáéíóúñ\\s'\\-]+$"
+                     [(ngModel)]="nuevoCliente.apellido_materno"
+                     #apMat="ngModel"
+                     [ngClass]="{'is-invalid': apMat.invalid && (apMat.touched || clienteForm.submitted)}">
+              <div class="invalid-feedback d-block" *ngIf="apMat.errors && (apMat.touched || clienteForm.submitted)">
+                <div *ngIf="apMat.errors?.['required']">El apellido materno es obligatorio.</div>
+                <div *ngIf="apMat.errors?.['pattern']">Solo se permiten letras, espacios, comillas o guiones.</div>
+                <div *ngIf="apMat.errors?.['maxlength']">Máximo 50 caracteres.</div>
+              </div>
             </div>
           </div>
 
-          <!-- Contacto -->
+          <!-- FILA: Correo, Teléfono, CURP -->
           <div class="row">
             <div class="col-md-4 mb-3">
-              <label>Correo *</label>
-              <input type="email" class="form-control" name="correo" required [(ngModel)]="nuevoCliente.correo" />
+              <label for="correo">Correo *</label>
+              <input id="correo"
+                     type="email"
+                     name="correo"
+                     class="form-control"
+                     required
+                     maxlength="100"
+                     email
+                     [(ngModel)]="nuevoCliente.correo"
+                     #correo="ngModel"
+                     [ngClass]="{'is-invalid': correo.invalid && (correo.touched || clienteForm.submitted)}">
+              <div class="invalid-feedback d-block" *ngIf="correo.errors && (correo.touched || clienteForm.submitted)">
+                <div *ngIf="correo.errors?.['required']">El correo es obligatorio.</div>
+                <div *ngIf="correo.errors?.['email']">Formato de correo inválido. (ej. usuario@dominio.com)</div>
+                <div *ngIf="correo.errors?.['maxlength']">Máximo 100 caracteres.</div>
+              </div>
             </div>
+
             <div class="col-md-4 mb-3">
-              <label>Teléfono *</label>
-              <input type="tel" class="form-control" name="telefono" required maxlength="10"
-                     (input)="validarTelefono($event)" [(ngModel)]="nuevoCliente.telefono" />
+              <label for="telefono">Teléfono *</label>
+              <input id="telefono"
+                     type="tel"
+                     name="telefono"
+                     class="form-control"
+                     required
+                     maxlength="10"
+                     minlength="10"
+                     pattern="^[0-9]{10}$"
+                     (input)="soloNumeros($event, 10)"
+                     [(ngModel)]="nuevoCliente.telefono"
+                     #tel="ngModel"
+                     [ngClass]="{'is-invalid': tel.invalid && (tel.touched || clienteForm.submitted)}">
+              <div class="invalid-feedback d-block" *ngIf="tel.errors && (tel.touched || clienteForm.submitted)">
+                <div *ngIf="tel.errors?.['required']">El teléfono es obligatorio.</div>
+                <div *ngIf="tel.errors?.['pattern || tel.errors.minlength']">Ingresa un teléfono válido de 10 dígitos.</div>
+                <div *ngIf="tel.errors?.['maxlength']">Máximo 10 dígitos.</div>
+              </div>
             </div>
+
             <div class="col-md-4 mb-3">
-              <label>CURP *</label>
-              <input class="form-control" name="curp" required minlength="18" maxlength="18"
-                     (input)="limpiarCurp()" [(ngModel)]="nuevoCliente.curp" />
+              <label for="curp">CURP *</label>
+              <input id="curp"
+                     name="curp"
+                     class="form-control text-uppercase"
+                     required
+                     minlength="18"
+                     maxlength="18"
+                     pattern="^[A-Z0-9]{18}$"
+                     (input)="formatearCurp($event)"
+                     [(ngModel)]="nuevoCliente.curp"
+                     #curp="ngModel"
+                     [ngClass]="{'is-invalid': curp.invalid && (curp.touched || clienteForm.submitted)}">
+              <div class="invalid-feedback d-block" *ngIf="curp.errors && (curp.touched || clienteForm.submitted)">
+                <div *ngIf="curp.errors?.['required']">La CURP es obligatoria.</div>
+                <div *ngIf="curp.errors?.['pattern']">La CURP debe contener solo letras y números (18 caracteres).</div>
+                <div *ngIf="curp.errors?.['minlength || curp.errors.maxlength']">La CURP debe tener 18 caracteres.</div>
+              </div>
             </div>
           </div>
 
-          <!-- Clave INE y Documentos -->
+          <!-- FILA: INE y documentos -->
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label>Clave de Elector (INE) *</label>
-              <input class="form-control" name="clave_elector" required maxlength="20"
-                     (input)="limpiarClaveElector()" [(ngModel)]="nuevoCliente.clave_elector" />
+              <label for="clave_elector">Clave de Elector (INE) *</label>
+              <input id="clave_elector"
+                     name="clave_elector"
+                     class="form-control text-uppercase"
+                     required
+                     maxlength="20"
+                     pattern="^[A-Z0-9\\-]{5,20}$"
+                     (input)="formatearClave($event)"
+                     [(ngModel)]="nuevoCliente.clave_elector"
+                     #clave="ngModel"
+                     [ngClass]="{'is-invalid': clave.invalid && (clave.touched || clienteForm.submitted)}">
+              <div class="invalid-feedback d-block" *ngIf="clave.errors && (clave.touched || clienteForm.submitted)">
+                <div *ngIf="clave.errors?.['required']">La clave de elector es obligatoria.</div>
+                <div *ngIf="clave.errors?.['pattern']">Formato de clave inválido.</div>
+                <div *ngIf="clave.errors?.['maxlength']">Máximo 20 caracteres.</div>
+              </div>
             </div>
+
             <div class="col-md-6 mb-3">
               <label>Documento INE (PDF) *</label>
-              <input type="file" class="form-control" name="doc_identificacion" required accept="application/pdf"
-                     (change)="nuevoCliente.doc_identificacion = $any($event.target).files[0]" />
+              <input type="file"
+                     class="form-control"
+                     accept="application/pdf"
+                     (change)="onFileChange($event, 'doc_identificacion')"
+                     [attr.required]="!modoEdicion ? true : null">
+              <small *ngIf="modoEdicion && nuevoCliente.doc_identificacion" class="text-success d-block mt-1">
+                Archivo actual: {{ getNombreArchivo(nuevoCliente.doc_identificacion) | slice:0:40 }}...
+
+              </small>
             </div>
           </div>
 
           <div class="row">
             <div class="col-md-6 mb-3">
               <label>Documento CURP (PDF) *</label>
-              <input type="file" class="form-control" name="doc_curp" required accept="application/pdf"
-                     (change)="nuevoCliente.doc_curp = $any($event.target).files[0]" />
+              <input type="file"
+                     class="form-control"
+                     accept="application/pdf"
+                     (change)="onFileChange($event, 'doc_curp')"
+                     [attr.required]="!modoEdicion ? true : null">
+              <small *ngIf="modoEdicion && nuevoCliente.doc_curp" class="text-success d-block mt-1">
+                Archivo actual: {{ getNombreArchivo(nuevoCliente.doc_curp) | slice:0:40 }}
+              </small>
             </div>
           </div>
 
-          <!-- Botones -->
+          <!-- BOTONES -->
           <div class="text-center mt-3">
-            <button type="submit" class="btn btn-gold me-2 px-4" [disabled]="clienteForm.invalid">Guardar</button>
-            <button type="reset" class="btn btn-silver px-4">Limpiar</button>
-          </div>
-
-        </form>
-      </div>
-    </ng-container>
-
-    <!-- Formulario Editar Cliente -->
-    <ng-template #editarForm>
-      <div class="form-container card p-4 shadow-sm mb-5">
-        <h3 class="mb-3 text-gold">Editar cliente</h3>
-        <form #clienteForm="ngForm" (ngSubmit)="actualizarCliente(clienteForm)" novalidate>
-
-          <!-- Datos personales -->
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label>Nombre *</label>
-              <input class="form-control" name="nombre" required [(ngModel)]="nuevoCliente.nombre" #nombre="ngModel" />
-              <div class="text-danger small" *ngIf="nombre.invalid && clienteForm.submitted">El nombre es obligatorio.</div>
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Apellido Paterno *</label>
-              <input class="form-control" name="apellido_paterno" required [(ngModel)]="nuevoCliente.apellido_paterno" #apPat="ngModel" />
-              <div class="text-danger small" *ngIf="apPat.invalid && clienteForm.submitted">El apellido paterno es obligatorio.</div>
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Apellido Materno *</label>
-              <input class="form-control" name="apellido_materno" required [(ngModel)]="nuevoCliente.apellido_materno" #apMat="ngModel" />
-              <div class="text-danger small" *ngIf="apMat.invalid && clienteForm.submitted">El apellido materno es obligatorio.</div>
-            </div>
-          </div>
-
-          <!-- Contacto -->
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label>Correo *</label>
-              <input type="email" class="form-control" name="correo" required [(ngModel)]="nuevoCliente.correo" #correo="ngModel" />
-              <div class="text-danger small" *ngIf="correo.invalid && clienteForm.submitted">Ingresa un correo válido.</div>
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Teléfono *</label>
-              <input type="tel" class="form-control" name="telefono" required maxlength="10"
-                     (input)="validarTelefono($event)" [(ngModel)]="nuevoCliente.telefono" #tel="ngModel" />
-              <div class="text-danger small" *ngIf="tel.invalid && clienteForm.submitted">Ingresa un teléfono válido de 10 dígitos.</div>
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>CURP *</label>
-              <input class="form-control" name="curp" required minlength="18" maxlength="18"
-                     (input)="limpiarCurp()" [(ngModel)]="nuevoCliente.curp" #curp="ngModel" />
-              <div class="text-danger small" *ngIf="curp.invalid && clienteForm.submitted">La CURP debe tener 18 caracteres.</div>
-            </div>
-          </div>
-
-          <!-- Clave INE -->
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label>Clave de Elector (INE) *</label>
-              <input class="form-control" name="clave_elector" required maxlength="20"
-                     (input)="limpiarClaveElector()" [(ngModel)]="nuevoCliente.clave_elector" #clave="ngModel" />
-              <div class="text-danger small" *ngIf="clave.invalid && clienteForm.submitted">La clave de elector es obligatoria.</div>
-            </div>
-          </div>
-
-          <!-- Documentos -->
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label>Documento INE (PDF) *</label>
-              <div *ngIf="modoEdicion && nuevoCliente.doc_identificacion && typeof nuevoCliente.doc_identificacion === 'string'">
-                <p><strong>Actual:</strong></p>
-                <a [href]="getPdfUrl(nuevoCliente.doc_identificacion)" target="_blank" class="btn btn-outline-primary btn-sm">Ver PDF</a>
-                <button type="button" class="btn btn-danger btn-sm ms-2" (click)="borrarArchivo('doc_identificacion')">Borrar</button>
-                <p class="mt-2 mb-0 small text-success">{{ nuevoCliente.doc_identificacion }}</p>
-              </div>
-              <input type="file" class="form-control mt-2" accept="application/pdf" (change)="onFileChange($event, 'doc_identificacion')">
-            </div>
-
-            <div class="col-md-6 mb-3">
-              <label>Documento CURP (PDF) *</label>
-              <div *ngIf="modoEdicion && nuevoCliente.doc_curp && typeof nuevoCliente.doc_curp === 'string'">
-                <p><strong>Actual:</strong></p>
-                <a [href]="getPdfUrl(nuevoCliente.doc_curp)" target="_blank" class="btn btn-outline-primary btn-sm">Ver PDF</a>
-                <button type="button" class="btn btn-danger btn-sm ms-2" (click)="borrarArchivo('doc_curp')">Borrar</button>
-                <p class="mt-2 mb-0 small text-success">{{ nuevoCliente.doc_curp }}</p>
-              </div>
-              <input type="file" class="form-control mt-2" accept="application/pdf" (change)="onFileChange($event, 'doc_curp')">
-            </div>
-          </div>
-
-          <!-- Botones -->
-          <div class="text-center mt-3">
-            <button type="submit" class="btn btn-gold px-4 me-2">{{ modoEdicion ? 'Actualizar Cliente' : 'Registrar Cliente' }}</button>
+            <button type="submit" class="btn btn-gold px-4 me-2">
+              {{ modoEdicion ? 'Actualizar Cliente' : 'Registrar Cliente' }}
+            </button>
             <button type="button" class="btn btn-silver px-4" (click)="limpiarFormulario(clienteForm)">Limpiar</button>
           </div>
 
         </form>
       </div>
-    </ng-template>
+    </div>
 
-  </div> <!-- Fin formulario -->
+    <!-- TABLA DE CLIENTES -->
+    <div class="table-responsive mt-4">
+      <table class="table table-striped align-middle text-center mb-0">
+        <thead class="table-dark">
+          <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>CURP</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of clientes | filter:filtroNombre:filtroCorreo:filtroCurp:filtroClave" class="table-row-hover"
+              (click)="verDetalles(c)">
+            <td>{{c.nombre}} {{c.apellido_paterno}} {{c.apellido_materno}}</td>
+            <td>{{c.correo}}</td>
+            <td>{{c.telefono}}</td>
+            <td>{{c.curp}}</td>
+            <td>
+              <button class="btn btn-gold btn-sm me-1" (click)="editarCliente(c); $event.stopPropagation();">✏️</button>
+              <button class="btn btn-silver btn-sm" (click)="eliminarCliente(c.curp); $event.stopPropagation();">🗑️</button>
+            </td>
+          </tr>
+          <tr *ngIf="!clientes.length">
+            <td colspan="5" class="text-muted">No hay clientes registrados.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-  <!-- Tabla de clientes -->
-  <div class="table-responsive mt-4">
-    <table class="table table-striped align-middle text-center mb-0">
-      <thead class="table-dark">
-        <tr>
-          <th>Nombre</th>
-          <th>Correo</th>
-          <th>Teléfono</th>
-          <th>CURP</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let c of clientes | filter:filtroNombre:filtroCorreo:filtroCurp:filtroClave" class="table-row-hover"
-            (click)="verDetalles(c)">
-          <td>{{c.nombre}} {{c.apellido_paterno}} {{c.apellido_materno}}</td>
-          <td>{{c.correo}}</td>
-          <td>{{c.telefono}}</td>
-          <td>{{c.curp}}</td>
-          <td>
-            <button class="btn btn-gold btn-sm me-1" (click)="editarCliente(c); $event.stopPropagation();">✏️</button>
-            <button class="btn btn-silver btn-sm" (click)="eliminarCliente(c.curp); $event.stopPropagation();">🗑️</button>
-          </td>
-        </tr>
-        <tr *ngIf="!clientes.length">
-          <td colspan="5" class="text-muted">No hay clientes registrados.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <!-- MODAL DETALLES -->
+    <div class="modal fade" id="modalDetallesCliente" tabindex="-1" aria-labelledby="modalDetallesClienteLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-dark text-white">
+            <h5 class="modal-title" id="modalDetallesClienteLabel">Detalles del Cliente</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body" *ngIf="clienteSeleccionado">
+            <h6><b>Nombre:</b> {{ clienteSeleccionado.nombre }} {{ clienteSeleccionado.apellido_paterno }} {{ clienteSeleccionado.apellido_materno }}</h6>
+            <p><b>Correo:</b> {{ clienteSeleccionado.correo }}</p>
+            <p><b>Teléfono:</b> {{ clienteSeleccionado.telefono }}</p>
+            <p><b>CURP:</b> {{ clienteSeleccionado.curp }}</p>
+            <p><b>Clave INE:</b> {{ clienteSeleccionado.clave_elector }}</p>
 
-</div> <!-- Fin contenedor -->
+            <hr>
+<p><b>Documento INE:</b></p>
+<a *ngIf="clienteSeleccionado.doc_identificacion && typeof clienteSeleccionado.doc_identificacion === 'string'"
+   [href]="getPdfUrl(clienteSeleccionado.doc_identificacion)" target="_blank" class="btn btn-gold">
+  Ver PDF
+</a>
 
-<!-- Modal Detalles -->
-<div class="modal fade" id="modalDetallesCliente" tabindex="-1" aria-labelledby="modalDetallesClienteLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title" id="modalDetallesClienteLabel">Detalles del Cliente</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body" *ngIf="clienteSeleccionado">
-        <h6><b>Nombre:</b> {{ clienteSeleccionado.nombre }} {{ clienteSeleccionado.apellido_paterno }} {{ clienteSeleccionado.apellido_materno }}</h6>
-        <p><b>Correo:</b> {{ clienteSeleccionado.correo }}</p>
-        <p><b>Teléfono:</b> {{ clienteSeleccionado.telefono }}</p>
-        <p><b>CURP:</b> {{ clienteSeleccionado.curp }}</p>
-        <p><b>Clave INE:</b> {{ clienteSeleccionado.clave_elector }}</p>
+<p class="mt-3"><b>Documento CURP:</b></p>
+<a *ngIf="clienteSeleccionado.doc_curp && typeof clienteSeleccionado.doc_curp === 'string'"
+   [href]="getPdfUrl(clienteSeleccionado.doc_curp)" target="_blank" class="btn btn-gold">
+  Ver PDF
+</a>
 
-        <hr>
-
-        <p><b>Documento INE:</b></p>
-        <a *ngIf="clienteSeleccionado.doc_identificacion && typeof clienteSeleccionado.doc_identificacion === 'string'" 
-           [href]="getPdfUrl(clienteSeleccionado.doc_identificacion)" target="_blank" class="btn btn-primary">
-          Ver PDF
-        </a>
-
-        <p class="mt-3"><b>Documento CURP:</b></p>
-        <a *ngIf="clienteSeleccionado.doc_curp && typeof clienteSeleccionado.doc_curp === 'string'" 
-           [href]="getPdfUrl(clienteSeleccionado.doc_curp)" target="_blank" class="btn btn-primary">
-          Ver PDF
-        </a>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<app-scroll-top></app-scroll-top>
-<app-footer-admin></app-footer-admin>
+  </main>
+
+  <app-scroll-top></app-scroll-top>
+  <app-footer-admin></app-footer-admin>
+</div>
